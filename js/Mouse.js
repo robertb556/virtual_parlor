@@ -14,9 +14,13 @@ var Mouse = function(){
 	me.yDown = 0;
 	me.useTouch = false;
 
+	me.heldObjects = [];
+	me.holdXPositions = [0, -20,   0,  20, 20, 20, 0, -20, -20];
+	me.holdYPositions = [0, -20, -20, -20,  0, 20, 20, 20,   0];
+
 	me.canvas = graphics.getTopCanvas();
 
-	
+
 	me.init = function(){
 		//input listeners
 		me.canvas.addEventListener('mouseup', me.mouseup,   false);
@@ -27,18 +31,68 @@ var Mouse = function(){
 		me.canvas.addEventListener('touchmove', me.touchmove, false);
 	};
 
-	me.refresh = function(){
-		me.isDown = false;
-		me.x = 0;
-		me.y = 0;
+
+
+	me.grab = function(object){
+		var alreadyHas = false;
+		for(var i=0; i<me.heldObjects.length; i++){
+			if(me.heldObjects[i] === object) alreadyHas = true;
+		}
+
+		if(!alreadyHas) me.heldObjects.push(object);
 	};
+
+	me.drop = function(object){
+		var index = -1;
+		for(var i=0; i<me.heldObjects.length; i++){
+			if(me.heldObjects[i] === object) index = i;
+		}
+
+		if(index >= 0){
+			me.heldObjects.splice(index, 1);
+		}
+	};
+
+	me.isHolding = function(object){
+		for(var i=0; i<me.heldObjects.length; i++){
+			if(me.heldObjects[i] === object) return true;
+		}
+
+		return false;
+	};
+
+	me.holdIndex = function(object){
+		for(var i=0; i<me.heldObjects.length; i++){
+			if(me.heldObjects[i] === object) return i;
+		}
+
+		return -1;
+	};
+
+	me.getHeldX = function(object){
+		var index = me.holdIndex(object);
+		if(index >= 0){
+			return me.x + me.holdXPositions[index];
+		}
+		else return null;
+	};
+	me.getHeldY = function(object){
+		var index = me.holdIndex(object);
+		if(index >= 0){
+			return me.y + me.holdYPositions[index];
+		}
+		else return null;
+	};
+
+
 
 	me.up = function(event){
 		//console.log("event up");
 		if(!me.isDown) return; //don't double call
 		me.isDown = false;
 		me.saveState(event);
-		activeElement.mouseUp();
+		
+		gameObjects.mouseUp();
 	};
 	
 	me.down = function(event){
@@ -50,7 +104,7 @@ var Mouse = function(){
 		me.xDown = me.x;
 		me.yDown = me.y;
 
-		activeElement.mouseDown();
+		gameObjects.mouseDown();
 	};
 
 	me.move = function(event){
@@ -62,7 +116,7 @@ var Mouse = function(){
 			graphics.yOffset = me.y - me.yDown;
 		}
 
-		activeElement.mouseMove();
+		gameObjects.mouseMove();
 	};
 
 	me.saveState = function(e){

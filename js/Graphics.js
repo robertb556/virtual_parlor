@@ -77,7 +77,9 @@ var Graphics = function(){
 		var ctx = me.mainCtx;
 
 		//main draw
-		if(activeElement) activeElement.draw(ctx);
+		//if(activeElement) activeElement.draw(ctx);
+		gameObjects.draw(ctx);
+		
 
 		//finish
 		me.finishFrame();

@@ -19,8 +19,9 @@ var SCREEN_HEIGHT = 612;
 var graphics;
 var mouse;
 var keyboard;
+var gameObjects;
 var activeElement;
-
+//var main;
 
 
 window.onload = function(){
@@ -28,6 +29,7 @@ window.onload = function(){
 	graphics = Graphics();
 	mouse = Mouse();
 	keyboard = Keyboard();
+	gameObjects = GameObjects();
 	graphics.start();
 
 	//launch
@@ -35,7 +37,17 @@ window.onload = function(){
 };
 
 function launch(){
-	setActiveElement(MainElement());
+	//main = MainElement();
+	//setActiveElement(main);
+	Token(10,20, "yellow");
+	Token(11,25, "green");
+	Token(10,20, "yellow");
+	Token(11,25, "green");
+	Token(10,20, "yellow");
+	Token(11,25, "green");
+	Token(10,20, "yellow");
+	Token(10,20, "yellow");
+	Token(11,25, "green");
 
 	tickStep();
 }
@@ -52,5 +64,7 @@ function setActiveElement(element){
 
 
 
-
+function lerp(start, end, percent){
+	return start + percent * (end - start);
+}
 
