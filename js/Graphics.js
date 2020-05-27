@@ -14,11 +14,13 @@ var Graphics = function(){
 
 	me.scale = 2;
 	me.windowSizer; 
-	me.xOffset = 0;
+	me.xOffset = DETAILS_WIDTH;
 	me.yOffset = 0;
+	me.zoom = 20;
 	
 	//Contexts
 	me.mainCtx;
+	me.detailsCtx;
 	
 	me.frameCount = 0;
 
@@ -27,8 +29,8 @@ var Graphics = function(){
 		me.windowSizer 	= document.getElementById("windowSize");
 		
 		//Set up Contexts
-		//me.blackBackgroundCtx	= me.newCanvas(1, null,  "black").getContext("2d");
-		me.mainCtx				= me.newCanvas(2, null,  "black").getContext("2d");
+		me.mainCtx				= me.newCanvas(1, null,  "#222").getContext("2d");
+		me.detailsCtx			= me.newCanvas(2, null,  null).getContext("2d");
 
 		//Prevent default right click menu so we can use right clicks for input
 		document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, false);
@@ -69,42 +71,54 @@ var Graphics = function(){
 	me.frame = function(){
 		requestAnimationFrame(me.frame);
 		me.frameCount++;
-		
-		//prepare
-		me.prepareFrame();
 
-		//select context
-		var ctx = me.mainCtx;
+		//pull from input buffer
+		input.play();
 
-		//main draw
-		//if(activeElement) activeElement.draw(ctx);
-		gameObjects.draw(ctx);
-		
+		//clear contexts
+		me.clearContext(me.mainCtx);
+		me.clearContext(me.detailsCtx);
 
-		//finish
-		me.finishFrame();
-	};
-
-	me.prepareFrame = function(){
-		for(var i=0; i<me.contexts.length; i++){
-			var ctx = me.contexts[i];
+		//save
+		me.mainCtx.save();
 			
-			//clear
-			me.clearContext(ctx);
+		//pan
+		me.mainCtx.translate(me.xOffset, me.yOffset);
 
-			//center all content on screen (use hoizontal offset)
-			ctx.save();
-			ctx.translate(me.xOffset, me.yOffset);
+		//zoom
+		me.mainCtx.scale(ZOOM_LEVELS[me.zoom], ZOOM_LEVELS[me.zoom]);
+
+		//draw objects
+		gameObjects.draw(me.mainCtx);
+
+		//restore
+		me.mainCtx.restore();
+
+		//draw details
+		me.detailsCtx.fillStyle = "#300";
+		me.detailsCtx.fillRect(0,0,DETAILS_WIDTH,SCREEN_HEIGHT);
+		var obj = gameObjects.getAt(input.x, input.y);
+		if(obj !== null) obj.drawDetails(me.detailsCtx);
+
+
+
+
+		/*
+		//temp
+		ctx.font = "36px Arial";
+		ctx.fillStyle = "white";
+		ctx.textAlign = "left";
+		var text = "buffer[";
+		for(var i=0; i<input.buffer.length; i++){
+			var n = input.buffer.at(i);
+			if(n !== null) text += ","+n.type;
+			else text += ",x";
 		}
-	};
+		text += "]";
+		//ctx.fillText(""+input.buffer.length, 200, 200);
+		ctx.fillText(input.buffer.length+" "+text, 200, 200);
+		*/
 
-	me.finishFrame = function(){
-		for(var i=0; i<me.contexts.length; i++){
-			var ctx = me.contexts[i];
-
-			//restore
-			ctx.restore();
-		}
 	};
 
 	me.clearContext = function(ctx){
@@ -141,6 +155,24 @@ var Graphics = function(){
 			
 		}
 
+	};
+
+	me.pan = function(xoff, yoff){
+		me.xOffset += xoff/me.scale;
+		me.yOffset += yoff/me.scale;
+	};
+
+	me.zoomAt = function(zdelta, x, y){
+		if(me.zoom+zdelta >= 0 && me.zoom+zdelta < ZOOM_LEVELS.length){
+			me.xOffset += x * (ZOOM_LEVELS[me.zoom] - ZOOM_LEVELS[me.zoom+zdelta]);
+			me.yOffset += y * (ZOOM_LEVELS[me.zoom] - ZOOM_LEVELS[me.zoom+zdelta]);
+			
+			me.zoom += zdelta;
+		}
+	};
+
+	me.getCurrentScale = function(){
+		return ZOOM_LEVELS[me.zoom];
 	};
 
 	me.getTopCanvas = function(){

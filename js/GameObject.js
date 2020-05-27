@@ -12,33 +12,82 @@ var GameObjects = function(){
 
 	me.add = function(obj){
 		me.objects.push(obj);
+		me.sortObjects();
+	};
+
+	me.getAt = function(x,y){
+		for(var i=0; i<me.objects.length; i++){
+			var obj = me.objects[i];
+			if(obj.contains(x,y)) return obj;
+		}
+		return null;
+	};
+
+	me.getDeckIntersectsAt = function(topLeft, bottomRight){
+		for(var i=0; i<me.objects.length; i++){
+			var obj = me.objects[i];
+			if(obj.isDeck && (obj.contains(topLeft[0], topLeft[1]) || obj.contains(bottomRight[0], bottomRight[1]) || obj.contains(topLeft[0], bottomRight[1]) || obj.contains(bottomRight[0], topLeft[1]))){
+				return obj;
+			}
+		}
+		return null;
+	};
+
+	me.sortObjects = function(){
+		var temp = [];
+		var maxLayer = 10;
+		for(var layer=0; layer<=maxLayer; layer++){
+			for(var i=0; i<me.objects.length; i++){
+				var obj = me.objects[i];
+				if(obj.sortLayer === layer) temp.push(obj);
+			}
+		}
+
+		me.objects = temp;
+	};
+
+	me.moveToTop = function(object){
+		me.remove(object);
+		me.add(object);
+	};
+
+	me.remove = function(object){
+		var index = 0;
+		while(index < me.objects.length){
+			if(me.objects[index] === object){
+				me.objects.splice(index, 1);
+			}
+			else{
+				index++;
+			}
+		}
 	};
 
 	me.draw = function(ctx){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			obj.onDraw(ctx);
+			obj.draw(ctx);
 		}
 	};
 
-	me.mouseDown = function(){
+	me.mouseDown = function(e){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			obj.onMouseDown();
+			obj.mouseDown(e);
 		}
 	};
 
-	me.mouseUp = function(){
+	me.mouseUp = function(e){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			obj.onMouseUp();
+			obj.mouseUp(e);
 		}
 	};
 
-	me.mouseMove = function(){
+	me.mouseMove = function(e){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			obj.onMouseMove();
+			obj.mouseMove(e);
 		}
 	};
 
@@ -57,24 +106,98 @@ var GameObject = function(){
 	me.y = 0;
 	me.w = 0;
 	me.h = 0;
+	me.sortLayer = 4;
+	me.ownerIndex = ACTIVE_PLAYER;
+
+	me.viewX = 0;
+	me.viewY = 0;
 
 	gameObjects.add(me);
 
+	me.getOwner = function(){
+		return players[me.ownerIndex];
+	};
 
 	me.contains = function(x,y){
 		if(x>me.x && x<me.x+me.w && y>me.y && y<me.y+me.h) return true;
 		else return false;
 	};
 
+	me.draw = function(ctx){
+		//calculate
+		me.viewX = lerp(me.viewX, me.x, 0.2);
+		me.viewY = lerp(me.viewY, me.y, 0.2);
+		if(Math.abs(me.viewX-me.x) < 0.1) me.viewX = me.x;
+		if(Math.abs(me.viewY-me.y) < 0.1) me.viewY = me.y;
+
+		me.onDraw(ctx);
+	};
+
+	me.drawDetails = function(ctx){
+		me.onDrawDetails(ctx);
+	};
+
+	me.mouseDown = function(e){
+		me.onMouseDown(e);
+	};
+
+	me.mouseUp = function(e){
+		me.onMouseUp(e);
+	};
+
+	me.mouseMove = function(e){
+		me.onMouseMove(e);
+	};
+
+	me.drop = function(){
+		me.onDrop();
+	};
+
+
 	//child implements
 	me.onDraw = function(ctx){};
-	me.onFocus = function(){};
-	me.onDraw = function(ctx){};
-	me.onMouseDown = function(){};
-	me.onMouseUp = function(){};
-	me.onMouseMove = function(){};
+	me.onDrawDetails = function(ctx){};
+	me.onMouseDown = function(e){};
+	me.onMouseUp = function(e){};
+	me.onMouseMove = function(e){};
+	me.onDrop = function(){};
 
 	return me;
 };
 
 
+
+var MovableObject = function(){
+	var me = GameObject();
+
+	me.sortLayer = 5;
+
+	me.mouseDown = function(e){
+		if(me.contains(e.x, e.y)){
+			input.grab(me);
+		}
+
+		me.onMouseDown(e);
+	};
+
+	me.mouseMove = function(e){
+		if(e.leftDown && me.contains(e.x, e.y)){
+			input.grab(me);
+		}
+
+		if(input.isHolding(me)){
+			me.x = Math.floor(input.getHeldX(me) - (me.w/2));
+			me.y = Math.floor(input.getHeldY(me) - (me.h/2));
+		}
+
+		me.onMouseMove(e);
+	};
+
+	me.mouseUp = function(e){
+		input.drop(me);
+
+		me.onMouseUp(e);
+	};
+
+	return me;
+};
