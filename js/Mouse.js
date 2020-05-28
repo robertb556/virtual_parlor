@@ -54,6 +54,8 @@ var Mouse = function(){
 		me.isDown = true;
 		if(event.button === 0) me.leftDown = true;
 		if(event.button === 2) me.rightDown = true;
+		//console.log("event button["+event.button+"]");
+		//console.log("rightdown["+me.rightDown+"]");
 		me.saveState(event);
 
 		me.xDown = me.x;
@@ -81,10 +83,12 @@ var Mouse = function(){
 	};
 
 	me.onscroll = function(event){
-		if(event.deltaY > 0){
-			graphics.zoomAt(-1, me.x, me.y);
-		}else{
-			graphics.zoomAt(1, me.x, me.y);
+		if(keyboard.isDown(CHAR_TO_KEYCODE["Shift"])){
+			if(event.deltaY > 0){
+				graphics.zoomAt(-1, me.x, me.y);
+			}else{
+				graphics.zoomAt(1, me.x, me.y);
+			}
 		}
 	};
 

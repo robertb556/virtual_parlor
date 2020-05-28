@@ -18,15 +18,17 @@ var Input = function(){
 
 	me.x = 0;
 	me.y = 0;
+	me.ctrlDown = false;
+	me.shiftDown = false;
 
 	me.heldObjects = [];
-	var holdSpacing = 40;
+	var holdSpacing = 68;
 	me.holdXPositions = [0, holdSpacing,   0,  holdSpacing, 2*holdSpacing, 2*holdSpacing, 0, holdSpacing, 2*holdSpacing];
 	me.holdYPositions = [0, 0, holdSpacing, holdSpacing,  0, holdSpacing, 2*holdSpacing, 2*holdSpacing, 2*holdSpacing];
 
 	//holding methods
 	me.grab = function(object){
-		if(!me.isHolding(object)){
+		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
 			me.heldObjects.push(object);
 			gameObjects.moveToTop(object);
 		}
@@ -88,17 +90,22 @@ var Input = function(){
 			if(e !== null){
 				me.x = e.x;
 				me.y = e.y;
-				if(e.type === MOUSE_DOWN){
-					//console.log("play down");
-					gameObjects.mouseDown(e);
-				}
-				else if(e.type === MOUSE_UP){
-					//console.log("play up");
-					gameObjects.mouseUp(e);
-				}
-				else if(e.type === MOUSE_MOVE){
-					//console.log("play move");
-					gameObjects.mouseMove(e);
+				me.ctrlDown = e.ctrlDown;
+				me.shiftDown = e.shiftDown;
+
+				if(!e.shiftDown){
+					if(e.type === MOUSE_DOWN){
+						//console.log("play down");
+						gameObjects.mouseDown(e);
+					}
+					else if(e.type === MOUSE_UP){
+						//console.log("play up");
+						gameObjects.mouseUp(e);
+					}
+					else if(e.type === MOUSE_MOVE){
+						//console.log("play move");
+						gameObjects.mouseMove(e);
+					}
 				}
 			}
 		}

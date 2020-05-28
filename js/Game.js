@@ -16,6 +16,7 @@ var DETAILS_WIDTH = 400;
 var IMAGE_SCALE = 4;
 var ACTIVE_PLAYER = 0;
 
+
 //##############################################
 //-----------------VARS-------------------------
 //##############################################
@@ -52,7 +53,7 @@ function launch(){
 	//main = MainElement();
 	//setActiveElement(main);
 	Board(0, 0, "board");
-	var deck = Deck(200, 200, "back", true);
+	var deck = Deck(200, 200, "back", false);
 	for(var i=0; i<11; i++) deck.addCard(Card(0,0, "c"+(i+1), "back", "mask"));
 	Cube(10,20, "yellow");
 	Cube(11,25, "green");

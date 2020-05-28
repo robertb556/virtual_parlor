@@ -10,8 +10,8 @@ var Cube = function(x, y, color){
 	me.color = color;
 	me.x = x;
 	me.y = y;
-	me.w = 16;
-	me.h = 16;
+	me.w = 48;
+	me.h = 48;
 
 	me.onDraw = function(ctx){
 		ctx.fillStyle = me.color;
@@ -53,6 +53,17 @@ var D6 = function(x, y){
 	me.onDrop = function(){
 		me.value = (random.next1000() % 6) + 1;
 		me.animation = 30;
+	};
+
+	me.setValue = function(value){
+		me.value = value;
+	};
+
+	me.onMouseDown = function(e){
+		if(e.rightDown && me.contains(e.x, e.y)){
+			for(var i=1; i<=6; i++) gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, i));
+		}
+		
 	};
 
 	return me;
@@ -114,8 +125,8 @@ var Card = function(x, y, imgTop, imgBot, imgMask){
 		}
 	};
 
-	me.onMouseUp = function(e){
-		if(localPlayer === me.getOwner() && keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]) && me.contains(e.x, e.y)){
+	me.onMouseDown = function(e){
+		if(e.rightDown && localPlayer === me.getOwner() && me.contains(e.x, e.y)){
 			me.isFaceUp = !me.isFaceUp;
 		}
 	};
@@ -179,21 +190,29 @@ var Deck = function(x, y, img, drawFaceUp){
 	};
 
 	me.onMouseDown = function(e){
-		if(me.cards.length > 0 && localPlayer === me.getOwner() && me.contains(e.x, e.y)){
-			var card = me.drawCard();
+		if(me.contains(e.x, e.y)){
+			if(e.leftDown){
+				if(me.cards.length > 0 && localPlayer === me.getOwner()){
+					var card = me.drawCard();
 
-			//face up?
-			if(me.drawFaceUp) card.isFaceUp = true;
-			else card.isFaceUp = false;
+					//face up?
+					if(me.drawFaceUp) card.isFaceUp = true;
+					else card.isFaceUp = false;
 
-			//location
-			card.x = me.x;
-			card.y = me.y;
-			card.viewX = card.x;
-			card.viewY = card.y;
+					//location
+					card.x = me.x;
+					card.y = me.y;
+					card.viewX = card.x;
+					card.viewY = card.y;
 
-			//finish
-			gameObjects.add(card);
+					//finish
+					gameObjects.add(card);
+				}
+			}
+
+			else if(e.rightDown){
+				gameObjects.add(DeckContextMenu(e.x, e.y, me));
+			}
 		}
 	};
 
@@ -211,7 +230,14 @@ var Deck = function(x, y, img, drawFaceUp){
 	};
 
 	me.shuffle = function(){
+		var temp = [];
 
+		while(me.cards.length > 0){
+			var i = random.next1000()%me.cards.length;
+			temp.push(me.cards[i]);
+			me.cards.splice(i, 1);
+		}
+		me.cards = temp;
 	};
 
 	return me;
@@ -232,13 +258,77 @@ var Button = function(x, y, img, imgDown){
 		ctx.drawImage(me.img, me.x, me.y);
 	};
 
-	me.onMouseUp = function(){
+	me.onMouseUp = function(e){
 		
 	};
 
 	return me;
 };
 
+
+var DeckContextMenu = function(x, y, deck){
+	var me = GameObject();
+
+	me.x = x;
+	me.y = y;
+	me.deck = deck;
+	me.w = 150;
+	me.h = 60;
+
+	me.onDraw = function(ctx){
+		ctx.drawImage(IMG["shuffle"], me.x, me.y);
+	};
+
+	me.onMouseDown = function(e){
+		var result = false;
+		if(me.contains(e.x, e.y)){
+			result = true;
+
+			if(e.leftDown && localPlayer === me.getOwner()){
+				me.deck.shuffle();
+			}
+		}
+		
+		gameObjects.remove(me);
+
+		return result;
+	};
+
+	return me;
+};
+
+
+var DieContextMenu = function(x, y, die, value){
+	var me = GameObject();
+
+	me.x = x;
+	me.y = y;
+	me.die = die;
+	me.value = value;
+	me.w = 150;
+	me.h = 60;
+
+	me.onDraw = function(ctx){
+		ctx.drawImage(IMG["set"+me.value], me.x, me.y);
+	};
+
+	me.onMouseDown = function(e){
+		var result = false;
+		if(me.contains(e.x, e.y)){
+			result = true;
+
+			if(e.leftDown && localPlayer === me.getOwner()){
+				me.die.setValue(me.value);
+			}
+		}
+		
+		gameObjects.remove(me);
+
+		return result;
+	};
+
+	return me;
+};
 
 
 

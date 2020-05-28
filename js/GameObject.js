@@ -16,7 +16,7 @@ var GameObjects = function(){
 	};
 
 	me.getAt = function(x,y){
-		for(var i=0; i<me.objects.length; i++){
+		for(var i=me.objects.length-1; i>=0; i--){
 			var obj = me.objects[i];
 			if(obj.contains(x,y)) return obj;
 		}
@@ -71,21 +71,22 @@ var GameObjects = function(){
 	};
 
 	me.mouseDown = function(e){
-		for(var i=0; i<me.objects.length; i++){
+		for(var i=me.objects.length-1; i>=0; i--){
 			var obj = me.objects[i];
-			obj.mouseDown(e);
+			var result = obj.mouseDown(e);
+			if(result) break;
 		}
 	};
 
 	me.mouseUp = function(e){
-		for(var i=0; i<me.objects.length; i++){
+		for(var i=me.objects.length-1; i>=0; i--){
 			var obj = me.objects[i];
 			obj.mouseUp(e);
 		}
 	};
 
 	me.mouseMove = function(e){
-		for(var i=0; i<me.objects.length; i++){
+		for(var i=me.objects.length-1; i>=0; i--){
 			var obj = me.objects[i];
 			obj.mouseMove(e);
 		}
@@ -138,7 +139,7 @@ var GameObject = function(){
 	};
 
 	me.mouseDown = function(e){
-		me.onMouseDown(e);
+		return me.onMouseDown(e);
 	};
 
 	me.mouseUp = function(e){
@@ -173,11 +174,14 @@ var MovableObject = function(){
 	me.sortLayer = 5;
 
 	me.mouseDown = function(e){
-		if(me.contains(e.x, e.y)){
+		var success = false;
+		if(e.leftDown && me.contains(e.x, e.y)){
 			input.grab(me);
+			success = true;
 		}
 
-		me.onMouseDown(e);
+		if(success || me.onMouseDown(e)) return true;
+		else return false;
 	};
 
 	me.mouseMove = function(e){

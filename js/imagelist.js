@@ -16,6 +16,14 @@ addImageFile("d6_4",		"d6_4.png");
 addImageFile("d6_5",		"d6_5.png");
 addImageFile("d6_6",		"d6_6.png");
 
+addImageFile("shuffle",		"shuffle.png");
+addImageFile("set1",		"set1.png");
+addImageFile("set2",		"set2.png");
+addImageFile("set3",		"set3.png");
+addImageFile("set4",		"set4.png");
+addImageFile("set5",		"set5.png");
+addImageFile("set6",		"set6.png");
+
 addImageFile("back",		"back.png");
 addImageFile("mask",		"mask.png");
 
