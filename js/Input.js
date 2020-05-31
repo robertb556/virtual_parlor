@@ -48,6 +48,12 @@ var Input = function(){
 		};
 	};
 
+	me.send = function(message){
+		if(me.connected){
+			me.server.send(message);
+		}
+	};
+
 
 	//holding methods
 	me.grab = function(object){
