@@ -93,7 +93,14 @@ var GameObjects = function(){
 	me.draw = function(ctx){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			obj.draw(ctx);
+			if(!obj.isUi) obj.draw(ctx);
+		}
+	};
+
+	me.drawUi = function(ctx){
+		for(var i=0; i<me.objects.length; i++){
+			var obj = me.objects[i];
+			if(obj.isUi) obj.draw(ctx);
 		}
 	};
 
@@ -138,6 +145,7 @@ var GameObject = function(){
 	me.ownerIndex = ACTIVE_PLAYER;
 	me.deleteMe = false;
 	me.moveToTop = false;
+	me.isUi = false;  //draw without pan & zoom, eg. for UI stuff.
 
 	me.viewX = 0;
 	me.viewY = 0;
@@ -204,7 +212,7 @@ var MovableObject = function(){
 
 	me.mouseDown = function(e){
 		var success = false;
-		if(e.leftDown && me.contains(e.x, e.y)){
+		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			input.grab(me);
 			success = true;
 		}
@@ -214,7 +222,7 @@ var MovableObject = function(){
 	};
 
 	me.mouseMove = function(e){
-		if(e.leftDown && me.contains(e.x, e.y)){
+		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			input.grab(me);
 		}
 
@@ -227,7 +235,7 @@ var MovableObject = function(){
 	};
 
 	me.mouseUp = function(e){
-		input.drop(me);
+		if(e.player === me.getOwner()) input.drop(me);
 
 		me.onMouseUp(e);
 	};

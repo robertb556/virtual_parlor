@@ -91,14 +91,26 @@ var Graphics = function(){
 		//draw objects
 		gameObjects.draw(me.mainCtx);
 
+		//draw player mice on top
+		for(var i=1; i<players.length; i++) players[i].drawMouse(me.mainCtx);
+
 		//restore
 		me.mainCtx.restore();
 
 		//draw details
-		me.detailsCtx.fillStyle = "#300";
-		me.detailsCtx.fillRect(0,0,DETAILS_WIDTH,SCREEN_HEIGHT);
 		var obj = gameObjects.getAt(input.x, input.y);
-		if(obj !== null) obj.drawDetails(me.detailsCtx);
+		if(obj !== null) obj.drawDetails(me.mainCtx);
+
+
+		//ui
+		gameObjects.drawUi(me.mainCtx);
+
+		//me.detailsCtx.fillStyle = "#300";
+		//me.detailsCtx.fillRect(0,0,DETAILS_WIDTH,SCREEN_HEIGHT);
+		//var obj = gameObjects.getAt(input.x, input.y);
+		//if(obj !== null) obj.drawDetails(me.detailsCtx);
+
+		//draw pass buttons
 
 
 

@@ -7,6 +7,7 @@
 var MOUSE_MOVE = 0;
 var MOUSE_DOWN = 1;
 var MOUSE_UP = 2;
+var PASS_CONTROL = 3;
 
 var Input = function(){
 	var me = {};
@@ -31,7 +32,6 @@ var Input = function(){
 		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
 			me.heldObjects.push(object);
 			object.moveToTop = true;
-			//gameObjects.moveToTop(object);
 		}
 	};
 
@@ -98,15 +98,21 @@ var Input = function(){
 				if(!e.shiftDown){
 					if(e.type === MOUSE_DOWN){
 						//console.log("play down");
-						gameObjects.mouseDown(e);
+						if(localPlayer === players[ACTIVE_PLAYER]) gameObjects.mouseDown(e);
 					}
 					else if(e.type === MOUSE_UP){
 						//console.log("play up");
-						gameObjects.mouseUp(e);
+						if(localPlayer === players[ACTIVE_PLAYER]) gameObjects.mouseUp(e);
 					}
 					else if(e.type === MOUSE_MOVE){
 						//console.log("play move");
-						gameObjects.mouseMove(e);
+						if(localPlayer === players[ACTIVE_PLAYER]) gameObjects.mouseMove(e);
+
+						//syncing mice for visual communication
+						e.player.mouseMove(e);
+					}
+					else if(e.type === PASS_CONTROL){
+						players[ACTIVE_PLAYER] = e.player;
 					}
 				}
 			}
@@ -120,7 +126,7 @@ var Input = function(){
 		}
 	};
 
-	me.add = function(playerIndex, type, x, y, leftDown, rightDown, ctrlDown, shiftDown){
+	me.add = function(playerIndex, type, x, y, rawX, rawY, leftDown, rightDown, ctrlDown, shiftDown){
 		//keep buffer full up to date
 		me.tick();
 
@@ -131,6 +137,8 @@ var Input = function(){
 			e.type = type;
 			e.x = Math.round(x);
 			e.y = Math.round(y);
+			e.rawX = Math.round(rawX);
+			e.rawY = Math.round(rawY);
 			e.leftDown = leftDown;
 			e.rightDown = rightDown;
 			e.ctrlDown = ctrlDown;

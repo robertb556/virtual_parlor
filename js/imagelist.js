@@ -43,7 +43,7 @@ addImageFile("c13",		"c13.png");
 addImageFile("c14",		"c14.png");
 
 addImageFile("button",		"button.png");
-addImageFile("buttonDown",		"buttonDown.png");
+
 
 function addImageFile(name, fileName){
 	IMG[name] = new Image();

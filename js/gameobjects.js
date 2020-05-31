@@ -50,6 +50,16 @@ var D6 = function(x, y){
 		
 	};
 
+	me.onDrawDetails = function(ctx){
+		if(me.animation > 0){
+			var rval = (me.animation%6)+1;
+			ctx.drawImage(IMG["d6_"+rval], 0, 0);
+		}
+		else{
+			ctx.drawImage(IMG["d6_"+me.value], 0, 0);
+		}
+	};
+
 	me.onDrop = function(){
 		me.value = (random.next1000() % 6) + 1;
 		me.animation = 30;
@@ -60,7 +70,10 @@ var D6 = function(x, y){
 	};
 
 	me.onMouseDown = function(e){
-		if(e.rightDown && me.contains(e.x, e.y)){
+		var result = false;
+
+		if(e.rightDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
+			result = true;
 			for(var i=1; i<=6; i++){
 				(function(val){
 					gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, val));
@@ -69,6 +82,7 @@ var D6 = function(x, y){
 			}
 		}
 		
+		return result;
 	};
 
 	return me;
@@ -131,9 +145,14 @@ var Card = function(x, y, imgTop, imgBot, imgMask){
 	};
 
 	me.onMouseDown = function(e){
+		var result = false;
+
 		if(e.rightDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
+			result = true;
 			me.isFaceUp = !me.isFaceUp;
 		}
+
+		return result;
 	};
 
 	me.onDrop = function(){
@@ -145,6 +164,35 @@ var Card = function(x, y, imgTop, imgBot, imgMask){
 		}
 	};
 
+
+	return me;
+};
+
+
+
+
+//Cannot interact with, just showing where other players mice are
+var PlayerMouse = function(player){
+	var me = GameObject();
+
+	me.sortLayer = 9;
+	me.ownerIndex = player.index;
+	me.color = player.color;
+
+	me.onDraw = function(ctx){
+		console.log("mousedraw["+me.ownerIndex+"]");
+		ctx.fillStyle = me.color;
+		ctx.beginPath();
+		ctx.arc(me.viewX, me.viewY, 20, 0, 2 * Math.PI);
+		ctx.fill();
+	};
+
+	me.onMouseMove = function(e){
+		if(e.player === me.getOwner()){
+			me.x = e.x;
+			me.y = e.y;
+		}
+	};
 
 	return me;
 };
@@ -195,10 +243,17 @@ var Deck = function(x, y, img, drawFaceUp){
 	};
 
 	me.onMouseDown = function(e){
-		if(me.contains(e.x, e.y)){
+		var result = false;
+
+		if(e.player === me.getOwner() && me.contains(e.x, e.y)){
+			result = true;
+
 			if(e.leftDown){
 				if(me.cards.length > 0 && e.player === me.getOwner()){
 					var card = me.drawCard();
+
+					//owner
+					card.ownerIndex = localPlayer.index;
 
 					//face up?
 					if(me.drawFaceUp) card.isFaceUp = true;
@@ -218,12 +273,15 @@ var Deck = function(x, y, img, drawFaceUp){
 			else if(e.rightDown){
 				gameObjects.add(DeckContextMenu(e.x, e.y, me));
 			}
+
 		}
+
+		return result;
 	};
 
 	me.addCard = function(card){
-		//gameObjects.remove(card);
 		card.deleteMe = true;
+		card.ownerIndex = ACTIVE_PLAYER;
 		me.cards.push(card);
 	};
 
@@ -250,22 +308,39 @@ var Deck = function(x, y, img, drawFaceUp){
 };
 
 
-var Button = function(x, y, img, imgDown){
+var PassButton = function(x, y, player){
 	var me = GameObject();
 
-	me.img = img;
-	me.imgDown = imgDown;
+	me.sortLayer = 8;
+	me.img = IMG["button"];
+	me.player = player;
 	me.x = x;
 	me.y = y;
-	me.w = img.width;
-	me.h = img.height;
+	me.w = me.img.width;
+	me.h = me.img.height;
+	me.isUi = true;
 
 	me.onDraw = function(ctx){
+		ctx.fillStyle = me.player.color;
+		var b = 2;
+		ctx.fillRect(me.x-b, me.y-b, me.w+2*b, me.h+2*b);
 		ctx.drawImage(me.img, me.x, me.y);
+
+		ctx.font = "36px Arial";
+		ctx.textAlign = "center";
+		ctx.fillStyle = "black";
+		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+10+Math.floor(me.h/2));
 	};
 
-	me.onMouseUp = function(e){
-		
+	me.onMouseDown = function(e){
+		var result = false;
+		if(localPlayer === players[ACTIVE_PLAYER] && e.player === localPlayer && e.leftDown && me.contains(e.rawX, e.rawY)){
+			result = true;
+
+			input.add(me.player.index, PASS_CONTROL, 0, 0, 0, 0, false, false, false, false);
+		}
+
+		return result;
 	};
 
 	return me;
@@ -288,18 +363,16 @@ var DeckContextMenu = function(x, y, deck){
 
 	me.onMouseDown = function(e){
 		var result = false;
-		if(me.contains(e.x, e.y)){
+		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			result = true;
-
-			if(e.leftDown && e.player === me.getOwner()){
-				me.deck.shuffle();
-			}
+			me.deck.shuffle();
 		}
-		
-		//gameObjects.remove(me);
-		me.deleteMe = true;
 
 		return result;
+	};
+
+	me.onMouseUp = function(e){
+		me.deleteMe = true;
 	};
 
 	return me;
@@ -323,18 +396,16 @@ var DieContextMenu = function(x, y, die, value){
 
 	me.onMouseDown = function(e){
 		var result = false;
-		if(me.contains(e.x, e.y)){
+		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			result = true;
-
-			if(e.leftDown && e.player === me.getOwner()){
-				me.die.setValue(me.value);
-			}
+			me.die.setValue(me.value);
 		}
-		
-		//gameObjects.remove(me);
-		me.deleteMe = true;
 
 		return result;
+	};
+
+	me.onMouseUp = function(e){
+		me.deleteMe = true;
 	};
 
 	return me;

@@ -15,10 +15,7 @@ var SCREEN_HEIGHT = 1080;
 var DETAILS_WIDTH = 400;
 var IMAGE_SCALE = 4;
 var ACTIVE_PLAYER = 0;
-var PLAYER1 = 1;
-var PLAYER2 = 2;
-var PLAYER3 = 3;
-var PLAYER4 = 4;
+
 
 
 //##############################################
@@ -38,28 +35,16 @@ var random;
 
 window.onload = function(){
 	//create players
-	var player;
-	player = Player();
-	player.index = PLAYER1;
-	players[PLAYER1] = player;
-
-	player = Player();
-	player.index = PLAYER2;
-	players[PLAYER2] = player;
-
-	player = Player();
-	player.index = PLAYER3;
-	players[PLAYER3] = player;
-
-	player = Player();
-	player.index = PLAYER4;
-	players[PLAYER4] = player;
+	players[1] = Player(1, "Rob", "red");
+	players[2] = Player(2, "Chris", "blue");
+	players[3] = Player(3, "Tim", "green");
+	players[4] = Player(4, "Sean", "yellow");
 
 	//active player
-	players[ACTIVE_PLAYER] = players[PLAYER1];
+	players[ACTIVE_PLAYER] = players[1];
 
 	//local player
-	localPlayer = players[PLAYER1];
+	localPlayer = players[1];
 
 
 	//INIT
@@ -77,6 +62,8 @@ window.onload = function(){
 };
 
 function launch(){
+	for(var i=1; i<players.length; i++) PassButton(200*i, 30, players[i]);
+	
 	//main = MainElement();
 	//setActiveElement(main);
 	Board(0, 0, "board");
@@ -109,10 +96,40 @@ function setActiveElement(element){
 }
 
 
-var Player = function(){
+var Player = function(index, name, color){
 	var me = {};
 
-	me.index;
+	me.index = index;
+	me.color = color;
+	me.name = name;
+
+	me.x = 0;
+	me.y = 0;
+	me.viewX = 0;
+	me.viewY = 0;
+
+	me.drawMouse = function(ctx){
+		//don't draw the local player mouse
+		if(me === localPlayer) return;
+
+		//calculate
+		me.viewX = lerp(me.viewX, me.x, 0.2);
+		me.viewY = lerp(me.viewY, me.y, 0.2);
+		if(Math.abs(me.viewX-me.x) < 0.1) me.viewX = me.x;
+		if(Math.abs(me.viewY-me.y) < 0.1) me.viewY = me.y;
+
+		//draw
+		ctx.fillStyle = me.color;
+		ctx.beginPath();
+		var r = 10 / ZOOM_LEVELS[graphics.zoom];
+		ctx.arc(me.viewX, me.viewY, r, 0, 2 * Math.PI);
+		ctx.fill();
+	};
+
+	me.mouseMove = function(e){
+		me.x = e.x;
+		me.y = e.y;
+	};
 
 	return me;
 };

@@ -45,7 +45,7 @@ var Mouse = function(){
 		me.saveState(event);
 		
 		//gameObjects.mouseUp();
-		input.add(localPlayer.index, MOUSE_UP, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
+		input.add(localPlayer.index, MOUSE_UP, me.x, me.y, me.rawX, me.rawY, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
 	};
 	
 	me.down = function(event){
@@ -62,7 +62,7 @@ var Mouse = function(){
 		me.yDown = me.y;
 
 		//gameObjects.mouseDown();
-		input.add(localPlayer.index, MOUSE_DOWN, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
+		input.add(localPlayer.index, MOUSE_DOWN, me.x, me.y, me.rawX, me.rawY, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
 	};
 
 	me.move = function(event){
@@ -79,7 +79,7 @@ var Mouse = function(){
 		}
 
 		//gameObjects.mouseMove();
-		input.add(localPlayer.index, MOUSE_MOVE, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
+		input.add(localPlayer.index, MOUSE_MOVE, me.x, me.y, me.rawX, me.rawY, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
 	};
 
 	me.onscroll = function(event){
@@ -103,10 +103,10 @@ var Mouse = function(){
 
 		me.lastRawX = me.rawX;
 		me.lastRawY = me.rawY;
-		me.rawX = e.pageX - r.left;
-		me.rawY = e.pageY - r.top;
-		me.x = ((e.pageX - r.left)/graphics.scale - graphics.xOffset)/graphics.getCurrentScale();
-		me.y = ((e.pageY - r.top)/graphics.scale - graphics.yOffset)/graphics.getCurrentScale();
+		me.rawX = (e.pageX - r.left)/graphics.scale;
+		me.rawY = (e.pageY - r.top)/graphics.scale;
+		me.x = (me.rawX - graphics.xOffset)/graphics.getCurrentScale();
+		me.y = (me.rawY - graphics.yOffset)/graphics.getCurrentScale();
 	};
 
 	me.mouseup = function(event){
