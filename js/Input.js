@@ -44,6 +44,8 @@ var Input = function(){
 		};
 
 		me.server.onmessage	= function(e){
+			console.log("got message["+e.data+"]");
+			//var data = JSON.parse(e.data);
 			//add to buffer
 		};
 	};
