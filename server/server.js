@@ -39,6 +39,7 @@ function closeClient(client){
 
 
 function initClient(ws){
+	console.log('new client.');
 	//MAKE NEW OBJECT TO HOLD EVERYTHING PERTAINING TO THIS CLIENT
 	var client = {};
 	
@@ -47,6 +48,7 @@ function initClient(ws){
 	
 	//CLIENT FUNCTIONS
 	client.ws.on('message', function(message) {
+		console.log('relaying message["+message+"]');
 		//parse
 		//var data = JSON.parse(message);
 

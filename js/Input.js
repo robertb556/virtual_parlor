@@ -27,6 +27,28 @@ var Input = function(){
 	me.holdXPositions = [0, holdSpacing,   0,  holdSpacing, 2*holdSpacing, 2*holdSpacing, 0, holdSpacing, 2*holdSpacing];
 	me.holdYPositions = [0, 0, holdSpacing, holdSpacing,  0, holdSpacing, 2*holdSpacing, 2*holdSpacing, 2*holdSpacing];
 
+
+	me.server;
+	me.connected = false;
+	me.init = function(){
+		me.server = new WebSocket('ws://18.224.202.15:9191');
+		console.log("trying to connnect");
+		me.server.onopen = function(){
+			me.connected = true;
+			console.log("connected");
+			me.send("hello world");
+		};
+
+		me.server.onerror = function(error){
+			alert('WebSocket Error ' + error); console.log(error);
+		};
+
+		me.server.onmessage	= function(e){
+			//add to buffer
+		};
+	};
+
+
 	//holding methods
 	me.grab = function(object){
 		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
@@ -156,6 +178,7 @@ var Input = function(){
 		return Math.floor(me.getTime() / me.DELAY);
 	};
 
+	me.init();
 	return me;
 };
 
