@@ -45,7 +45,7 @@ var Mouse = function(){
 		me.saveState(event);
 		
 		//gameObjects.mouseUp();
-		input.add(MOUSE_UP, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
+		input.add(localPlayer.index, MOUSE_UP, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
 	};
 	
 	me.down = function(event){
@@ -62,7 +62,7 @@ var Mouse = function(){
 		me.yDown = me.y;
 
 		//gameObjects.mouseDown();
-		input.add(MOUSE_DOWN, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
+		input.add(localPlayer.index, MOUSE_DOWN, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
 	};
 
 	me.move = function(event){
@@ -79,7 +79,7 @@ var Mouse = function(){
 		}
 
 		//gameObjects.mouseMove();
-		input.add(MOUSE_MOVE, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
+		input.add(localPlayer.index, MOUSE_MOVE, me.x, me.y, me.leftDown, me.rightDown, keyboard.isDown(CHAR_TO_KEYCODE["Ctrl"]), keyboard.isDown(CHAR_TO_KEYCODE["Shift"]));
 	};
 
 	me.onscroll = function(event){

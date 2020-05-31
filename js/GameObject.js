@@ -10,6 +10,11 @@ var GameObjects = function(){
 
 	me.objects = [];
 
+	me.tick = function(){
+		me.removeDead();
+		me.moveToTop();
+	};
+
 	me.add = function(obj){
 		me.objects.push(obj);
 		me.sortObjects();
@@ -47,10 +52,31 @@ var GameObjects = function(){
 	};
 
 	me.moveToTop = function(object){
-		me.remove(object);
-		me.add(object);
+		for(var i=0; i<me.objects.length; i++){
+			var obj = me.objects[i];
+			if(obj.moveToTop){
+				me.remove(obj);
+				me.add(obj);
+				obj.moveToTop = false;
+			}
+		}
 	};
 
+	me.removeDead = function(){
+		var index = 0;
+		while(index < me.objects.length){
+			var obj = me.objects[index];
+			if(obj.deleteMe){
+				obj.deleteMe = false;
+				me.objects.splice(index, 1);
+			}
+			else{
+				index++;
+			}
+		}
+	};
+
+	
 	me.remove = function(object){
 		var index = 0;
 		while(index < me.objects.length){
@@ -62,6 +88,7 @@ var GameObjects = function(){
 			}
 		}
 	};
+	
 
 	me.draw = function(ctx){
 		for(var i=0; i<me.objects.length; i++){
@@ -109,6 +136,8 @@ var GameObject = function(){
 	me.h = 0;
 	me.sortLayer = 4;
 	me.ownerIndex = ACTIVE_PLAYER;
+	me.deleteMe = false;
+	me.moveToTop = false;
 
 	me.viewX = 0;
 	me.viewY = 0;

@@ -61,7 +61,12 @@ var D6 = function(x, y){
 
 	me.onMouseDown = function(e){
 		if(e.rightDown && me.contains(e.x, e.y)){
-			for(var i=1; i<=6; i++) gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, i));
+			for(var i=1; i<=6; i++){
+				(function(val){
+					gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, val));
+				})(i);
+				
+			}
 		}
 		
 	};
@@ -126,7 +131,7 @@ var Card = function(x, y, imgTop, imgBot, imgMask){
 	};
 
 	me.onMouseDown = function(e){
-		if(e.rightDown && localPlayer === me.getOwner() && me.contains(e.x, e.y)){
+		if(e.rightDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			me.isFaceUp = !me.isFaceUp;
 		}
 	};
@@ -192,7 +197,7 @@ var Deck = function(x, y, img, drawFaceUp){
 	me.onMouseDown = function(e){
 		if(me.contains(e.x, e.y)){
 			if(e.leftDown){
-				if(me.cards.length > 0 && localPlayer === me.getOwner()){
+				if(me.cards.length > 0 && e.player === me.getOwner()){
 					var card = me.drawCard();
 
 					//face up?
@@ -217,7 +222,8 @@ var Deck = function(x, y, img, drawFaceUp){
 	};
 
 	me.addCard = function(card){
-		gameObjects.remove(card);
+		//gameObjects.remove(card);
+		card.deleteMe = true;
 		me.cards.push(card);
 	};
 
@@ -269,6 +275,7 @@ var Button = function(x, y, img, imgDown){
 var DeckContextMenu = function(x, y, deck){
 	var me = GameObject();
 
+	me.sortLayer = 7;
 	me.x = x;
 	me.y = y;
 	me.deck = deck;
@@ -284,12 +291,13 @@ var DeckContextMenu = function(x, y, deck){
 		if(me.contains(e.x, e.y)){
 			result = true;
 
-			if(e.leftDown && localPlayer === me.getOwner()){
+			if(e.leftDown && e.player === me.getOwner()){
 				me.deck.shuffle();
 			}
 		}
 		
-		gameObjects.remove(me);
+		//gameObjects.remove(me);
+		me.deleteMe = true;
 
 		return result;
 	};
@@ -301,6 +309,7 @@ var DeckContextMenu = function(x, y, deck){
 var DieContextMenu = function(x, y, die, value){
 	var me = GameObject();
 
+	me.sortLayer = 7;
 	me.x = x;
 	me.y = y;
 	me.die = die;
@@ -317,12 +326,13 @@ var DieContextMenu = function(x, y, die, value){
 		if(me.contains(e.x, e.y)){
 			result = true;
 
-			if(e.leftDown && localPlayer === me.getOwner()){
+			if(e.leftDown && e.player === me.getOwner()){
 				me.die.setValue(me.value);
 			}
 		}
 		
-		gameObjects.remove(me);
+		//gameObjects.remove(me);
+		me.deleteMe = true;
 
 		return result;
 	};

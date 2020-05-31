@@ -15,6 +15,10 @@ var SCREEN_HEIGHT = 1080;
 var DETAILS_WIDTH = 400;
 var IMAGE_SCALE = 4;
 var ACTIVE_PLAYER = 0;
+var PLAYER1 = 1;
+var PLAYER2 = 2;
+var PLAYER3 = 3;
+var PLAYER4 = 4;
 
 
 //##############################################
@@ -33,9 +37,32 @@ var random;
 
 
 window.onload = function(){
+	//create players
+	var player;
+	player = Player();
+	player.index = PLAYER1;
+	players[PLAYER1] = player;
+
+	player = Player();
+	player.index = PLAYER2;
+	players[PLAYER2] = player;
+
+	player = Player();
+	player.index = PLAYER3;
+	players[PLAYER3] = player;
+
+	player = Player();
+	player.index = PLAYER4;
+	players[PLAYER4] = player;
+
+	//active player
+	players[ACTIVE_PLAYER] = players[PLAYER1];
+
+	//local player
+	localPlayer = players[PLAYER1];
+
+
 	//INIT
-	players.push(Player());
-	localPlayer = players[0];
 	input = Input();
 	graphics = Graphics();
 	loadImages();
@@ -71,6 +98,7 @@ function launch(){
 
 function tickStep(){
 	input.tick();
+	gameObjects.tick();
 
 	setTimeout(tickStep, 15);
 }
@@ -83,6 +111,8 @@ function setActiveElement(element){
 
 var Player = function(){
 	var me = {};
+
+	me.index;
 
 	return me;
 };

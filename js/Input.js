@@ -30,7 +30,8 @@ var Input = function(){
 	me.grab = function(object){
 		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
 			me.heldObjects.push(object);
-			gameObjects.moveToTop(object);
+			object.moveToTop = true;
+			//gameObjects.moveToTop(object);
 		}
 	};
 
@@ -88,6 +89,7 @@ var Input = function(){
 			//release event
 			var e = me.buffer.shift();
 			if(e !== null){
+				e.player = players[e.playerIndex];
 				me.x = e.x;
 				me.y = e.y;
 				me.ctrlDown = e.ctrlDown;
@@ -118,13 +120,14 @@ var Input = function(){
 		}
 	};
 
-	me.add = function(type, x, y, leftDown, rightDown, ctrlDown, shiftDown){
+	me.add = function(playerIndex, type, x, y, leftDown, rightDown, ctrlDown, shiftDown){
 		//keep buffer full up to date
 		me.tick();
 
 		//add
 		if(me.buffer.addCount < me.getCurrentEventIndex()+2 || type !== MOUSE_MOVE){
 			var e = {};
+			e.playerIndex = playerIndex;
 			e.type = type;
 			e.x = Math.round(x);
 			e.y = Math.round(y);
