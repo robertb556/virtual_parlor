@@ -29,6 +29,7 @@ var gameObjects;
 var activeElement;
 var players = [];
 var localPlayer;
+var isHost = false;
 var random;
 
 
@@ -68,17 +69,17 @@ function launch(){
 	//setActiveElement(main);
 	Board(0, 0, "board");
 	var deck = Deck(200, 200, "back", false);
-	for(var i=0; i<11; i++) deck.addCard(Card(0,0, "c"+(i+1), "back", "mask"));
+	for(var i=0; i<11; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "c"+(i+1), "back", "mask", false));
 	Cube(10,20, "yellow");
 	Cube(11,25, "green");
 	Cube(10,20, "yellow");
 	Cube(100,25, "green");
-	D6(100,25);
-	D6(11,55);
-	D6(200,25);
-	D6(31,55);
-	D6(200,25);
-	D6(31,55);
+	D6(100,25, 5);
+	D6(11,55, 5);
+	D6(200,25, 5);
+	D6(31,55, 5);
+	D6(200,25, 5);
+	D6(31,55, 5);
 
 	tickStep();
 }
@@ -102,6 +103,8 @@ var Player = function(index, name, color){
 	me.index = index;
 	me.color = color;
 	me.name = name;
+
+	me.buffer = LinkedList();
 
 	me.x = 0;
 	me.y = 0;

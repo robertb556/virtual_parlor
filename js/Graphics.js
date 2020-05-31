@@ -73,7 +73,7 @@ var Graphics = function(){
 		me.frameCount++;
 
 		//pull from input buffer
-		input.play();
+		for(var i=1; i<players.length; i++) input.play(players[i].buffer);
 
 		//clear contexts
 		me.clearContext(me.mainCtx);

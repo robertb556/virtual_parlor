@@ -6,6 +6,7 @@
 //##############################################
 var Cube = function(x, y, color){
 	var me = MovableObject();
+	me.type = OBJ_CUBE;
 
 	me.color = color;
 	me.x = x;
@@ -28,14 +29,15 @@ var Cube = function(x, y, color){
 };
 
 
-var D6 = function(x, y){
+var D6 = function(x, y, value){
 	var me = MovableObject();
+	me.type = OBJ_D6;
 
 	me.x = x;
 	me.y = y;
 	me.w = SIMG["d6_1"].width;
 	me.h = SIMG["d6_1"].height;
-	me.value = 5;
+	me.value = value;
 	me.animation = 0;
 
 	me.onDraw = function(ctx){
@@ -89,8 +91,9 @@ var D6 = function(x, y){
 };
 
 
-var Card = function(x, y, imgTop, imgBot, imgMask){
+var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 	var me = MovableObject();
+	me.type = OBJ_CARD;
 
 	me.x = x;
 	me.y = y;
@@ -99,7 +102,7 @@ var Card = function(x, y, imgTop, imgBot, imgMask){
 	me.imgTop = imgTop;
 	me.imgBot = imgBot;
 	me.imgMask = imgMask;
-	me.isFaceUp = false;
+	me.isFaceUp = faceUp;
 
 	me.onDraw = function(ctx){
 		//FACE UP
@@ -174,6 +177,7 @@ var Card = function(x, y, imgTop, imgBot, imgMask){
 //Cannot interact with, just showing where other players mice are
 var PlayerMouse = function(player){
 	var me = GameObject();
+	me.type = OBJ_MOUSE;
 
 	me.sortLayer = 9;
 	me.ownerIndex = player.index;
@@ -204,6 +208,7 @@ var PlayerMouse = function(player){
 //##############################################
 var Board = function(x, y, img){
 	var me = GameObject();
+	me.type = OBJ_BOARD;
 	me.sortLayer = 2;
 
 	me.x = x;
@@ -220,7 +225,7 @@ var Board = function(x, y, img){
 
 var Deck = function(x, y, img, drawFaceUp){
 	var me = GameObject();
-	me.isDeck = true;
+	me.type = OBJ_DECK;
 
 	me.img = img;
 	me.x = x;
@@ -310,6 +315,7 @@ var Deck = function(x, y, img, drawFaceUp){
 
 var PassButton = function(x, y, player){
 	var me = GameObject();
+	me.type = OBJ_PASS;
 
 	me.sortLayer = 8;
 	me.img = IMG["button"];
@@ -349,6 +355,7 @@ var PassButton = function(x, y, player){
 
 var DeckContextMenu = function(x, y, deck){
 	var me = GameObject();
+	me.type = OBJ_DECK_CONTEXT;
 
 	me.sortLayer = 7;
 	me.x = x;
@@ -381,6 +388,7 @@ var DeckContextMenu = function(x, y, deck){
 
 var DieContextMenu = function(x, y, die, value){
 	var me = GameObject();
+	me.type = OBJ_DIE_CONTEXT;
 
 	me.sortLayer = 7;
 	me.x = x;

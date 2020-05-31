@@ -14,7 +14,6 @@ var Input = function(){
 
 	me.DELAY = 50;
 	me.startTime = Date.now();
-	me.buffer = LinkedList();
 	me.tickTime = Date.now();
 
 	me.x = 0;
@@ -30,6 +29,8 @@ var Input = function(){
 
 	me.server;
 	me.connected = false;
+
+	//web server methods
 	me.init = function(){
 		me.server = new WebSocket('ws://18.224.202.15:9191');
 		console.log("trying to connnect");
@@ -45,8 +46,26 @@ var Input = function(){
 
 		me.server.onmessage	= function(e){
 			console.log("got message["+e.data+"]");
-			//var data = JSON.parse(e.data);
-			//add to buffer
+			var data = JSON.parse(e.data);
+
+			
+			//WORLD STATE
+			if(data.WORLD_STATE){
+				gameObjects.setWorldState(data.state);
+			}
+			
+			//UPDATE
+			else if(data.UPDATE){
+				//add to buffer
+			}
+			
+
+
+			//YOU ARE HOST
+			else if(data.YOU_ARE_HOST){
+
+			}
+			
 		};
 	};
 
@@ -107,17 +126,17 @@ var Input = function(){
 
 
 	//general methods
-	me.play = function(){
-		if(me.buffer.length === 0) return;
+	me.play = function(buffer){
+		if(buffer.length === 0) return;
 
-		var delay = Math.floor(1 / me.buffer.length); //for localPlayer
-		//var delay = Math.floor(1000 / me.buffer.length); //for remote players
+		var delay = Math.floor(1 / buffer.length); //for localPlayer
+		//var delay = Math.floor(1000 / buffer.length); //for remote players
 		var now = Date.now();
 		var dt = now - me.tickTime;
 		if(dt > delay){
 			me.tickTime = now;
 			//release event
-			var e = me.buffer.shift();
+			var e = buffer.shift();
 			if(e !== null){
 				e.player = players[e.playerIndex];
 				me.x = e.x;
@@ -151,17 +170,19 @@ var Input = function(){
 
 	me.tick = function(){
 		var max = me.getCurrentEventIndex();
-		while(me.buffer.addCount < max){
-			me.buffer.push(null);
+		while(localPlayer.buffer.addCount < max){
+			localPlayer.buffer.push(null);
 		}
 	};
 
 	me.add = function(playerIndex, type, x, y, rawX, rawY, leftDown, rightDown, ctrlDown, shiftDown){
+		var player = players[playerIndex];
+
 		//keep buffer full up to date
 		me.tick();
 
 		//add
-		if(me.buffer.addCount < me.getCurrentEventIndex()+2 || type !== MOUSE_MOVE){
+		if(player.buffer.addCount < me.getCurrentEventIndex()+2 || type !== MOUSE_MOVE){
 			var e = {};
 			e.playerIndex = playerIndex;
 			e.type = type;
@@ -173,7 +194,7 @@ var Input = function(){
 			e.rightDown = rightDown;
 			e.ctrlDown = ctrlDown;
 			e.shiftDown = shiftDown;
-			me.buffer.push(e);
+			player.buffer.push(e);
 		}
 		
 	};

@@ -4,6 +4,15 @@
 //##############################################
 //-----------------GAME OBJECTS-----------------
 //##############################################
+var OBJ_CUBE = 0;
+var OBJ_D6 = 0;
+var OBJ_CARD = 0;
+var OBJ_MOUSE = 0;
+var OBJ_BOARD = 0;
+var OBJ_DECK = 0;
+var OBJ_PASS = 0;
+var OBJ_DECK_CONTEXT = 0;
+var OBJ_DIE_CONTEXT = 0;
 
 var GameObjects = function(){
 	var me = {};
@@ -15,9 +24,152 @@ var GameObjects = function(){
 		me.moveToTop();
 	};
 
+	me.setWorldState = function(state){
+		var temp = [];
+
+		for(var i=0; i<state.length; i++){
+			var a = state[i];
+			if(a.type === OBJ_CUBE){
+				temp.push(Cube(a.x, a.y, a.color));
+			}
+			else if(a.type === OBJ_D6){
+				temp.push(D6(a.x, a.y, a.value));
+			}
+			else if(a.type === OBJ_CARD){
+				temp.push(Card(a.ownerIndex, a.x, a.y, a.imgTop, a.imgBot, a.imgMask, a.isFaceUp));
+			}
+			else if(a.type === OBJ_MOUSE){
+				temp.push(PlayerMouse(players[a.playerIndex]));
+			}
+			else if(a.type === OBJ_BOARD){
+				temp.push(Board(a.x, a.y, a.img));
+			}
+			else if(a.type === OBJ_DECK){
+				var deck = Deck(a.x, a.y, a.img, a.faceUp);
+				for(var j=0; j<a.cards.length; j++){
+					var c = a.cards[j];
+					deck.push(Card(c.ownerIndex, c.x, c.y, c.imgTop, c.imgBot, c.imgMask, c.isFaceUp));
+				}
+				temp.push(deck);
+			}
+			else if(a.type === OBJ_PASS){
+				temp.push(PassButton(a.x, a.y, players[a.playerIndex]));
+			}
+			else if(a.type === OBJ_DECK_CONTEXT){
+				temp.push(DeckContextMenu(a.x, a.y, temp[a.deckIndex]));
+			}
+			else if(a.type === OBJ_DIE_CONTEXT){
+				temp.push(DieContextMenu(a.x, a.y, temp[a.dieIndex]));
+			}
+		}
+		me.objects = temp;
+	};
+
+	me.getWorldSnapShot = function(){
+		var world = [];
+
+		for(var i=0; i<me.objects.length; i++){
+			var a = me.objects[i];
+
+			if(a.type === OBJ_CUBE){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.color = a.color;
+				world.push(o);
+			}
+			else if(a.type === OBJ_D6){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.value = a.value;
+				world.push(o);
+			}
+			else if(a.type === OBJ_CARD){
+				var o = {};
+				o.type = a.type;
+				o.ownerIndex = a.ownerIndex;
+				o.x = a.x;
+				o.y = a.y;
+				o.imgTop = a.imgTop;
+				o.imgBot = a.imgBot;
+				o.imgMask = a.imgMask;
+				o.isFaceUp = a.isFaceUp;
+				world.push(o);
+			}
+			else if(a.type === OBJ_MOUSE){
+				var o = {};
+				o.type = a.type;
+				o.playerIndex = a.player.index;
+				world.push(o);
+			}
+			else if(a.type === OBJ_BOARD){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.img = a.img;
+				world.push(o);
+			}
+			else if(a.type === OBJ_DECK){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.cards = [];
+				for(var j=0; j<a.cards.length; j++){
+					var card = a.cards[j];
+					var c = {};
+					c.ownerIndex = card.ownerIndex;
+					c.x = card.x;
+					c.y = card.y;
+					c.imgTop = card.imgTop;
+					c.imgBot = card.imgBot;
+					c.imgMask = card.imgMask;
+					c.isFaceUp = card.isFaceUp;
+					o.cards.push(c);
+				}
+				world.push(o);
+			}
+			else if(a.type === OBJ_PASS){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.playerIndex = a.player.index;
+				world.push(o);
+			}
+			else if(a.type === OBJ_DECK_CONTEXT){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.deckIndex = me.getIndex(a.deck);
+				world.push(o);
+			}
+			else if(a.type === OBJ_DIE_CONTEXT){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.dieIndex = me.getIndex(a.die);
+				world.push(o);
+			}
+		}
+	};
+
 	me.add = function(obj){
 		me.objects.push(obj);
 		me.sortObjects();
+	};
+
+	me.getIndex = function(object){
+		for(var i=0; i<me.objects.length; i++){
+			if(me.objects[i] === object) return i;
+		}
+		return -1;
 	};
 
 	me.getAt = function(x,y){
@@ -31,7 +183,7 @@ var GameObjects = function(){
 	me.getDeckIntersectsAt = function(topLeft, bottomRight){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			if(obj.isDeck && (obj.contains(topLeft[0], topLeft[1]) || obj.contains(bottomRight[0], bottomRight[1]) || obj.contains(topLeft[0], bottomRight[1]) || obj.contains(bottomRight[0], topLeft[1]))){
+			if(obj.type === OBJ_DECK && (obj.contains(topLeft[0], topLeft[1]) || obj.contains(bottomRight[0], bottomRight[1]) || obj.contains(topLeft[0], bottomRight[1]) || obj.contains(bottomRight[0], topLeft[1]))){
 				return obj;
 			}
 		}
