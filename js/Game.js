@@ -29,7 +29,7 @@ var input;
 var gameObjects;
 var activeElement;
 var players = [];
-var localPlayer;
+var localPlayer = null;
 var isHost = false;
 var random;
 var tickCount = 0;
@@ -76,10 +76,12 @@ function launch(){
 function tickStep(){
 	tickCount++;
 
-	input.tick();
-	gameObjects.tick();
-	if(tickCount % 50 === 0) input.sendBuffer();
-
+	if(localPlayer !== null){
+		input.tick();
+		gameObjects.tick();
+		if(tickCount % 50 === 0) input.sendBuffer();
+	}
+	
 	setTimeout(tickStep, 15);
 }
 

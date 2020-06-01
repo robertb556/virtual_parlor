@@ -79,6 +79,8 @@ var Graphics = function(){
 		me.clearContext(me.mainCtx);
 		me.clearContext(me.detailsCtx);
 
+		if(localPlayer === null) return;
+
 		//save
 		me.mainCtx.save();
 			

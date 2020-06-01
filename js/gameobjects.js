@@ -95,6 +95,7 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 	var me = MovableObject();
 	me.type = OBJ_CARD;
 
+	me.ownerIndex = ownerIndex;
 	me.x = x;
 	me.y = y;
 	me.w = SIMG[imgTop].width;
