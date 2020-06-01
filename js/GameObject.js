@@ -65,7 +65,7 @@ var GameObjects = function(){
 		me.objects = temp;
 	};
 
-	me.getWorldSnapShot = function(){
+	me.getWorldState = function(){
 		var world = [];
 
 		for(var i=0; i<me.objects.length; i++){

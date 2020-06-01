@@ -354,6 +354,74 @@ var PassButton = function(x, y, player){
 };
 
 
+var SyncButton = function(x, y){
+	var me = GameObject();
+	me.type = OBJ_SYNC;
+
+	me.sortLayer = 6;
+	me.img = IMG["sync"];
+	me.x = x;
+	me.y = y;
+	me.w = me.img.width;
+	me.h = me.img.height;
+	me.isUi = true;
+
+	me.onDraw = function(ctx){
+		ctx.drawImage(me.img, me.x, me.y);
+	};
+
+	me.onMouseDown = function(e){
+		var result = false;
+		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
+			result = true;
+
+			gameObjects.add(SyncContextMenu(e.x, e.y, true));
+			gameObjects.add(SyncContextMenu(e.x, e.y+65, false));
+		}
+
+		return result;
+	};
+
+	return me;
+};
+
+
+var SyncContextMenu = function(x, y, isConfirm){
+	var me = GameObject();
+	me.type = OBJ_SYNC_CONTEXT;
+
+	me.sortLayer = 7;
+	me.isConfirm = isConfirm;
+	me.x = x;
+	me.y = y;
+	me.w = 150;
+	me.h = 60;
+	me.isUi = true;
+
+	me.onDraw = function(ctx){
+		if(me.isConfirm) ctx.drawImage(IMG["confirm"], me.x, me.y);
+		else ctx.drawImage(IMG["cancel"], me.x, me.y);
+	};
+
+	me.onMouseDown = function(e){
+		var result = false;
+		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
+			result = true;
+			
+			if(me.isConfirm) ;
+		}
+
+		return result;
+	};
+
+	me.onMouseUp = function(e){
+		me.deleteMe = true;
+	};
+
+	return me;
+};
+
+
 var DeckContextMenu = function(x, y, deck){
 	var me = GameObject();
 	me.type = OBJ_DECK_CONTEXT;

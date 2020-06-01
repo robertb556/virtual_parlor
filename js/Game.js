@@ -91,7 +91,7 @@ function tickStep(){
 
 	input.tick();
 	gameObjects.tick();
-	if(tickCount % 50 === 0) input.sendPacket();
+	if(tickCount % 50 === 0) input.sendBuffer();
 
 	setTimeout(tickStep, 15);
 }

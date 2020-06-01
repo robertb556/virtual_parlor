@@ -47,7 +47,12 @@ var Input = function(){
 			
 			//WORLD STATE
 			if(data.WORLD_STATE){
-				gameObjects.setWorldState(data.worldState);
+				//load state
+				gameObjects.setWorldState(data.state);
+
+				//clear buffers
+				me.outboundBuffer.length = 0;
+				for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
 			}
 			
 			//UPDATE
@@ -82,7 +87,7 @@ var Input = function(){
 		};
 	};
 
-	me.sendPacket = function(){
+	me.sendBuffer = function(){
 		//prepare packet
 		var data = {};
 		data.UPDATE = true;
@@ -95,6 +100,17 @@ var Input = function(){
 
 		//clear outbound
 		me.outboundBuffer.length = 0;
+	};
+
+	me.sendWorldState = function(){
+		//prepare packet
+		var data = {};
+		data.WORLD_STATE = true;
+		data.state = gameObjects.getWorldState();
+		var message = JSON.stringify(data);
+
+		//send it
+		me.send(message);
 	};
 
 	me.send = function(message){
@@ -221,6 +237,12 @@ var LinkedList = function(){
 	me.tail = null;
 	me.length = 0;
 	me.addCount = 0;
+
+	me.removeAll = function(){
+		me.head = null;
+		me.tail = null;
+		me.length = 0;
+	};
 
 	me.at = function(index){
 		var val = null;

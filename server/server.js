@@ -79,8 +79,9 @@ function initClient(ws){
 			broadcast(message, client);
 		}
 
-		else if(data.REQUEST_WORLD){
-			
+		else if(data.WORLD_STATE){
+			//relay to all clients
+			broadcast(message, null);
 		}
 
 
