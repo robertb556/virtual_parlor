@@ -47,7 +47,7 @@ var GameObjects = function(){
 				temp.push(Board(a.x, a.y, a.img));
 			}
 			else if(a.type === OBJ_DECK){
-				var deck = Deck(a.x, a.y, a.img, a.faceUp);
+				var deck = Deck(a.x, a.y, a.img, a.drawFaceUp);
 				for(var j=0; j<a.cards.length; j++){
 					var c = a.cards[j];
 					deck.push(Card(c.ownerIndex, c.x, c.y, c.imgTop, c.imgBot, c.imgMask, c.isFaceUp));
@@ -126,6 +126,8 @@ var GameObjects = function(){
 				o.type = a.type;
 				o.x = a.x;
 				o.y = a.y;
+				o.img = a.img;
+				o.drawFaceUp = a.drawFaceUp;
 				o.cards = [];
 				for(var j=0; j<a.cards.length; j++){
 					var card = a.cards[j];
