@@ -113,8 +113,17 @@ var Player = function(index, name){
 
 	me.x = 0;
 	me.y = 0;
+	me.ctrlDown = false;
+	me.shiftDown = false;
 	me.viewX = 0;
 	me.viewY = 0;
+
+	me.heldObjects = [];
+	var holdSpacing = 68;
+	me.holdXPositions = [0, holdSpacing,   0,  holdSpacing, 2*holdSpacing, 2*holdSpacing, 0, holdSpacing, 2*holdSpacing];
+	me.holdYPositions = [0, 0, holdSpacing, holdSpacing,  0, holdSpacing, 2*holdSpacing, 2*holdSpacing, 2*holdSpacing];
+
+	
 
 	me.drawMouse = function(ctx){
 		//don't draw the local player mouse
@@ -137,6 +146,54 @@ var Player = function(index, name){
 	me.mouseMove = function(e){
 		me.x = e.x;
 		me.y = e.y;
+	};
+
+
+	
+	
+	
+	//holding methods
+	me.grab = function(object){
+		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
+			me.heldObjects.push(object);
+			object.moveToTop = true;
+		}
+	};
+
+	me.drop = function(object){
+		var index = me.holdIndex(object);
+		if(index >= 0){
+			me.heldObjects.splice(index, 1);
+			object.drop();
+		}
+	};
+
+	me.isHolding = function(object){
+		if(me.holdIndex(object) >= 0) return true;
+		else return false;
+	};
+
+	me.holdIndex = function(object){
+		for(var i=0; i<me.heldObjects.length; i++){
+			if(me.heldObjects[i] === object) return i;
+		}
+
+		return -1;
+	};
+
+	me.getHeldX = function(object){
+		var index = me.holdIndex(object);
+		if(index >= 0){
+			return me.x + me.holdXPositions[index];
+		}
+		else return null;
+	};
+	me.getHeldY = function(object){
+		var index = me.holdIndex(object);
+		if(index >= 0){
+			return me.y + me.holdYPositions[index];
+		}
+		else return null;
 	};
 
 	return me;

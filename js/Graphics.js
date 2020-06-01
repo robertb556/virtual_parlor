@@ -98,7 +98,7 @@ var Graphics = function(){
 		me.mainCtx.restore();
 
 		//draw details
-		var obj = gameObjects.getAt(input.x, input.y);
+		var obj = gameObjects.getAt(localPlayer.x, localPlayer.y);
 		if(obj !== null) obj.drawDetails(me.mainCtx);
 
 
@@ -113,10 +113,6 @@ var Graphics = function(){
 			me.mainCtx.strokeRect(0+w, 0+w, SCREEN_WIDTH-2*w, SCREEN_HEIGHT-2*w);
 		}
 
-		//me.detailsCtx.fillStyle = "#300";
-		//me.detailsCtx.fillRect(0,0,DETAILS_WIDTH,SCREEN_HEIGHT);
-		//var obj = gameObjects.getAt(input.x, input.y);
-		//if(obj !== null) obj.drawDetails(me.detailsCtx);
 
 		
 

@@ -367,7 +367,7 @@ var MovableObject = function(){
 	me.mouseDown = function(e){
 		var success = false;
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
-			input.grab(me);
+			e.player.grab(me);
 			success = true;
 		}
 
@@ -377,19 +377,19 @@ var MovableObject = function(){
 
 	me.mouseMove = function(e){
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
-			input.grab(me);
+			e.player.grab(me);
 		}
 
-		if(input.isHolding(me)){
-			me.x = Math.floor(input.getHeldX(me) - (me.w/2));
-			me.y = Math.floor(input.getHeldY(me) - (me.h/2));
+		if(e.player.isHolding(me)){
+			me.x = Math.floor(e.player.getHeldX(me) - (me.w/2));
+			me.y = Math.floor(e.player.getHeldY(me) - (me.h/2));
 		}
 
 		me.onMouseMove(e);
 	};
 
 	me.mouseUp = function(e){
-		if(e.player === me.getOwner()) input.drop(me);
+		if(e.player === me.getOwner()) e.player.drop(me);
 
 		me.onMouseUp(e);
 	};

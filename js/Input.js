@@ -18,17 +18,6 @@ var Input = function(){
 	me.startTime = Date.now();
 	me.tickTime = Date.now();
 
-	me.x = 0;
-	me.y = 0;
-	me.ctrlDown = false;
-	me.shiftDown = false;
-
-	me.heldObjects = [];
-	var holdSpacing = 68;
-	me.holdXPositions = [0, holdSpacing,   0,  holdSpacing, 2*holdSpacing, 2*holdSpacing, 0, holdSpacing, 2*holdSpacing];
-	me.holdYPositions = [0, 0, holdSpacing, holdSpacing,  0, holdSpacing, 2*holdSpacing, 2*holdSpacing, 2*holdSpacing];
-
-
 	me.server;
 	me.connected = false;
 
@@ -115,49 +104,7 @@ var Input = function(){
 	};
 
 
-	//holding methods
-	me.grab = function(object){
-		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
-			me.heldObjects.push(object);
-			object.moveToTop = true;
-		}
-	};
 
-	me.drop = function(object){
-		var index = me.holdIndex(object);
-		if(index >= 0){
-			me.heldObjects.splice(index, 1);
-			object.drop();
-		}
-	};
-
-	me.isHolding = function(object){
-		if(me.holdIndex(object) >= 0) return true;
-		else return false;
-	};
-
-	me.holdIndex = function(object){
-		for(var i=0; i<me.heldObjects.length; i++){
-			if(me.heldObjects[i] === object) return i;
-		}
-
-		return -1;
-	};
-
-	me.getHeldX = function(object){
-		var index = me.holdIndex(object);
-		if(index >= 0){
-			return me.x + me.holdXPositions[index];
-		}
-		else return null;
-	};
-	me.getHeldY = function(object){
-		var index = me.holdIndex(object);
-		if(index >= 0){
-			return me.y + me.holdYPositions[index];
-		}
-		else return null;
-	};
 
 
 
@@ -191,10 +138,10 @@ var Input = function(){
 				e.ctrlDown = !!f[8];
 				e.shiftDown = !!f[9];
 
-				me.x = e.x;
-				me.y = e.y;
-				me.ctrlDown = e.ctrlDown;
-				me.shiftDown = e.shiftDown;
+				player.x = e.x;
+				player.y = e.y;
+				player.ctrlDown = e.ctrlDown;
+				player.shiftDown = e.shiftDown;
 
 				if(!e.shiftDown){
 					if(e.type === MOUSE_DOWN){
