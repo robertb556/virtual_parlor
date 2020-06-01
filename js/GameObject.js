@@ -158,6 +158,8 @@ var GameObjects = function(){
 				world.push(o);
 			}
 		}
+
+		return world;
 	};
 
 	me.add = function(obj){

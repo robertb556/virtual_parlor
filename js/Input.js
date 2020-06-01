@@ -12,6 +12,8 @@ var PASS_CONTROL = 3;
 var Input = function(){
 	var me = {};
 
+	me.outboundBuffer = [];
+
 	me.DELAY = 50;
 	me.startTime = Date.now();
 	me.tickTime = Date.now();
@@ -56,7 +58,10 @@ var Input = function(){
 			
 			//UPDATE
 			else if(data.UPDATE){
+				var player = players[data.playerIndex];
+
 				//add to buffer
+				for(var i=0; i<data.buffer.length; i++) player.buffer.push(data.buffer[i]);
 			}
 			
 
@@ -67,6 +72,21 @@ var Input = function(){
 			}
 			
 		};
+	};
+
+	me.sendPacket = function(){
+		//prepare packet
+		var data = {};
+		data.UPDATE = true;
+		data.playerIndex = localPlayer.index;
+		data.buffer = me.outboundBuffer;
+		var message = JSON.stringify(data);
+
+		//send it
+		me.send(message);
+
+		//clear outbound
+		me.outboundBuffer.length = 0;
 	};
 
 	me.send = function(message){
@@ -195,6 +215,7 @@ var Input = function(){
 			e.ctrlDown = ctrlDown;
 			e.shiftDown = shiftDown;
 			player.buffer.push(e);
+			me.outboundBuffer.push(e);
 		}
 		
 	};

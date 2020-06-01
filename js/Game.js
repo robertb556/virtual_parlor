@@ -87,6 +87,7 @@ function launch(){
 function tickStep(){
 	input.tick();
 	gameObjects.tick();
+	if(tickCount % 50 === 0) input.sendPacket();
 
 	setTimeout(tickStep, 15);
 }
