@@ -165,11 +165,13 @@ var Input = function(){
 
 
 	//general methods
-	me.play = function(buffer){
+	me.play = function(player){
+		var buffer = player.buffer;
 		if(buffer.length === 0) return;
 
-		var delay = Math.floor(1 / buffer.length); //for localPlayer
-		//var delay = Math.floor(1000 / buffer.length); //for remote players
+		var delay;
+		if(player === localPlayer) delay = Math.floor(1 / buffer.length); //for localPlayer
+		else delay = Math.floor(1000 / buffer.length); //for remote players
 		var now = Date.now();
 		var dt = now - me.tickTime;
 		if(dt > delay){

@@ -15,7 +15,7 @@ var SCREEN_HEIGHT = 1080;
 var DETAILS_WIDTH = 400;
 var IMAGE_SCALE = 4;
 var ACTIVE_PLAYER = 0;
-var COLORS = ["red", "blue", "green", "yellow"];
+var COLORS = ["white", "red", "blue", "green", "yellow"];
 
 
 
