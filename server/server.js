@@ -24,11 +24,15 @@ function broadcast(message, excludedClient){
 	for(var i=0; i<clients.length; i++){
 		var client = clients[i];
 		if(client !== excludedClient){
-			client.ws.send(message, function(error){
-				if(error != null) closeClient(client);
-			});
+			send(client, message);
 		}
 	}
+}
+
+function send(client, message){
+	client.ws.send(message, function(error){
+		if(error != null) closeClient(client);
+	});
 }
 
 
@@ -57,10 +61,24 @@ function initClient(ws){
 			client.name = data.name;
 
 			//tell all clients
+			for(var i=0; i<clients.length; i++){
+				var c = clients[i];
+				var d = {};
+				d.PLAYER_LIST = true;
+				d.players = [];
+				for(var j=0; j<clients.length; j++) d.players[j] = clients[j].name;
+				d.localPlayerIndex = i;
+				var m = JSON.stringify(d);
+				send(c, m);
+			}
+
+
 			var d = {};
 			d.PLAYER_LIST = true;
 			d.players = [];
-			for(var i=0; i<clients.length; i++) d.players[i] = clients[i].name;
+			for(var i=0; i<clients.length; i++){
+				d.players[i] = clients[i].name;
+			}
 			var m = JSON.stringify(d);
 			broadcast(m);
 		}
