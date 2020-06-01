@@ -71,16 +71,6 @@ function initClient(ws){
 				var m = JSON.stringify(d);
 				send(c, m);
 			}
-
-
-			var d = {};
-			d.PLAYER_LIST = true;
-			d.players = [];
-			for(var i=0; i<clients.length; i++){
-				d.players[i] = clients[i].name;
-			}
-			var m = JSON.stringify(d);
-			broadcast(m);
 		}
 
 		else if(data.UPDATE){
