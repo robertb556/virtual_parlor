@@ -158,7 +158,7 @@ var Input = function(){
 			//release event
 			var f = buffer.shift();
 			if(f !== null){
-				e = {};
+				var e = {};
 				e.player = players[f[0]];
 				e.type = f[1];
 				e.x = f[2];
