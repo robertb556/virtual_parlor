@@ -146,15 +146,15 @@ var Input = function(){
 				if(!e.shiftDown){
 					if(e.type === MOUSE_DOWN){
 						//console.log("play down");
-						if(localPlayer === players[ACTIVE_PLAYER]) gameObjects.mouseDown(e);
+						if(e.player === players[ACTIVE_PLAYER]) gameObjects.mouseDown(e);
 					}
 					else if(e.type === MOUSE_UP){
 						//console.log("play up");
-						if(localPlayer === players[ACTIVE_PLAYER]) gameObjects.mouseUp(e);
+						if(e.player === players[ACTIVE_PLAYER]) gameObjects.mouseUp(e);
 					}
 					else if(e.type === MOUSE_MOVE){
 						//console.log("play move");
-						if(localPlayer === players[ACTIVE_PLAYER]) gameObjects.mouseMove(e);
+						if(e.player === players[ACTIVE_PLAYER]) gameObjects.mouseMove(e);
 
 						//syncing mice for visual communication
 						e.player.mouseMove(e);
