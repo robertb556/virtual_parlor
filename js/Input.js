@@ -68,8 +68,16 @@ var Input = function(){
 			
 
 			else if(data.PLAYER_LIST){
-				//players
+				//delete old players
 				players = [];
+
+				//delete old pass buttons
+				for(var i=0; i<gameObjects.objects.length; i++){
+					var obj = gameObjects.objects[i];
+					if(obj.type === OBJ_PASS) obj.deleteMe = true;
+				}
+
+				//new player list
 				for(var i=1; i<data.players.length; i++){
 					var player = Player(i, data.players[i]);
 					players[i] = player;

@@ -37,17 +37,6 @@ var tickCount = 0;
 
 
 window.onload = function(){
-	//create players
-	players[1] = Player(1, "Rob");
-	players[2] = Player(2, "Chris");
-	players[3] = Player(3, "Tim");
-	players[4] = Player(4, "Sean");
-
-	//active player
-	players[ACTIVE_PLAYER] = players[1];
-
-	//local player
-	localPlayer = players[1];
 
 
 	//INIT
@@ -65,7 +54,6 @@ window.onload = function(){
 };
 
 function launch(){
-	for(var i=1; i<players.length; i++) PassButton(300+200*i, 30, players[i]);
 	SyncButton(1400, 30);
 
 	Board(0, 0, "board");
@@ -107,6 +95,7 @@ var Player = function(index, name){
 	me.index = index;
 	me.color = COLORS[index];
 	me.name = name;
+	PassButton(300+200*me.index, 30, me);
 
 	me.buffer = LinkedList();
 
