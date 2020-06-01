@@ -53,7 +53,7 @@ var Input = function(){
 			
 			//WORLD STATE
 			if(data.WORLD_STATE){
-				gameObjects.setWorldState(data.state);
+				gameObjects.setWorldState(data.worldState);
 			}
 			
 			//UPDATE
@@ -65,6 +65,20 @@ var Input = function(){
 			}
 			
 
+			else if(data.PLAYER_LIST){
+				//players
+				players = [];
+				for(var i=1; i<data.players.length; i++){
+					var player = Player(i, data.players[i]);
+					players[i] = player;
+				}
+
+				//active player
+				players[0] = players[1];
+
+				//local player
+				localPlayer = players[data.localPlayerIndex];
+			}
 
 			//YOU ARE HOST
 			else if(data.YOU_ARE_HOST){

@@ -105,13 +105,20 @@ var Graphics = function(){
 		//ui
 		gameObjects.drawUi(me.mainCtx);
 
+		//active player border
+		if(localPlayer === players[ACTIVE_PLAYER]){
+			var w = 5;
+			me.mainCtx.lineWidth = w*2;
+			me.mainCtx.strokeStyle = "gold";
+			me.mainCtx.strokeRect(0+w, 0+w, SCREEN_WIDTH-2*w, SCREEN_HEIGHT-2*w);
+		}
+
 		//me.detailsCtx.fillStyle = "#300";
 		//me.detailsCtx.fillRect(0,0,DETAILS_WIDTH,SCREEN_HEIGHT);
 		//var obj = gameObjects.getAt(input.x, input.y);
 		//if(obj !== null) obj.drawDetails(me.detailsCtx);
 
-		//draw pass buttons
-
+		
 
 
 

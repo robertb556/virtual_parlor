@@ -329,6 +329,7 @@ var PassButton = function(x, y, player){
 	me.onDraw = function(ctx){
 		ctx.fillStyle = me.player.color;
 		var b = 2;
+		if(me.player === players[ACTIVE_PLAYER]) b = 6;
 		ctx.fillRect(me.x-b, me.y-b, me.w+2*b, me.h+2*b);
 		ctx.drawImage(me.img, me.x, me.y);
 

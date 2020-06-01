@@ -15,6 +15,7 @@ var SCREEN_HEIGHT = 1080;
 var DETAILS_WIDTH = 400;
 var IMAGE_SCALE = 4;
 var ACTIVE_PLAYER = 0;
+var COLORS = ["red", "blue", "green", "yellow"];
 
 
 
@@ -37,10 +38,10 @@ var tickCount = 0;
 
 window.onload = function(){
 	//create players
-	players[1] = Player(1, "Rob", "red");
-	players[2] = Player(2, "Chris", "blue");
-	players[3] = Player(3, "Tim", "green");
-	players[4] = Player(4, "Sean", "yellow");
+	//players[1] = Player(1, "Rob");
+	//players[2] = Player(2, "Chris");
+	//players[3] = Player(3, "Tim");
+	//players[4] = Player(4, "Sean");
 
 	//active player
 	players[ACTIVE_PLAYER] = players[1];
@@ -101,11 +102,11 @@ function setActiveElement(element){
 }
 
 
-var Player = function(index, name, color){
+var Player = function(index, name){
 	var me = {};
 
 	me.index = index;
-	me.color = color;
+	me.color = COLORS[index];
 	me.name = name;
 
 	me.buffer = LinkedList();

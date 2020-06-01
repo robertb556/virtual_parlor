@@ -3,7 +3,7 @@
 //-----VARIABLES-----
 var WebSocketServer	= require('ws').Server;
 var wss				= new WebSocketServer({port: 9191});
-var clients			= new Array();  //CLIENTS AND THEIR DATA
+var clients			= [];  //CLIENTS AND THEIR DATA
 
 
 console.log('Starting server.');
@@ -45,15 +45,36 @@ function initClient(ws){
 	
 	//CLIENT SPECIFIC DATA
 	client.ws		= ws;
+	client.name		= "none";
 	
 	//CLIENT FUNCTIONS
 	client.ws.on('message', function(message) {
-		console.log('relaying message['+message+']');
-		//parse
-		//var data = JSON.parse(message);
+		//console.log('relaying message['+message+']');
 
-		//relay to other clients
-		broadcast(message, client);
+		var data = JSON.parse(message);
+		
+		if(data.JOIN){
+			client.name = data.name;
+
+			//tell all clients
+			var d = {};
+			d.PLAYER_LIST = true;
+			d.players = [];
+			for(var i=0; i<clients.length; i++) d.players[i] = clients[i].name;
+			var m = JSON.stringify(d);
+			broadcast(m);
+		}
+
+		else if(data.UPDATE){
+			//relay to other clients
+			broadcast(message, client);
+		}
+
+		else if(data.REQUEST_WORLD){
+			
+		}
+
+
 	});
 	
 
