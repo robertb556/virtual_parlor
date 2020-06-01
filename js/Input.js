@@ -39,7 +39,7 @@ var Input = function(){
 		me.server.onopen = function(){
 			me.connected = true;
 			console.log("connected");
-			me.send("hello world");
+			//me.send("hello world");
 		};
 
 		me.server.onerror = function(error){
