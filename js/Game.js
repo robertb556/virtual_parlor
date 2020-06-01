@@ -65,10 +65,9 @@ window.onload = function(){
 };
 
 function launch(){
-	for(var i=1; i<players.length; i++) PassButton(200*i, 30, players[i]);
-	
-	//main = MainElement();
-	//setActiveElement(main);
+	for(var i=1; i<players.length; i++) PassButton(100+200*i, 30, players[i]);
+	SyncButton(100, 30);
+
 	Board(0, 0, "board");
 	var deck = Deck(200, 200, "back", false);
 	for(var i=0; i<11; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "c"+(i+1), "back", "mask", false));

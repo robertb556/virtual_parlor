@@ -11,8 +11,10 @@ var OBJ_MOUSE = 3;
 var OBJ_BOARD = 4;
 var OBJ_DECK = 5;
 var OBJ_PASS = 6;
-var OBJ_DECK_CONTEXT = 7;
-var OBJ_DIE_CONTEXT = 8;
+var OBJ_SYNC = 7;
+var OBJ_SYNC_CONTEXT = 8;
+var OBJ_DECK_CONTEXT = 9;
+var OBJ_DIE_CONTEXT = 10;
 
 var GameObjects = function(){
 	var me = {};
@@ -54,6 +56,12 @@ var GameObjects = function(){
 			}
 			else if(a.type === OBJ_PASS){
 				temp.push(PassButton(a.x, a.y, players[a.playerIndex]));
+			}
+			else if(a.type === OBJ_SYNC){
+				temp.push(SyncButton(a.x, a.y));
+			}
+			else if(a.type === OBJ_SYNC_CONTEXT){
+				temp.push(SyncContextMenu(a.x, a.y, a.isConfirm));
 			}
 			else if(a.type === OBJ_DECK_CONTEXT){
 				temp.push(DeckContextMenu(a.x, a.y, temp[a.deckIndex]));
@@ -139,6 +147,21 @@ var GameObjects = function(){
 				o.x = a.x;
 				o.y = a.y;
 				o.playerIndex = a.player.index;
+				world.push(o);
+			}
+			else if(a.type === OBJ_SYNC){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				world.push(o);
+			}
+			else if(a.type === OBJ_SYNC_CONTEXT){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.isConfirm = a.isConfirm;
 				world.push(o);
 			}
 			else if(a.type === OBJ_DECK_CONTEXT){

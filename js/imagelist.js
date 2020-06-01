@@ -16,6 +16,9 @@ addImageFile("d6_4",		"d6_4.png");
 addImageFile("d6_5",		"d6_5.png");
 addImageFile("d6_6",		"d6_6.png");
 
+addImageFile("sync",		"sync.png");
+addImageFile("cancel",		"cancel.png");
+addImageFile("confirm",		"confirm.png");
 addImageFile("shuffle",		"shuffle.png");
 addImageFile("set1",		"set1.png");
 addImageFile("set2",		"set2.png");
