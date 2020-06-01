@@ -165,10 +165,10 @@ var Input = function(){
 				e.y = f[3];
 				e.rawX = f[4];
 				e.rawY = f[5];
-				e.leftDown = f[6];
-				e.rightDown = f[7];
-				e.ctrlDown = f[8];
-				e.shiftDown = f[9];
+				e.leftDown = !!f[6];
+				e.rightDown = !!f[7];
+				e.ctrlDown = !!f[8];
+				e.shiftDown = !!f[9];
 
 				me.x = e.x;
 				me.y = e.y;
@@ -222,10 +222,10 @@ var Input = function(){
 			e[3] = Math.round(y);
 			e[4] = Math.round(rawX);
 			e[5] = Math.round(rawY);
-			e[6] = leftDown;
-			e[7] = rightDown;
-			e[8] = ctrlDown;
-			e[9] = shiftDown;
+			e[6] = leftDown + 0;
+			e[7] = rightDown + 0;
+			e[8] = ctrlDown + 0;
+			e[9] = shiftDown + 0;
 			player.buffer.push(e);
 			me.outboundBuffer.push(e);
 		}
