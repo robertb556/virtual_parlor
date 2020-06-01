@@ -254,11 +254,11 @@ var Deck = function(x, y, img, drawFaceUp){
 			result = true;
 
 			if(e.leftDown){
-				if(me.cards.length > 0 && e.player === me.getOwner()){
+				if(me.cards.length > 0){
 					var card = me.drawCard();
 
 					//owner
-					card.ownerIndex = localPlayer.index;
+					card.ownerIndex = e.player.index;
 
 					//face up?
 					if(me.drawFaceUp) card.isFaceUp = true;
