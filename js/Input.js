@@ -39,7 +39,12 @@ var Input = function(){
 		me.server.onopen = function(){
 			me.connected = true;
 			console.log("connected");
-			//me.send("hello world");
+			
+			var data = {};
+			data.JOIN = true;
+			data.name = "N"+Math.floor(Math.random()*1000);
+			var message = JSON.stringify(data);
+			me.send(message);
 		};
 
 		me.server.onerror = function(error){
