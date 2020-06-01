@@ -13,6 +13,8 @@ var Input = function(){
 	var me = {};
 
 	me.outboundBuffer = [];
+	me.inboundLocked = false;
+	me.outboundLocked = false;
 
 	me.DELAY = 50;
 	me.startTime = Date.now();
@@ -56,14 +58,21 @@ var Input = function(){
 				//clear buffers
 				me.outboundBuffer.length = 0;
 				for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
+
+				//lock buffers for a time
+				me.inboundLocked = true;
+				me.outboundLocked = true;
+				setTimeout(me.unlockInbound, 3000);
+				setTimeout(me.unlockOutbound, 6000);
 			}
 			
 			//UPDATE
 			else if(data.UPDATE){
-				var player = players[data.playerIndex];
-
-				//add to buffer
-				for(var i=0; i<data.buffer.length; i++) player.buffer.push(data.buffer[i]);
+				if(!me.inboundLocked){
+					var player = players[data.playerIndex];
+					//add to buffer
+					for(var i=0; i<data.buffer.length; i++) player.buffer.push(data.buffer[i]);
+				}
 			}
 			
 
@@ -131,7 +140,12 @@ var Input = function(){
 		}
 	};
 
-
+	me.unlockInbound = function(){
+		me.inboundLocked = false;
+	};
+	me.unlockOutbound = function(){
+		me.outboundLocked = false;
+	};
 
 
 
@@ -204,6 +218,8 @@ var Input = function(){
 	};
 
 	me.add = function(playerIndex, type, x, y, rawX, rawY, leftDown, rightDown, ctrlDown, shiftDown){
+		if(me.outboundLocked) return;
+
 		var player = players[playerIndex];
 
 		//keep buffer full up to date
