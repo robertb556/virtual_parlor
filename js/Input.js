@@ -156,9 +156,20 @@ var Input = function(){
 		if(dt > delay){
 			me.tickTime = now;
 			//release event
-			var e = buffer.shift();
-			if(e !== null){
-				e.player = players[e.playerIndex];
+			var f = buffer.shift();
+			if(f !== null){
+				e = {};
+				e.player = players[f[0]];
+				e.type = f[1];
+				e.x = f[2];
+				e.y = f[3];
+				e.rawX = f[4];
+				e.rawY = f[5];
+				e.leftDown = f[6];
+				e.rightDown = f[7];
+				e.ctrlDown = f[8];
+				e.shiftDown = f[9];
+
 				me.x = e.x;
 				me.y = e.y;
 				me.ctrlDown = e.ctrlDown;
@@ -192,6 +203,7 @@ var Input = function(){
 		var max = me.getCurrentEventIndex();
 		while(localPlayer.buffer.addCount < max){
 			localPlayer.buffer.push(null);
+			me.outboundBuffer.push(null);
 		}
 	};
 
@@ -203,17 +215,17 @@ var Input = function(){
 
 		//add
 		if(player.buffer.addCount < me.getCurrentEventIndex()+2 || type !== MOUSE_MOVE){
-			var e = {};
-			e.playerIndex = playerIndex;
-			e.type = type;
-			e.x = Math.round(x);
-			e.y = Math.round(y);
-			e.rawX = Math.round(rawX);
-			e.rawY = Math.round(rawY);
-			e.leftDown = leftDown;
-			e.rightDown = rightDown;
-			e.ctrlDown = ctrlDown;
-			e.shiftDown = shiftDown;
+			var e = [];
+			e[0] = playerIndex;
+			e[1] = type;
+			e[2] = Math.round(x);
+			e[3] = Math.round(y);
+			e[4] = Math.round(rawX);
+			e[5] = Math.round(rawY);
+			e[6] = leftDown;
+			e[7] = rightDown;
+			e[8] = ctrlDown;
+			e[9] = shiftDown;
 			player.buffer.push(e);
 			me.outboundBuffer.push(e);
 		}

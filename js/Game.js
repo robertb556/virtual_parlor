@@ -31,6 +31,7 @@ var players = [];
 var localPlayer;
 var isHost = false;
 var random;
+var tickCount = 0;
 
 
 
@@ -85,6 +86,8 @@ function launch(){
 }
 
 function tickStep(){
+	tickCount++;
+
 	input.tick();
 	gameObjects.tick();
 	if(tickCount % 50 === 0) input.sendPacket();
