@@ -68,7 +68,7 @@ function initClient(ws){
 				d.players = [];
 				d.players.push(0); //leave blank for active player
 				for(var j=0; j<clients.length; j++) d.players.push(clients[j].name);
-				d.localPlayerIndex = i;
+				d.localPlayerIndex = i+1;
 				var m = JSON.stringify(d);
 				send(c, m);
 			}
