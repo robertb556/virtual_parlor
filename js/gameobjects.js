@@ -375,8 +375,8 @@ var SyncButton = function(x, y){
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
 			result = true;
 
-			gameObjects.add(SyncContextMenu(e.x, e.y, true));
-			gameObjects.add(SyncContextMenu(e.x, e.y+65, false));
+			gameObjects.add(SyncContextMenu(e.rawX, e.rawY, true));
+			gameObjects.add(SyncContextMenu(e.rawX, e.rawY+65, false));
 		}
 
 		return result;
@@ -408,7 +408,7 @@ var SyncContextMenu = function(x, y, isConfirm){
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
 			result = true;
 			
-			if(me.isConfirm) ;
+			if(me.isConfirm) input.sendWorldState();
 		}
 
 		return result;

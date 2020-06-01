@@ -50,6 +50,9 @@ var Input = function(){
 				//load state
 				gameObjects.setWorldState(data.state);
 
+				//random seed
+				random.setSeed(data.seed);
+
 				//clear buffers
 				me.outboundBuffer.length = 0;
 				for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
@@ -107,6 +110,7 @@ var Input = function(){
 		var data = {};
 		data.WORLD_STATE = true;
 		data.state = gameObjects.getWorldState();
+		data.seed = random.getSeed();
 		var message = JSON.stringify(data);
 
 		//send it

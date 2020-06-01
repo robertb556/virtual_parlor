@@ -65,8 +65,8 @@ window.onload = function(){
 };
 
 function launch(){
-	for(var i=1; i<players.length; i++) PassButton(100+200*i, 30, players[i]);
-	SyncButton(100, 30);
+	for(var i=1; i<players.length; i++) PassButton(300+200*i, 30, players[i]);
+	SyncButton(1400, 30);
 
 	Board(0, 0, "board");
 	var deck = Deck(200, 200, "back", false);
