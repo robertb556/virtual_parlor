@@ -38,10 +38,10 @@ var tickCount = 0;
 
 window.onload = function(){
 	//create players
-	//players[1] = Player(1, "Rob");
-	//players[2] = Player(2, "Chris");
-	//players[3] = Player(3, "Tim");
-	//players[4] = Player(4, "Sean");
+	players[1] = Player(1, "Rob");
+	players[2] = Player(2, "Chris");
+	players[3] = Player(3, "Tim");
+	players[4] = Player(4, "Sean");
 
 	//active player
 	players[ACTIVE_PLAYER] = players[1];
