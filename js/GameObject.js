@@ -5,14 +5,14 @@
 //-----------------GAME OBJECTS-----------------
 //##############################################
 var OBJ_CUBE = 0;
-var OBJ_D6 = 0;
-var OBJ_CARD = 0;
-var OBJ_MOUSE = 0;
-var OBJ_BOARD = 0;
-var OBJ_DECK = 0;
-var OBJ_PASS = 0;
-var OBJ_DECK_CONTEXT = 0;
-var OBJ_DIE_CONTEXT = 0;
+var OBJ_D6 = 1;
+var OBJ_CARD = 2;
+var OBJ_MOUSE = 3;
+var OBJ_BOARD = 4;
+var OBJ_DECK = 5;
+var OBJ_PASS = 6;
+var OBJ_DECK_CONTEXT = 7;
+var OBJ_DIE_CONTEXT = 8;
 
 var GameObjects = function(){
 	var me = {};
