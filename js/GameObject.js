@@ -5,16 +5,18 @@
 //-----------------GAME OBJECTS-----------------
 //##############################################
 var OBJ_CUBE = 0;
-var OBJ_D6 = 1;
-var OBJ_CARD = 2;
-var OBJ_MOUSE = 3;
-var OBJ_BOARD = 4;
-var OBJ_DECK = 5;
-var OBJ_PASS = 6;
-var OBJ_SYNC = 7;
-var OBJ_SYNC_CONTEXT = 8;
-var OBJ_DECK_CONTEXT = 9;
-var OBJ_DIE_CONTEXT = 10;
+var OBJ_TILE = 1;
+var OBJ_TILE3 = 2;
+var OBJ_D6 = 3;
+var OBJ_CARD = 4;
+var OBJ_MOUSE = 5;
+var OBJ_BOARD = 6;
+var OBJ_DECK = 7;
+var OBJ_PASS = 8;
+var OBJ_SYNC = 9;
+var OBJ_SYNC_CONTEXT = 10;
+var OBJ_DECK_CONTEXT = 11;
+var OBJ_DIE_CONTEXT = 12;
 
 var GameObjects = function(){
 	var me = {};
@@ -34,8 +36,14 @@ var GameObjects = function(){
 			if(a.type === OBJ_CUBE){
 				temp.push(Cube(a.x, a.y, a.color));
 			}
+			else if(a.type === OBJ_TILE){
+				temp.push(Tile(a.x, a.y, a.img));
+			}
+			else if(a.type === OBJ_TILE3){
+				temp.push(Tile3(a.x, a.y, a.value, a.img0, a.img1, a.img2));
+			}
 			else if(a.type === OBJ_D6){
-				temp.push(D6(a.x, a.y, a.value));
+				temp.push(D6(a.x, a.y, a.value, a.color));
 			}
 			else if(a.type === OBJ_CARD){
 				temp.push(Card(a.ownerIndex, a.x, a.y, a.imgTop, a.imgBot, a.imgMask, a.isFaceUp));
@@ -87,12 +95,32 @@ var GameObjects = function(){
 				o.color = a.color;
 				world.push(o);
 			}
+			else if(a.type === OBJ_TILE){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.img = a.img;
+				world.push(o);
+			}
+			else if(a.type === OBJ_TILE3){
+				var o = {};
+				o.type = a.type;
+				o.x = a.x;
+				o.y = a.y;
+				o.value = a.value;
+				o.img0 = a.img0;
+				o.img1 = a.img1;
+				o.img2 = a.img2;
+				world.push(o);
+			}
 			else if(a.type === OBJ_D6){
 				var o = {};
 				o.type = a.type;
 				o.x = a.x;
 				o.y = a.y;
 				o.value = a.value;
+				o.color = a.color;
 				world.push(o);
 			}
 			else if(a.type === OBJ_CARD){

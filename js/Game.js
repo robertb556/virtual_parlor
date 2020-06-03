@@ -56,19 +56,38 @@ window.onload = function(){
 function launch(){
 	SyncButton(1400, 30);
 
-	Board(0, 0, "board");
-	var deck = Deck(200, 200, "back", false);
-	for(var i=0; i<11; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "c"+(i+1), "back", "mask", false));
-	Cube(10,20, "yellow");
-	Cube(11,25, "green");
-	Cube(10,20, "yellow");
-	Cube(100,25, "green");
-	D6(100,25, 5);
-	D6(11,55, 5);
-	D6(200,25, 5);
-	D6(31,55, 5);
-	D6(200,25, 5);
-	D6(31,55, 5);
+	//boards
+	Board(0, 0, "turn_order");
+
+	//resource deck
+	var deck = Deck(100, 100, "resourceback", false);
+	for(var i=1; i<=16; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "resource"+i, "resourceback", "resourceback", true));
+
+	//buildings deck
+	var deck = Deck(400, 100, "buildingback", false);
+	for(var i=1; i<=18; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "building"+i, "buildingback", "buildingback", true));
+
+	//parts deck
+	var deck = Deck(800, 100, "partback", false);
+	for(var i=1; i<=23; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "part"+i, "partback", "partback", true));
+
+	//dice
+	for(var i=0; i<20; i++) D6(200, 100, 5, "white");
+	for(var i=0; i<20; i++) D6(200, 200, 5, "black");
+
+	//workers
+	for(var i=0; i<20; i++) Tile3(300, 300, 0, "worker1", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(350, 300, 0, "worker2", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(400, 300, 0, "worker3", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(450, 300, 0, "worker4", "pilot", "ace");
+
+	//cubes
+	for(var i=0; i<20; i++) Tile(300, 400, "cube1");
+	for(var i=0; i<20; i++) Tile(350, 400, "cube2");
+	for(var i=0; i<20; i++) Tile(400, 400, "cube3");
+	for(var i=0; i<20; i++) Tile(450, 400, "cube4");
+
+
 
 	tickStep();
 }

@@ -28,26 +28,112 @@ var Cube = function(x, y, color){
 	return me;
 };
 
+var Tile = function(x, y, img){
+	var me = MovableObject();
+	me.type = OBJ_TILE;
 
-var D6 = function(x, y, value){
+	me.img = img;
+	me.x = x;
+	me.y = y;
+	me.w = SIMG[me.img].width;
+	me.h = SIMG[me.img].height;
+
+	me.onDraw = function(ctx){
+		ctx.drawImage(SIMG[me.img], me.viewX, me.viewY);
+	};
+
+	me.onDrawDetails = function(ctx){
+		var scale = 1;
+		var iw = IMG[me.img].width;
+		var ih = IMG[me.img].height;
+		if(DETAILS_WIDTH < iw) scale = DETAILS_WIDTH / iw;
+		var w = iw * scale;
+		var h = ih * scale;
+
+		ctx.drawImage(IMG[me.img], 0, 0, w, h);
+	};
+
+	return me;
+};
+
+
+var Tile3 = function(x, y, value, img0, img1, img2){
+	var me = MovableObject();
+	me.type = OBJ_TILE;
+
+	me.value = value;
+	me.img = [];
+	me.img[0] = img0;
+	me.img[1] = img1;
+	me.img[2] = img2;
+	me.x = x;
+	me.y = y;
+	me.w = SIMG[me.img[me.value]].width;
+	me.h = SIMG[me.img[me.value]].height;
+
+	me.onDraw = function(ctx){
+		ctx.drawImage(SIMG[me.img[me.value]], me.viewX, me.viewY);
+	};
+
+	me.onDrawDetails = function(ctx){
+		var scale = 1;
+		var iw = IMG[me.img[me.value]].width;
+		var ih = IMG[me.img[me.value]].height;
+		if(DETAILS_WIDTH < iw) scale = DETAILS_WIDTH / iw;
+		var w = iw * scale;
+		var h = ih * scale;
+
+		ctx.drawImage(me.img[me.value]], 0, 0, w, h);
+	};
+
+	me.setValue = function(value){
+		me.value = value;
+	};
+
+	me.onMouseDown = function(e){
+		var result = false;
+
+		if(e.rightDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
+			result = true;
+			for(var i=1; i<=3; i++){
+				(function(val){
+					gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, val));
+				})(i);
+				
+			}
+		}
+		
+		return result;
+	};
+
+	return me;
+};
+
+
+var D6 = function(x, y, value, color){
 	var me = MovableObject();
 	me.type = OBJ_D6;
 
 	me.x = x;
 	me.y = y;
-	me.w = SIMG["d6_1"].width;
-	me.h = SIMG["d6_1"].height;
+	me.color = color;
+	me.imgPrefix = "d6_";
+	if(me.color === "black") me.imgPrefix = "kd6_";
+	if(me.color === "blue") me.imgPrefix = "bd6_";
+	if(me.color === "red") me.imgPrefix = "rd6_";
+	me.w = SIMG[me.imgPrefix+"1"].width;
+	me.h = SIMG[me.imgPrefix+"1"].height;
 	me.value = value;
 	me.animation = 0;
 
 	me.onDraw = function(ctx){
 		if(me.animation > 0){
 			var rval = (me.animation%6)+1;
-			ctx.drawImage(SIMG["d6_"+rval], me.viewX, me.viewY);
+			ctx.drawImage(SIMG[me.imgPrefix+rval], me.viewX, me.viewY);
 			me.animation--;
 		}
 		else{
-			ctx.drawImage(SIMG["d6_"+me.value], me.viewX, me.viewY);
+			ctx.drawImage(SIMG[me.imgPrefix+me.value], me.viewX, me.viewY);
 		}
 		
 	};
@@ -55,10 +141,10 @@ var D6 = function(x, y, value){
 	me.onDrawDetails = function(ctx){
 		if(me.animation > 0){
 			var rval = (me.animation%6)+1;
-			ctx.drawImage(IMG["d6_"+rval], 0, 0);
+			ctx.drawImage(IMG[me.imgPrefix+rval], 0, 0);
 		}
 		else{
-			ctx.drawImage(IMG["d6_"+me.value], 0, 0);
+			ctx.drawImage(IMG[me.imgPrefix+me.value], 0, 0);
 		}
 	};
 

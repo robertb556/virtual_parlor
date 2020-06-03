@@ -7,15 +7,31 @@
 var IMG = {};
 var SIMG = {}; //small versions
 
-addImageFile("board",		"board2.jpg");
 
-addImageFile("d6_1",		"d6_1.png");
-addImageFile("d6_2",		"d6_2.png");
-addImageFile("d6_3",		"d6_3.png");
-addImageFile("d6_4",		"d6_4.png");
-addImageFile("d6_5",		"d6_5.png");
-addImageFile("d6_6",		"d6_6.png");
 
+for(var i=1; i<=6; i++) addImageFile("d6_"+i, "d6_"+i+".png");		//white dice
+for(var i=1; i<=6; i++) addImageFile("db6_"+i, "bd6_"+i+".png");	//blue dice
+for(var i=1; i<=6; i++) addImageFile("k6_"+i, "k6_"+i+".png");		//black dice
+for(var i=1; i<=6; i++) addImageFile("r6_"+i, "r6_"+i+".png");		//red dice
+
+for(var i=1; i<=18; i++) addImageFile("building"+i, "building"+i+".png");		//building cards
+for(var i=1; i<=23; i++) addImageFile("part"+i, "part"+i+".png");				//part cards
+for(var i=1; i<=16; i++) addImageFile("resource"+i, "resource"+i+".png");		//resource cards
+for(var i=1; i<=18; i++) addImageFile("building"+i, "building"+i+".png");		//building cards
+for(var i=1; i<=4; i++) addImageFile("worker"+i, "worker"+i+".png");			//worker tokens
+for(var i=1; i<=4; i++) addImageFile("cube"+i, "cube"+i+".png");				//resource tokens
+
+addImageFile("resourceback",		"resourceback.png");
+addImageFile("buildingback",		"buildingback.png");
+addImageFile("partback",			"partback.png");
+
+addImageFile("pilot",		"pilot.png");
+addImageFile("ace",			"ace.png");
+
+addImageFile("turn_order",	"turn_order.png");
+
+
+addImageFile("button",		"button.png");
 addImageFile("sync",		"sync.png");
 addImageFile("cancel",		"cancel.png");
 addImageFile("confirm",		"confirm.png");
@@ -27,25 +43,7 @@ addImageFile("set4",		"set4.png");
 addImageFile("set5",		"set5.png");
 addImageFile("set6",		"set6.png");
 
-addImageFile("back",		"back.png");
-addImageFile("mask",		"mask.png");
 
-addImageFile("c1",		"c1.png");
-addImageFile("c2",		"c2.png");
-addImageFile("c3",		"c3.png");
-addImageFile("c4",		"c4.png");
-addImageFile("c5",		"c5.png");
-addImageFile("c6",		"c6.png");
-addImageFile("c7",		"c7.png");
-addImageFile("c8",		"c8.png");
-addImageFile("c9",		"c9.png");
-addImageFile("c10",		"c10.png");
-addImageFile("c11",		"c11.png");
-addImageFile("c12",		"c12.png");
-addImageFile("c13",		"c13.png");
-addImageFile("c14",		"c14.png");
-
-addImageFile("button",		"button.png");
 
 
 function addImageFile(name, fileName){
