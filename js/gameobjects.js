@@ -72,7 +72,7 @@ var Tile3 = function(x, y, value, img0, img1, img2){
 	me.h = SIMG[me.img[me.value]].height;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(SIMG[me.img[me.value]], me.viewX, me.viewY);
+		ctx.drawImage(SIMG[me.img[me.value]]), me.viewX, me.viewY);
 	};
 
 	me.onDrawDetails = function(ctx){
@@ -83,7 +83,7 @@ var Tile3 = function(x, y, value, img0, img1, img2){
 		var w = iw * scale;
 		var h = ih * scale;
 
-		ctx.drawImage(me.img[me.value]], 0, 0, w, h);
+		ctx.drawImage(IMG[me.img[me.value]], 0, 0, w, h);
 	};
 
 	me.setValue = function(value){
