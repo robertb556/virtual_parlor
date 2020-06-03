@@ -11,8 +11,8 @@ var SIMG = {}; //small versions
 
 for(var i=1; i<=6; i++) addImageFile("d6_"+i, "d6_"+i+".png");		//white dice
 for(var i=1; i<=6; i++) addImageFile("db6_"+i, "bd6_"+i+".png");	//blue dice
-for(var i=1; i<=6; i++) addImageFile("k6_"+i, "k6_"+i+".png");		//black dice
-for(var i=1; i<=6; i++) addImageFile("r6_"+i, "r6_"+i+".png");		//red dice
+for(var i=1; i<=6; i++) addImageFile("kd6_"+i, "kd6_"+i+".png");		//black dice
+for(var i=1; i<=6; i++) addImageFile("rd6_"+i, "rd6_"+i+".png");		//red dice
 
 for(var i=1; i<=18; i++) addImageFile("building"+i, "building"+i+".png");		//building cards
 for(var i=1; i<=23; i++) addImageFile("part"+i, "part"+i+".png");				//part cards
