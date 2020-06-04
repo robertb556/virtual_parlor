@@ -57,22 +57,24 @@ var Tile = function(x, y, img){
 };
 
 
-var Tile3 = function(x, y, value, img0, img1, img2){
+var Tile3 = function(x, y, value, img1, img2, img3){
 	var me = MovableObject();
-	me.type = OBJ_TILE;
+	me.type = OBJ_TILE3;
 
 	me.value = value;
 	me.img = [];
-	me.img[0] = img0;
 	me.img[1] = img1;
 	me.img[2] = img2;
+	me.img[3] = img3;
 	me.x = x;
 	me.y = y;
 	me.w = SIMG[me.img[me.value]].width;
 	me.h = SIMG[me.img[me.value]].height;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(SIMG[me.img[me.value]], me.viewX, me.viewY);
+		ctx.drawImage(SIMG[me.img[1]], me.viewX, me.viewY);
+		if(me.value === 2) ctx.drawImage(SIMG[me.img[2]], me.viewX, me.viewY);
+		if(me.value === 3) ctx.drawImage(SIMG[me.img[3]], me.viewX, me.viewY);
 	};
 
 	me.onDrawDetails = function(ctx){
@@ -83,7 +85,9 @@ var Tile3 = function(x, y, value, img0, img1, img2){
 		var w = iw * scale;
 		var h = ih * scale;
 
-		ctx.drawImage(IMG[me.img[me.value]], 0, 0, w, h);
+		ctx.drawImage(SIMG[me.img[1]], 0, 0, w, h);
+		if(me.value === 2) ctx.drawImage(SIMG[me.img[2]], 0, 0, w, h);
+		if(me.value === 3) ctx.drawImage(SIMG[me.img[3]], 0, 0, w, h);
 	};
 
 	me.setValue = function(value){
@@ -97,7 +101,7 @@ var Tile3 = function(x, y, value, img0, img1, img2){
 			result = true;
 			for(var i=1; i<=3; i++){
 				(function(val){
-					gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, val));
+					gameObjects.add(DieContextMenu(e.x, e.y+260*i, me, val));
 				})(i);
 				
 			}
@@ -125,6 +129,9 @@ var D6 = function(x, y, value, color){
 	me.h = SIMG[me.imgPrefix+"1"].height;
 	me.value = value;
 	me.animation = 0;
+
+	me.spacingWidth = 300;
+	me.spacingHeight = 300;
 
 	me.onDraw = function(ctx){
 		if(me.animation > 0){
@@ -164,7 +171,7 @@ var D6 = function(x, y, value, color){
 			result = true;
 			for(var i=1; i<=6; i++){
 				(function(val){
-					gameObjects.add(DieContextMenu(e.x, e.y+65*i, me, val));
+					gameObjects.add(DieContextMenu(e.x, e.y+260*(i-1), me, val));
 				})(i);
 				
 			}
@@ -517,11 +524,11 @@ var DeckContextMenu = function(x, y, deck){
 	me.x = x;
 	me.y = y;
 	me.deck = deck;
-	me.w = 150;
-	me.h = 60;
+	me.w = 150*4;
+	me.h = 60*4;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(IMG["shuffle"], me.x, me.y);
+		ctx.drawImage(IMG["shuffle"], me.x, me.y, me.w, me.h);
 	};
 
 	me.onMouseDown = function(e){
@@ -551,11 +558,11 @@ var DieContextMenu = function(x, y, die, value){
 	me.y = y;
 	me.die = die;
 	me.value = value;
-	me.w = 150;
-	me.h = 60;
+	me.w = 150*4;
+	me.h = 60*4;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(IMG["set"+me.value], me.x, me.y);
+		ctx.drawImage(IMG["set"+me.value], me.x, me.y, me.w, me.h);
 	};
 
 	me.onMouseDown = function(e){

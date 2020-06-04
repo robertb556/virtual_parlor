@@ -9,11 +9,11 @@ var SHOW_TUTORIAL = true;
 
 
 //UI
-var ZOOM_LEVELS = [0.10,0.11,0.12,0.13,0.15,0.16,0.18,0.19,0.21,0.24,0.26,0.29,0.31,0.35,0.38,0.42,0.46,0.51,0.56,0.61,0.67,0.74,0.81,0.90,0.98,1.08,1.19,1.31,1.44,1.59,1.74,1.92,2.11,2.32,2.55,2.81,3.09,3.40,3.74,4.11,4.53,4.98,5.48,6.02,6.63,7.29,8.02,8.82,9.70,10.67,11.74,12.91,14.20,15.62];
+var ZOOM_LEVELS = [0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.15,0.16,0.18,0.19,0.21,0.24,0.26,0.29,0.31,0.35,0.38,0.42,0.46,0.51,0.56,0.61,0.67,0.74,0.81,0.90,0.98,1.08,1.19,1.31,1.44,1.59,1.74,1.92,2.11,2.32,2.55,2.81,3.09,3.40,3.74,4.11,4.53,4.98,5.48,6.02,6.63,7.29,8.02,8.82,9.70,10.67,11.74,12.91,14.20,15.62];
 var SCREEN_WIDTH = 1920; //960;
 var SCREEN_HEIGHT = 1080;
 var DETAILS_WIDTH = 400;
-var IMAGE_SCALE = 4;
+var IMAGE_SCALE = 1;
 var ACTIVE_PLAYER = 0;
 var COLORS = ["white", "red", "blue", "green", "yellow"];
 
@@ -54,39 +54,51 @@ window.onload = function(){
 };
 
 function launch(){
+	//sync
 	SyncButton(1400, 30);
 
+	//layout
+	var s1 = 200;
+	var s2 = 300;
+	var x1 = 200;
+	var y1 = 400;
+	var y2 = y1+200;
+	var y3 = y2+200;
+	var y4 = y3+400;
+
+	//workers
+	for(var i=0; i<20; i++) Tile3(x1, y1, 1, "worker1", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(x1+s1, y1, 1, "worker2", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(x1+s1*2, y1, 1, "worker3", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(x1+s1*3, y1, 1, "worker4", "pilot", "ace");
+
+	//cubes
+	for(var i=0; i<20; i++) Tile(x1, y2, "cube1");
+	for(var i=0; i<20; i++) Tile(x1+s1, y2, "cube2");
+	for(var i=0; i<20; i++) Tile(x1+s1*2, y2, "cube3");
+	for(var i=0; i<20; i++) Tile(x1+s1*3, y2, "cube4");
+
+	//dice
+	for(var i=0; i<20; i++) D6(x1, y3, 5, "white");
+	for(var i=0; i<20; i++) D6(x1+s2, y3, 5, "black");
+
+	
 	//boards
-	Board(0, 0, "turn_order");
+	Board(1500, 1500, "turn_order");
 
 	//resource deck
-	var deck = Deck(100, 100, "resourceback", false);
+	var deck = Deck(200, y4, "resourceback", true);
 	for(var i=1; i<=16; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "resource"+i, "resourceback", "resourceback", true));
 
 	//buildings deck
-	var deck = Deck(400, 100, "buildingback", false);
+	var deck = Deck(1000, y4, "buildingback", true);
 	for(var i=1; i<=18; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "building"+i, "buildingback", "buildingback", true));
 
 	//parts deck
-	var deck = Deck(800, 100, "partback", false);
+	var deck = Deck(2000, y4, "partback", true);
 	for(var i=1; i<=23; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "part"+i, "partback", "partback", true));
 
-	//dice
-	for(var i=0; i<20; i++) D6(200, 100, 5, "white");
-	for(var i=0; i<20; i++) D6(200, 200, 5, "black");
-
-	//workers
-	for(var i=0; i<20; i++) Tile3(300, 300, 0, "worker1", "pilot", "ace");
-	for(var i=0; i<20; i++) Tile3(350, 300, 0, "worker2", "pilot", "ace");
-	for(var i=0; i<20; i++) Tile3(400, 300, 0, "worker3", "pilot", "ace");
-	for(var i=0; i<20; i++) Tile3(450, 300, 0, "worker4", "pilot", "ace");
-
-	//cubes
-	for(var i=0; i<20; i++) Tile(300, 400, "cube1");
-	for(var i=0; i<20; i++) Tile(350, 400, "cube2");
-	for(var i=0; i<20; i++) Tile(400, 400, "cube3");
-	for(var i=0; i<20; i++) Tile(450, 400, "cube4");
-
+	
 
 
 	tickStep();
@@ -128,10 +140,6 @@ var Player = function(index, name){
 	me.viewY = 0;
 
 	me.heldObjects = [];
-	var holdSpacing = 68;
-	me.holdXPositions = [0, holdSpacing,   0,  holdSpacing, 2*holdSpacing, 2*holdSpacing, 0, holdSpacing, 2*holdSpacing];
-	me.holdYPositions = [0, 0, holdSpacing, holdSpacing,  0, holdSpacing, 2*holdSpacing, 2*holdSpacing, 2*holdSpacing];
-
 	
 
 	me.drawMouse = function(ctx){
@@ -163,7 +171,7 @@ var Player = function(index, name){
 	
 	//holding methods
 	me.grab = function(object){
-		if(!me.isHolding(object) && (me.heldObjects.length === 0 || me.ctrlDown)){
+		if(!me.isHolding(object) && (me.heldObjects.length === 0 || (me.ctrlDown && object.type === me.heldObjects[0].type))){
 			me.heldObjects.push(object);
 			object.moveToTop = true;
 		}
@@ -193,14 +201,16 @@ var Player = function(index, name){
 	me.getHeldX = function(object){
 		var index = me.holdIndex(object);
 		if(index >= 0){
-			return me.x + me.holdXPositions[index];
+			var gx = index % object.spacingRowLength;
+			return me.x + gx*object.spacingWidth;
 		}
 		else return null;
 	};
 	me.getHeldY = function(object){
 		var index = me.holdIndex(object);
 		if(index >= 0){
-			return me.y + me.holdYPositions[index];
+			var gy = integerDivision(index, object.spacingRowLength);
+			return me.y + gy*object.spacingHeight;
 		}
 		else return null;
 	};
@@ -222,7 +232,14 @@ function lerp(start, end, percent){
 	return start + percent * (end - start);
 }
 
-
+function integerDivision(a,b){
+	var count = 0;
+	while(a >= b){
+		a -= b;
+		count++;
+	}
+	return count;
+}
 
 
 //##############################################

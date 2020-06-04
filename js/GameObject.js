@@ -357,6 +357,10 @@ var GameObject = function(){
 	me.viewX = 0;
 	me.viewY = 0;
 
+	me.spacingWidth = 200;
+	me.spacingHeight = 200;
+	me.spacingRowLength = 5;
+
 	gameObjects.add(me);
 
 	me.getOwner = function(){
