@@ -40,7 +40,7 @@ var GameObjects = function(){
 				temp.push(Tile(a.x, a.y, a.img));
 			}
 			else if(a.type === OBJ_TILE3){
-				temp.push(Tile3(a.x, a.y, a.value, a.img0, a.img1, a.img2));
+				temp.push(Tile3(a.x, a.y, a.value, a.img1, a.img2, a.img3));
 			}
 			else if(a.type === OBJ_D6){
 				temp.push(D6(a.x, a.y, a.value, a.color));
@@ -109,9 +109,9 @@ var GameObjects = function(){
 				o.x = a.x;
 				o.y = a.y;
 				o.value = a.value;
-				o.img0 = a.img0;
-				o.img1 = a.img1;
-				o.img2 = a.img2;
+				o.img1 = a.img[1];
+				o.img2 = a.img[2];
+				o.img3 = a.img[3];
 				world.push(o);
 			}
 			else if(a.type === OBJ_D6){
@@ -218,6 +218,7 @@ var GameObjects = function(){
 	me.add = function(obj){
 		me.objects.push(obj);
 		me.sortObjects();
+		graphics.repaint();
 	};
 
 	me.getIndex = function(object){
@@ -276,6 +277,7 @@ var GameObjects = function(){
 			if(obj.deleteMe){
 				obj.deleteMe = false;
 				me.objects.splice(index, 1);
+				graphics.repaint();
 			}
 			else{
 				index++;
@@ -392,10 +394,6 @@ var GameObject = function(){
 		if(Math.abs(me.x-me.viewX)+Math.abs(me.y-me.viewY) > 1) dynamic = true;
 
 		if(me.animation > 0) dynamic = true;
-
-		if(me.type === OBJ_SYNC_CONTEXT) dynamic = true;
-		if(me.type === OBJ_DECK_CONTEXT) dynamic = true;
-		if(me.type === OBJ_DIE_CONTEXT) dynamic = true;
 
 		if(me.isDynamic !== dynamic){
 			me.isDynamic = dynamic;
