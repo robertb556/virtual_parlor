@@ -103,6 +103,10 @@ var Input = function(){
 
 			}
 			
+			//keep alive
+			else if(data.KEEP_ALIVE){
+				//do nothing
+			}
 		};
 	};
 
