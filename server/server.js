@@ -70,6 +70,9 @@ function initClient(ws){
 		if(data.JOIN){
 			client.name = data.name;
 
+			//give world if it exists
+			if(worldSnapshot) send(client, worldSnapshot);
+
 			//tell all clients
 			for(var i=0; i<clients.length; i++){
 				var c = clients[i];
