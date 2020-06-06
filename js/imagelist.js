@@ -1,6 +1,43 @@
 'use strict';
 
 
+
+
+
+function colorizeImage(base, top, color, opacity){
+	var canvas = document.createElement("canvas");
+	canvas.width = base.width;
+	canvas.height = base.height;
+	var ctx = canvas.getContext('2d');
+	
+	
+	ctx.drawImage(base, 0, 0);
+	
+	ctx.globalCompositeOperation = "source-atop";
+	//ctx.globalAlpha = 1;
+	ctx.fillStyle = color;
+	ctx.fillRect(0, 0, base.width, base.height);
+	
+	ctx.globalCompositeOperation = "source-over";
+	//ctx.globalAlpha = 1;
+	if(top) ctx.drawImage(top, 0, 0);
+	
+	
+	//opacity
+	var canvas2 = document.createElement("canvas");
+	canvas2.width = base.width;
+	canvas2.height = base.height;
+	var ctx2 = canvas2.getContext('2d');
+	
+	ctx2.globalAlpha = opacity;
+	ctx2.drawImage(canvas, 0, 0);
+	ctx2.globalAlpha = 1;
+	
+	return canvas2;
+}
+
+
+
 //##############################################
 //-----------------IMAGES-----------------------
 //##############################################
@@ -30,7 +67,8 @@ addImageFile("ace",			"ace.png");
 
 addImageFile("turn_order",	"turn_order.png");
 
-
+addImageFile("btop",		"btop.png");
+addImageFile("bbot",		"bbot.png");
 addImageFile("button",		"button.png");
 addImageFile("sync",		"sync.png");
 addImageFile("cancel",		"cancel.png");

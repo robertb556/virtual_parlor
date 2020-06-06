@@ -19,9 +19,9 @@ var Cube = function(x, y, color){
 		ctx.fillRect(me.viewX, me.viewY, me.w, me.h);
 	};
 
-	me.onDrawDetails = function(ctx){
+	me.onDrawDetails = function(ctx, w, h){
 		ctx.fillStyle = me.color;
-		ctx.fillRect(0, 0, me.w*IMAGE_SCALE, me.h*IMAGE_SCALE);
+		ctx.fillRect(0, 0, w, h);
 		
 	};
 
@@ -35,21 +35,14 @@ var Tile = function(x, y, img){
 	me.img = img;
 	me.x = x;
 	me.y = y;
-	me.w = SIMG[me.img].width;
-	me.h = SIMG[me.img].height;
+	me.w = IMG[me.img].width;
+	me.h = IMG[me.img].height;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(SIMG[me.img], me.viewX, me.viewY);
+		ctx.drawImage(IMG[me.img], me.viewX, me.viewY);
 	};
 
-	me.onDrawDetails = function(ctx){
-		var scale = 1;
-		var iw = IMG[me.img].width;
-		var ih = IMG[me.img].height;
-		if(DETAILS_WIDTH < iw) scale = DETAILS_WIDTH / iw;
-		var w = iw * scale;
-		var h = ih * scale;
-
+	me.onDrawDetails = function(ctx, w, h){
 		ctx.drawImage(IMG[me.img], 0, 0, w, h);
 	};
 
@@ -68,26 +61,19 @@ var Tile3 = function(x, y, value, img1, img2, img3){
 	me.img[3] = img3;
 	me.x = x;
 	me.y = y;
-	me.w = SIMG[me.img[me.value]].width;
-	me.h = SIMG[me.img[me.value]].height;
+	me.w = IMG[me.img[me.value]].width;
+	me.h = IMG[me.img[me.value]].height;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(SIMG[me.img[1]], me.viewX, me.viewY);
-		if(me.value === 2) ctx.drawImage(SIMG[me.img[2]], me.viewX, me.viewY);
-		if(me.value === 3) ctx.drawImage(SIMG[me.img[3]], me.viewX, me.viewY);
+		ctx.drawImage(IMG[me.img[1]], me.viewX, me.viewY);
+		if(me.value === 2) ctx.drawImage(IMG[me.img[2]], me.viewX, me.viewY);
+		if(me.value === 3) ctx.drawImage(IMG[me.img[3]], me.viewX, me.viewY);
 	};
 
-	me.onDrawDetails = function(ctx){
-		var scale = 1;
-		var iw = IMG[me.img[me.value]].width;
-		var ih = IMG[me.img[me.value]].height;
-		if(DETAILS_WIDTH < iw) scale = DETAILS_WIDTH / iw;
-		var w = iw * scale;
-		var h = ih * scale;
-
-		ctx.drawImage(SIMG[me.img[1]], 0, 0, w, h);
-		if(me.value === 2) ctx.drawImage(SIMG[me.img[2]], 0, 0, w, h);
-		if(me.value === 3) ctx.drawImage(SIMG[me.img[3]], 0, 0, w, h);
+	me.onDrawDetails = function(ctx, w, h){
+		ctx.drawImage(IMG[me.img[1]], 0, 0, w, h);
+		if(me.value === 2) ctx.drawImage(IMG[me.img[2]], 0, 0, w, h);
+		if(me.value === 3) ctx.drawImage(IMG[me.img[3]], 0, 0, w, h);
 	};
 
 	me.setValue = function(value){
@@ -125,10 +111,9 @@ var D6 = function(x, y, value, color){
 	if(me.color === "black") me.imgPrefix = "kd6_";
 	if(me.color === "blue") me.imgPrefix = "bd6_";
 	if(me.color === "red") me.imgPrefix = "rd6_";
-	me.w = SIMG[me.imgPrefix+"1"].width;
-	me.h = SIMG[me.imgPrefix+"1"].height;
+	me.w = IMG[me.imgPrefix+"1"].width;
+	me.h = IMG[me.imgPrefix+"1"].height;
 	me.value = value;
-	me.animation = 0;
 
 	me.spacingWidth = 300;
 	me.spacingHeight = 300;
@@ -136,22 +121,22 @@ var D6 = function(x, y, value, color){
 	me.onDraw = function(ctx){
 		if(me.animation > 0){
 			var rval = (me.animation%6)+1;
-			ctx.drawImage(SIMG[me.imgPrefix+rval], me.viewX, me.viewY);
+			ctx.drawImage(IMG[me.imgPrefix+rval], me.viewX, me.viewY);
 			me.animation--;
 		}
 		else{
-			ctx.drawImage(SIMG[me.imgPrefix+me.value], me.viewX, me.viewY);
+			ctx.drawImage(IMG[me.imgPrefix+me.value], me.viewX, me.viewY);
 		}
 		
 	};
 
-	me.onDrawDetails = function(ctx){
+	me.onDrawDetails = function(ctx, w, h){
 		if(me.animation > 0){
 			var rval = (me.animation%6)+1;
-			ctx.drawImage(IMG[me.imgPrefix+rval], 0, 0);
+			ctx.drawImage(IMG[me.imgPrefix+rval], 0, 0, w, h);
 		}
 		else{
-			ctx.drawImage(IMG[me.imgPrefix+me.value], 0, 0);
+			ctx.drawImage(IMG[me.imgPrefix+me.value], 0, 0, w, h);
 		}
 	};
 
@@ -191,8 +176,8 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 	me.ownerIndex = ownerIndex;
 	me.x = x;
 	me.y = y;
-	me.w = SIMG[imgTop].width;
-	me.h = SIMG[imgTop].height;
+	me.w = IMG[imgTop].width;
+	me.h = IMG[imgTop].height;
 	me.imgTop = imgTop;
 	me.imgBot = imgBot;
 	me.imgMask = imgMask;
@@ -201,30 +186,22 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 	me.onDraw = function(ctx){
 		//FACE UP
 		if(me.isFaceUp){
-			ctx.drawImage(SIMG[me.imgTop], me.viewX, me.viewY);
+			ctx.drawImage(IMG[me.imgTop], me.viewX, me.viewY);
 		}
 
 		//FACE DOWN
 		else{
 			if(localPlayer === me.getOwner()){
-				ctx.drawImage(SIMG[me.imgTop], me.viewX, me.viewY);
-				ctx.drawImage(SIMG[me.imgMask], me.viewX, me.viewY);
+				ctx.drawImage(IMG[me.imgTop], me.viewX, me.viewY);
+				ctx.drawImage(IMG[me.imgMask], me.viewX, me.viewY);
 			}
 			else{
-				ctx.drawImage(SIMG[me.imgBot], me.viewX, me.viewY);
+				ctx.drawImage(IMG[me.imgBot], me.viewX, me.viewY);
 			}
 		}
 	};
 
-	me.onDrawDetails = function(ctx){
-		var scale = 1;
-		var iw = IMG[me.imgTop].width;
-		var ih = IMG[me.imgTop].height;
-		if(DETAILS_WIDTH < iw) scale = DETAILS_WIDTH / iw;
-		var w = iw * scale;
-		var h = ih * scale;
-
-
+	me.onDrawDetails = function(ctx, w, h){
 		//FACE UP
 		if(me.isFaceUp){
 			ctx.drawImage(IMG[me.imgTop], 0, 0, w, h);
@@ -324,8 +301,8 @@ var Deck = function(x, y, img, drawFaceUp){
 	me.img = img;
 	me.x = x;
 	me.y = y;
-	me.w = SIMG[img].width;
-	me.h = SIMG[img].height;
+	me.w = IMG[img].width;
+	me.h = IMG[img].height;
 
 	me.drawFaceUp = drawFaceUp;
 	me.cards = [];
@@ -333,7 +310,7 @@ var Deck = function(x, y, img, drawFaceUp){
 	me.onDraw = function(ctx){
 		if(me.cards.length > 0){
 			var max = clamp(me.cards.length, 1, 10);
-			for(var i=0; i<max; i++) ctx.drawImage(SIMG[me.img], me.viewX+i*1, me.viewY+i*1);
+			for(var i=0; i<max; i++) ctx.drawImage(IMG[me.img], me.viewX+i*1, me.viewY+i*1);
 		}
 		else{
 			ctx.fillStyle = "red";
@@ -420,7 +397,25 @@ var PassButton = function(x, y, player){
 	me.h = me.img.height;
 	me.isUi = true;
 
+	me.img = colorizeImage(IMG["btop"], null, me.player.color, 1);
+
 	me.onDraw = function(ctx){
+		var dy = 10;
+		if(me.player === players[ACTIVE_PLAYER]){
+			dy = 0;
+		}
+
+		ctx.drawImage(me.img, me.x, me.y);
+		ctx.drawImage(me.img, me.x, me.y-dy);
+		if(dy > 0) ctx.drawImage(IMG["bbot"], me.x, me.y);
+		ctx.font = "24px Arial";
+		ctx.textAlign = "center";
+		ctx.fillStyle = "black";
+		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+8+Math.floor(me.h/2)-dy);
+
+
+
+		/*
 		ctx.fillStyle = me.player.color;
 		var b = 2;
 		if(me.player === players[ACTIVE_PLAYER]) b = 6;
@@ -431,6 +426,7 @@ var PassButton = function(x, y, player){
 		ctx.textAlign = "center";
 		ctx.fillStyle = "black";
 		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+10+Math.floor(me.h/2));
+		*/
 	};
 
 	me.onMouseDown = function(e){

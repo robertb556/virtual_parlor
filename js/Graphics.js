@@ -12,25 +12,26 @@ var Graphics = function(){
 	me.contexts = [];
 	me.topCanvas;
 
-	me.scale = 2;
+	me.scale = 1;
 	me.windowSizer; 
 	me.xOffset = DETAILS_WIDTH;
 	me.yOffset = 0;
-	me.zoom = 20;
+	me.zoom = 45;
 	
 	//Contexts
-	me.mainCtx;
-	me.detailsCtx;
+	me.staticCtx;
+	me.activeCtx;
 	
 	me.frameCount = 0;
+	me.doRepaint = true;
 
 	
 	me.initialize = function(){
 		me.windowSizer 	= document.getElementById("windowSize");
 		
 		//Set up Contexts
-		me.mainCtx				= me.newCanvas(1, null,  "#222").getContext("2d");
-		me.detailsCtx			= me.newCanvas(2, null,  null).getContext("2d");
+		me.staticCtx				= me.newCanvas(1, null,  "#222").getContext("2d");
+		me.activeCtx				= me.newCanvas(2, null,  null).getContext("2d");
 
 		//Prevent default right click menu so we can use right clicks for input
 		document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, false);
@@ -65,83 +66,138 @@ var Graphics = function(){
 	//DRAW METHODS
 	me.start = function(){
 		me.rescale();
+		me.rescale(); //second call fixes chrome stupid scroll bars
+		console.log("screen["+SCREEN_WIDTH+"]["+SCREEN_HEIGHT+"]");
 		me.frame();
+	};
+
+	me.repaint = function(){
+		me.doRepaint = true;
 	};
 	
 	me.frame = function(){
 		requestAnimationFrame(me.frame);
 		me.frameCount++;
 
+		if(localPlayer === null) return;
+
+
 		//pull from input buffer
 		for(var i=1; i<players.length; i++) input.play(players[i]);
 
-		//clear contexts
-		me.clearContext(me.mainCtx);
-		me.clearContext(me.detailsCtx);
+		//dynamic objects
+		gameObjects.checkIfDynamic();
 
-		if(localPlayer === null) return;
+		//draw
+		if(me.doRepaint) me.paint();
+		else me.draw();
+	};
 
-		//save
-		me.mainCtx.save();
-			
-		//pan
-		me.mainCtx.translate(me.xOffset, me.yOffset);
 
-		//zoom
-		me.mainCtx.scale(ZOOM_LEVELS[me.zoom], ZOOM_LEVELS[me.zoom]);
 
-		//draw objects
-		gameObjects.draw(me.mainCtx);
+	//regular frame, only draw active stuff
+	me.draw = function(){
+		var ctx = me.activeCtx;
 
-		//draw player mice on top
-		for(var i=1; i<players.length; i++) players[i].drawMouse(me.mainCtx);
+		//clear context
+		me.clearContext(ctx);
+
+		//pan & zoom
+		ctx.save();
+		ctx.translate(me.xOffset, me.yOffset);
+		ctx.scale(ZOOM_LEVELS[me.zoom], ZOOM_LEVELS[me.zoom]);
+
+		//held objects
+		gameObjects.drawDynamic(ctx);
+
+		//player mice
+		for(var i=1; i<players.length; i++) players[i].drawMouse(ctx);
 
 		//restore
-		me.mainCtx.restore();
+		ctx.restore();
 
-		//draw details
+		//details view
 		var obj = gameObjects.getAt(localPlayer.x, localPlayer.y);
-		if(obj !== null) obj.drawDetails(me.mainCtx);
+		if(obj !== null) obj.drawDetails(ctx);
 
+
+
+		//DEBUG current buffer's sizes
+		//ctx.font = "18px Arial";
+		//ctx.fillStyle = "white";
+		//ctx.textAlign = "left";
+		//for(var i=1; i<players.length; i++) ctx.fillText("player "+i+": "+players[i].buffer.length+" ", 600, i*50);
+	};
+
+	//redraw everything, much more expensive, only when necessary
+	me.paint = function(){
+		me.doRepaint = false;
+		var ctx = me.staticCtx;
+
+		//clear context
+		me.clearContext(ctx);
+
+		//details area
+		ctx.fillStyle = "#333";
+		ctx.fillRect(0,0,DETAILS_WIDTH, SCREEN_HEIGHT);
+
+		//pan & zoom
+		ctx.save();
+		ctx.translate(me.xOffset, me.yOffset);
+		ctx.scale(ZOOM_LEVELS[me.zoom], ZOOM_LEVELS[me.zoom]);
+
+		//draw objects
+		gameObjects.draw(ctx);
+
+		//restore
+		ctx.restore();
 
 		//ui
-		gameObjects.drawUi(me.mainCtx);
+		gameObjects.drawUi(ctx);
 
 		//active player border
 		if(localPlayer === players[ACTIVE_PLAYER]){
 			var w = 5;
-			me.mainCtx.lineWidth = w*2;
-			me.mainCtx.strokeStyle = "gold";
-			me.mainCtx.strokeRect(0+w, 0+w, SCREEN_WIDTH-2*w, SCREEN_HEIGHT-2*w);
+			ctx.lineWidth = w*2;
+			ctx.strokeStyle = "gold";
+			ctx.strokeRect(0+w, 0+w, SCREEN_WIDTH-2*w, SCREEN_HEIGHT-2*w);
 		}
 
 
-		
-
-
-
-		/*
-		//temp
-		ctx.font = "36px Arial";
-		ctx.fillStyle = "white";
-		ctx.textAlign = "left";
-		var text = "buffer[";
-		for(var i=0; i<input.buffer.length; i++){
-			var n = input.buffer.at(i);
-			if(n !== null) text += ","+n.type;
-			else text += ",x";
-		}
-		text += "]";
-		//ctx.fillText(""+input.buffer.length, 200, 200);
-		ctx.fillText(input.buffer.length+" "+text, 200, 200);
-		*/
-
+		//call draw
+		me.draw();
 	};
+
 
 	me.clearContext = function(ctx){
 		ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	};
 
+	me.rescale = function(){
+		//get window width & height
+		var w = me.windowSizer.offsetWidth;
+		var h = me.windowSizer.offsetHeight;
+
+		
+		//rescale
+		for(var i=0; i<me.canvases.length; i++){
+			var c = me.canvases[i];
+			
+			SCREEN_WIDTH = Math.floor(w/me.scale);
+			SCREEN_HEIGHT = Math.floor(h/me.scale);
+
+			c.width = SCREEN_WIDTH;
+			c.height = SCREEN_HEIGHT;
+			
+			c.style.width = Math.floor(SCREEN_WIDTH * me.scale);
+			c.style.height = Math.floor(SCREEN_HEIGHT * me.scale);
+			
+		}
+
+	};
+
+	/*
+	//screen fill style
 	me.rescale = function(){
 		//get window width & height
 		var w = me.windowSizer.offsetWidth;
@@ -173,10 +229,12 @@ var Graphics = function(){
 		}
 
 	};
+	*/
 
 	me.pan = function(xoff, yoff){
 		me.xOffset += xoff/me.scale;
 		me.yOffset += yoff/me.scale;
+		me.repaint();
 	};
 
 	me.zoomAt = function(zdelta, x, y){
@@ -186,6 +244,7 @@ var Graphics = function(){
 			
 			me.zoom += zdelta;
 		}
+		me.repaint();
 	};
 
 	me.getCurrentScale = function(){

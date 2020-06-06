@@ -18,7 +18,6 @@ var Input = function(){
 
 	me.DELAY = 50;
 	me.startTime = Date.now();
-	me.tickTime = Date.now();
 
 	me.server;
 	me.connected = false;
@@ -33,7 +32,7 @@ var Input = function(){
 			
 			var data = {};
 			data.JOIN = true;
-			data.name = "N"+Math.floor(Math.random()*1000);
+			data.name = $_GET["name"]; //"N"+Math.floor(Math.random()*1000);
 			var message = JSON.stringify(data);
 			me.send(message);
 		};
@@ -43,7 +42,7 @@ var Input = function(){
 		};
 
 		me.server.onmessage	= function(e){
-			console.log("got message["+e.data+"]");
+			//console.log("got message["+e.data+"]");
 			var data = JSON.parse(e.data);
 
 			
@@ -162,9 +161,10 @@ var Input = function(){
 		if(player === localPlayer) delay = Math.floor(1 / buffer.length); //for localPlayer
 		else delay = Math.floor(300 / buffer.length); //for remote players
 		var now = Date.now();
-		var dt = now - me.tickTime;
+		var dt = now - player.bufferPlayTime;
+
 		if(dt > delay){
-			me.tickTime = now;
+			player.bufferPlayTime = now;
 			//release event
 			var f = buffer.shift();
 			if(f !== null){
@@ -203,6 +203,7 @@ var Input = function(){
 					}
 					else if(e.type === PASS_CONTROL){
 						players[ACTIVE_PLAYER] = e.player;
+						graphics.repaint();
 					}
 				}
 			}

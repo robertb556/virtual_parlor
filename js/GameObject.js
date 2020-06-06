@@ -295,12 +295,17 @@ var GameObjects = function(){
 			}
 		}
 	};
-	
+
+	me.checkIfDynamic = function(){
+		for(var i=0; i<me.objects.length; i++){
+			me.objects[i].checkIfDynamic();
+		}
+	};
 
 	me.draw = function(ctx){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			if(!obj.isUi) obj.draw(ctx);
+			if(!obj.isUi && !obj.isDynamic) obj.draw(ctx);
 		}
 	};
 
@@ -308,6 +313,13 @@ var GameObjects = function(){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
 			if(obj.isUi) obj.draw(ctx);
+		}
+	};
+
+	me.drawDynamic = function(ctx){
+		for(var i=0; i<me.objects.length; i++){
+			var obj = me.objects[i];
+			if(!obj.isUi && obj.isDynamic) obj.draw(ctx);
 		}
 	};
 
@@ -350,9 +362,11 @@ var GameObject = function(){
 	me.h = 0;
 	me.sortLayer = 4;
 	me.ownerIndex = ACTIVE_PLAYER;
+	me.animation = 0;
 	me.deleteMe = false;
 	me.moveToTop = false;
 	me.isUi = false;  //draw without pan & zoom, eg. for UI stuff.
+	me.isDynamic = true;
 
 	me.viewX = 0;
 	me.viewY = 0;
@@ -372,6 +386,19 @@ var GameObject = function(){
 		else return false;
 	};
 
+	me.checkIfDynamic = function(){
+		var dynamic = false;
+
+		if(Math.abs(me.x-me.viewX)+Math.abs(me.y-me.viewY) > 1) dynamic = true;
+
+		if(me.animation > 0) dynamic = true;
+
+		if(me.isDynamic !== dynamic){
+			me.isDynamic = dynamic;
+			graphics.repaint();
+		}
+	};
+
 	me.draw = function(ctx){
 		//calculate
 		me.viewX = lerp(me.viewX, me.x, 0.2);
@@ -383,7 +410,12 @@ var GameObject = function(){
 	};
 
 	me.drawDetails = function(ctx){
-		me.onDrawDetails(ctx);
+		var scale = 1/IMAGE_SCALE;
+		if(DETAILS_WIDTH < me.w) scale = DETAILS_WIDTH / me.w;
+		var w = me.w * scale;
+		var h = me.h * scale;
+
+		me.onDrawDetails(ctx, w, h);
 	};
 
 	me.mouseDown = function(e){

@@ -4,7 +4,7 @@
 var WebSocketServer	= require('ws').Server;
 var wss				= new WebSocketServer({port: 9191});
 var clients			= [];  //CLIENTS AND THEIR DATA
-
+var worldSnapshot	= null;
 
 console.log('Starting server.');
 
@@ -19,6 +19,10 @@ function init(){
 
 }
 
+function keepAlive(){
+	broadcast("", null);
+	setTimeout(keepAlive, 100);
+}
 
 function broadcast(message, excludedClient){
 	for(var i=0; i<clients.length; i++){
@@ -51,6 +55,9 @@ function initClient(ws){
 	client.ws		= ws;
 	client.name		= "none";
 	
+	//ADD CLIENT TO CLIENT LIST
+	clients.push(client);
+
 	//CLIENT FUNCTIONS
 	client.ws.on('message', function(message) {
 		//console.log('relaying message['+message+']');
@@ -80,17 +87,18 @@ function initClient(ws){
 		}
 
 		else if(data.WORLD_STATE){
+			worldSnapshot = message;
+
 			//relay to all clients
 			broadcast(message, null);
 		}
-
+		else if(data.REQUESTING_WORLD){
+			if(worldSnapshot !== null){
+				send(client, worldSnapshot);
+			}
+		}
 
 	});
-	
-
-	
-	//ADD CLIENT TO CLIENT LIST
-	clients.push(client);
 }
 
 
