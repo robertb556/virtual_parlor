@@ -20,10 +20,10 @@ function init(){
 }
 
 function keepAlive(){
-	var message = {};
-	message.KEEP_ALIVE = true;
-	var data = JSON.parse(message);
-	broadcast(data, null);
+	var data = {};
+	data.KEEP_ALIVE = true;
+	var message = JSON.stringify(data);
+	broadcast(message, null);
 	setTimeout(keepAlive, 100);
 }
 
