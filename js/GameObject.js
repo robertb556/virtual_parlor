@@ -393,6 +393,10 @@ var GameObject = function(){
 
 		if(me.animation > 0) dynamic = true;
 
+		if(me.type === OBJ_SYNC_CONTEXT) dynamic = true;
+		if(me.type === OBJ_DECK_CONTEXT) dynamic = true;
+		if(me.type === OBJ_DIE_CONTEXT) dynamic = true;
+
 		if(me.isDynamic !== dynamic){
 			me.isDynamic = dynamic;
 			graphics.repaint();
