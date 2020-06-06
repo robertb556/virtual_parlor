@@ -11,7 +11,7 @@ console.log('Starting server.');
 //-----PROGRAM-----
 wss.on('connection', function(ws){ initClient(ws); } );
 init();
-
+keepAlive();
 
 
 //-----FUNCTIONS-----
