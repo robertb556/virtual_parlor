@@ -103,6 +103,7 @@ function initClient(ws){
 		}
 
 		else if(data.WORLD_BACKUP){
+			data.WORLD_STATE = true;
 			worldSnapshot = message;
 			console.log("saving world state");
 		}
