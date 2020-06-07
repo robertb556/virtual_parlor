@@ -24,6 +24,10 @@ var Input = function(){
 
 	//web server methods
 	me.init = function(){
+		//schedual backups
+		me.sendWorldBackup();
+
+		//connect to server
 		me.server = new WebSocket('ws://18.224.202.15:9191');
 		console.log("trying to connnect");
 		me.server.onopen = function(){
@@ -48,6 +52,12 @@ var Input = function(){
 			
 			//WORLD STATE
 			if(data.WORLD_STATE){
+				//lock buffers for a time
+				me.inboundLocked = true;
+				me.outboundLocked = true;
+				setTimeout(me.unlockInbound, 2000);
+				setTimeout(me.unlockOutbound, 3000);
+
 				//load state
 				gameObjects.setWorldState(data.state);
 
@@ -58,11 +68,6 @@ var Input = function(){
 				me.outboundBuffer.length = 0;
 				for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
 
-				//lock buffers for a time
-				me.inboundLocked = true;
-				me.outboundLocked = true;
-				setTimeout(me.unlockInbound, 3000);
-				setTimeout(me.unlockOutbound, 6000);
 			}
 			
 			//UPDATE
@@ -123,6 +128,7 @@ var Input = function(){
 
 		//clear outbound
 		me.outboundBuffer.length = 0;
+		me.startTime = Date.now();
 	};
 
 	me.sendWorldState = function(){
@@ -135,6 +141,26 @@ var Input = function(){
 
 		//send it
 		me.send(message);
+	};
+
+	me.sendWorldBackup = function(){
+		//if I'm the host
+		if(me.connected && localPlayer.index === 1){
+			//prepare packet
+			var data = {};
+			data.WORLD_BACKUP = true;
+			data.state = gameObjects.getWorldState();
+			data.seed = random.getSeed();
+			var message = JSON.stringify(data);
+
+			//send it
+			me.send(message);
+		}
+		
+		//but always schedual
+		setTimeout(me.sendWorldBackup, 30000);
+
+		console.log("backed up");
 	};
 
 	me.send = function(message){
@@ -215,8 +241,7 @@ var Input = function(){
 	};
 
 	me.tick = function(){
-		var max = me.getCurrentEventIndex();
-		while(localPlayer.buffer.addCount < max){
+		while(me.outboundBuffer.length < me.getCurrentEventIndex()){
 			localPlayer.buffer.push(null);
 			me.outboundBuffer.push(null);
 		}
@@ -231,7 +256,7 @@ var Input = function(){
 		me.tick();
 
 		//add
-		if(player.buffer.addCount < me.getCurrentEventIndex()+2 || type !== MOUSE_MOVE){
+		if(me.outboundBuffer.length < me.getCurrentEventIndex()+2 || type !== MOUSE_MOVE){
 			var e = [];
 			e[0] = playerIndex;
 			e[1] = type;
@@ -249,12 +274,9 @@ var Input = function(){
 		
 	};
 
-	me.getTime = function(){
-		return Date.now() - me.startTime;
-	};
-
 	me.getCurrentEventIndex = function(){
-		return Math.floor(me.getTime() / me.DELAY);
+		var dt = Date.now() - me.startTime;
+		return Math.floor(dt / me.DELAY);
 	};
 
 	me.init();

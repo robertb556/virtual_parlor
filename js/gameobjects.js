@@ -326,20 +326,24 @@ var Deck = function(x, y, img, drawFaceUp){
 
 			if(e.leftDown){
 				if(me.cards.length > 0){
-					var card = me.drawCard();
-
-					//owner
-					card.ownerIndex = e.player.index;
+					var card = me.cards.pop();
 
 					//face up?
-					if(me.drawFaceUp) card.isFaceUp = true;
-					else card.isFaceUp = false;
+					if(me.drawFaceUp){
+						card.isFaceUp = true;
+						card.ownerIndex = ACTIVE_PLAYER;
+					}
+					else{
+						card.isFaceUp = false;
+						card.ownerIndex = e.player.index;
+					}
 
 					//location
 					card.x = me.x;
 					card.y = me.y;
 					card.viewX = card.x;
 					card.viewY = card.y;
+					card.deleteMe = false;
 
 					//finish
 					gameObjects.add(card);
@@ -359,14 +363,6 @@ var Deck = function(x, y, img, drawFaceUp){
 		card.deleteMe = true;
 		card.ownerIndex = ACTIVE_PLAYER;
 		me.cards.push(card);
-	};
-
-	me.drawCard = function(){
-		var card = null;
-		if(me.cards.length > 0){
-			card = me.cards.pop();
-		}
-		return card;
 	};
 
 	me.shuffle = function(){

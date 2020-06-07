@@ -120,7 +120,17 @@ var Graphics = function(){
 		var obj = gameObjects.getAt(localPlayer.x, localPlayer.y);
 		if(obj !== null) obj.drawDetails(ctx);
 
-
+		//message
+		if(input.inboundLocked || input.outboundLocked){
+			ctx.font = "72px Arial";
+			ctx.textAlign = "center";
+			var x = Math.floor(SCREEN_WIDTH/2);
+			var y = Math.floor(SCREEN_HEIGHT/2);
+			ctx.fillStyle = "black";
+			ctx.fillText("Please wait...", x+2, y+2);
+			ctx.fillStyle = "red";
+			ctx.fillText("Please wait...", x, y);
+		}
 
 		//DEBUG current buffer's sizes
 		//ctx.font = "18px Arial";

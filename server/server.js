@@ -71,7 +71,10 @@ function initClient(ws){
 			client.name = data.name;
 
 			//give world if it exists
-			if(worldSnapshot) send(client, worldSnapshot);
+			if(worldSnapshot){
+				send(client, worldSnapshot);
+				console.log("forwarding world state");
+			}
 
 			//tell all clients
 			for(var i=0; i<clients.length; i++){
@@ -98,6 +101,11 @@ function initClient(ws){
 			//relay to all clients
 			broadcast(message, null);
 		}
+
+		else if(data.WORLD_BACKUP){
+			worldSnapshot = message;
+		}
+
 		else if(data.REQUESTING_WORLD){
 			if(worldSnapshot !== null){
 				send(client, worldSnapshot);

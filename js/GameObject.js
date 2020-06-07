@@ -58,7 +58,7 @@ var GameObjects = function(){
 				var deck = Deck(a.x, a.y, a.img, a.drawFaceUp);
 				for(var j=0; j<a.cards.length; j++){
 					var c = a.cards[j];
-					deck.cards.push(Card(c.ownerIndex, c.x, c.y, c.imgTop, c.imgBot, c.imgMask, c.isFaceUp));
+					deck.addCard(Card(c.ownerIndex, c.x, c.y, c.imgTop, c.imgBot, c.imgMask, c.isFaceUp));
 				}
 				temp.push(deck);
 			}
@@ -69,7 +69,7 @@ var GameObjects = function(){
 				temp.push(SyncButton(a.x, a.y));
 			}
 			else if(a.type === OBJ_SYNC_CONTEXT){
-				temp.push(SyncContextMenu(a.x, a.y, a.isConfirm));
+				//temp.push(SyncContextMenu(a.x, a.y, a.isConfirm));
 			}
 			else if(a.type === OBJ_DECK_CONTEXT){
 				temp.push(DeckContextMenu(a.x, a.y, temp[a.deckIndex]));
