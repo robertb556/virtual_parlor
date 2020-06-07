@@ -87,7 +87,7 @@ function initClient(ws){
 
 			//give world if it exists
 			if(worldSnapshot){
-				console.log("forwarding world state["+worldSnapshot+"]");
+				console.log("forwarding world state");
 				send(client, worldSnapshot);
 			}
 		}
@@ -106,7 +106,7 @@ function initClient(ws){
 
 		else if(data.WORLD_BACKUP){
 			data.WORLD_STATE = true;
-			worldSnapshot = message;
+			worldSnapshot = JSON.stringify(data);
 			console.log("saving world state");
 		}
 

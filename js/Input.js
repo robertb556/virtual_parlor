@@ -160,7 +160,7 @@ var Input = function(){
 		}
 		
 		//but always schedual
-		setTimeout(me.sendWorldBackup, 30000);
+		setTimeout(me.sendWorldBackup, 6000);
 
 		console.log("backed up");
 	};
