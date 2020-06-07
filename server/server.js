@@ -70,11 +70,7 @@ function initClient(ws){
 		if(data.JOIN){
 			client.name = data.name;
 
-			//give world if it exists
-			if(worldSnapshot){
-				send(client, worldSnapshot);
-				console.log("forwarding world state");
-			}
+			
 
 			//tell all clients
 			for(var i=0; i<clients.length; i++){
@@ -87,6 +83,12 @@ function initClient(ws){
 				d.localPlayerIndex = i+1;
 				var m = JSON.stringify(d);
 				send(c, m);
+			}
+
+			//give world if it exists
+			if(worldSnapshot){
+				send(client, worldSnapshot);
+				console.log("forwarding world state");
 			}
 		}
 

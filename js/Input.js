@@ -52,6 +52,8 @@ var Input = function(){
 			
 			//WORLD STATE
 			if(data.WORLD_STATE){
+				console.log("world state");
+
 				//lock buffers for a time
 				me.inboundLocked = true;
 				me.outboundLocked = true;
