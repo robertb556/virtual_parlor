@@ -87,8 +87,8 @@ function initClient(ws){
 
 			//give world if it exists
 			if(worldSnapshot){
+				console.log("forwarding world state["+worldSnapshot+"]");
 				send(client, worldSnapshot);
-				console.log("forwarding world state");
 			}
 		}
 
