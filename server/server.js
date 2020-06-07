@@ -104,6 +104,7 @@ function initClient(ws){
 
 		else if(data.WORLD_BACKUP){
 			worldSnapshot = message;
+			console.log("saving world state");
 		}
 
 		else if(data.REQUESTING_WORLD){
