@@ -62,6 +62,9 @@ addImageFile("resourceback",		"resourceback.png");
 addImageFile("buildingback",		"buildingback.png");
 addImageFile("partback",			"partback.png");
 
+addImageFile("mouse",			"mouse.png");
+addImageFile("mouseTop",		"mouseTop.png");
+
 addImageFile("pilot",		"pilot.png");
 addImageFile("ace",			"ace.png");
 
