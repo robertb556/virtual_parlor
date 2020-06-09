@@ -156,7 +156,9 @@ var Player = function(index, name){
 		if(Math.abs(me.viewY-me.y) < 0.1) me.viewY = me.y;
 
 		//draw
-		ctx.drawImage(me.mouseImg, me.viewX, me.viewY);
+		var w = 44 / ZOOM_LEVELS[graphics.zoom];
+		var h = 44 / ZOOM_LEVELS[graphics.zoom];
+		ctx.drawImage(me.mouseImg, me.viewX, me.viewY, w, h);
 		//ctx.fillStyle = me.color;
 		//ctx.beginPath();
 		//var r = 10 / ZOOM_LEVELS[graphics.zoom];
