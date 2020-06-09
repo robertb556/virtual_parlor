@@ -9,7 +9,6 @@ var OBJ_TILE = 1;
 var OBJ_TILE3 = 2;
 var OBJ_D6 = 3;
 var OBJ_CARD = 4;
-var OBJ_MOUSE = 5;
 var OBJ_BOARD = 6;
 var OBJ_DECK = 7;
 var OBJ_PASS = 8;
@@ -47,9 +46,6 @@ var GameObjects = function(){
 			}
 			else if(a.type === OBJ_CARD){
 				temp.push(Card(a.ownerIndex, a.x, a.y, a.imgTop, a.imgBot, a.imgMask, a.isFaceUp));
-			}
-			else if(a.type === OBJ_MOUSE){
-				temp.push(PlayerMouse(players[a.playerIndex]));
 			}
 			else if(a.type === OBJ_BOARD){
 				temp.push(Board(a.x, a.y, a.img));
@@ -133,12 +129,6 @@ var GameObjects = function(){
 				o.imgBot = a.imgBot;
 				o.imgMask = a.imgMask;
 				o.isFaceUp = a.isFaceUp;
-				world.push(o);
-			}
-			else if(a.type === OBJ_MOUSE){
-				var o = {};
-				o.type = a.type;
-				o.playerIndex = a.player.index;
 				world.push(o);
 			}
 			else if(a.type === OBJ_BOARD){

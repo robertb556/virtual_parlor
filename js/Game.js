@@ -140,6 +140,7 @@ var Player = function(index, name){
 	me.shiftDown = false;
 	me.viewX = 0;
 	me.viewY = 0;
+	me.mouseImg = colorizeImage(IMG["mouse"], IMG["mouseTop"], me.player.color, 1);
 
 	me.heldObjects = [];
 	
@@ -155,11 +156,12 @@ var Player = function(index, name){
 		if(Math.abs(me.viewY-me.y) < 0.1) me.viewY = me.y;
 
 		//draw
-		ctx.fillStyle = me.color;
-		ctx.beginPath();
-		var r = 10 / ZOOM_LEVELS[graphics.zoom];
-		ctx.arc(me.viewX, me.viewY, r, 0, 2 * Math.PI);
-		ctx.fill();
+		ctx.drawImage(me.mouseImg, me.viewX, me.viewY);
+		//ctx.fillStyle = me.color;
+		//ctx.beginPath();
+		//var r = 10 / ZOOM_LEVELS[graphics.zoom];
+		//ctx.arc(me.viewX, me.viewY, r, 0, 2 * Math.PI);
+		//ctx.fill();
 	};
 
 	me.mouseMove = function(e){

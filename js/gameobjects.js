@@ -245,34 +245,6 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 
 
 
-//Cannot interact with, just showing where other players mice are
-var PlayerMouse = function(player){
-	var me = GameObject();
-	me.type = OBJ_MOUSE;
-
-	me.sortLayer = 9;
-	me.ownerIndex = player.index;
-	me.color = player.color;
-
-	me.onDraw = function(ctx){
-		console.log("mousedraw["+me.ownerIndex+"]");
-		ctx.fillStyle = me.color;
-		ctx.beginPath();
-		ctx.arc(me.viewX, me.viewY, 20, 0, 2 * Math.PI);
-		ctx.fill();
-	};
-
-	me.onMouseMove = function(e){
-		if(e.player === me.getOwner()){
-			me.x = e.x;
-			me.y = e.y;
-		}
-	};
-
-	return me;
-};
-
-
 
 //##############################################
 //-----------------STATIC OBJECTS---------------
