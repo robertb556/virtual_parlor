@@ -36,7 +36,7 @@ var Input = function(){
 			
 			var data = {};
 			data.JOIN = true;
-			data.name = $_GET["name"]; //"N"+Math.floor(Math.random()*1000);
+			data.name = $_GET["name"];
 			var message = JSON.stringify(data);
 			me.send(message);
 		};
@@ -121,6 +121,7 @@ var Input = function(){
 		//prepare packet
 		var data = {};
 		data.UPDATE = true;
+		data.name = $_GET["name"];
 		data.playerIndex = localPlayer.index;
 		data.buffer = me.outboundBuffer;
 		var message = JSON.stringify(data);
@@ -137,6 +138,7 @@ var Input = function(){
 		//prepare packet
 		var data = {};
 		data.WORLD_STATE = true;
+		data.name = $_GET["name"];
 		data.state = gameObjects.getWorldState();
 		data.seed = random.getSeed();
 		var message = JSON.stringify(data);
@@ -151,6 +153,7 @@ var Input = function(){
 			//prepare packet
 			var data = {};
 			data.WORLD_BACKUP = true;
+			data.name = $_GET["name"];
 			data.state = gameObjects.getWorldState();
 			data.seed = random.getSeed();
 			var message = JSON.stringify(data);
