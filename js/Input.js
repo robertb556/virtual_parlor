@@ -93,16 +93,19 @@ var Input = function(){
 				}
 
 				//new player list
-				for(var i=1; i<data.players.length; i++){
-					var player = Player(i, data.players[i]);
+				for(var i=1; i<data.playerNames.length; i++){
+					var name = data.playerNames[i];
+					var player = Player(i, name);
 					players[i] = player;
+
+					//local player
+					if(name === $_GET["name"]){
+						localPlayer = players[i];
+					}
 				}
 
 				//active player
 				players[0] = players[1];
-
-				//local player
-				localPlayer = players[data.localPlayerIndex];
 			}
 
 			//YOU ARE HOST

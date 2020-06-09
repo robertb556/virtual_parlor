@@ -63,19 +63,16 @@ function addClient(ws, data){
 		//ADD CLIENT TO CLIENT LIST
 		clients.push(client);
 
-		//tell all clients
-		for(var i=0; i<clients.length; i++){
-			var c = clients[i];
-			var d = {};
-			d.PLAYER_LIST = true;
-			d.players = [];
-			d.players.push(0); //leave blank for active player
-			for(var j=0; j<clients.length; j++) d.players.push(clients[j].name);
-			d.localPlayerIndex = i+1;
-			var m = JSON.stringify(d);
-			send(c, m);
-		}
+		
 	}
+	//tell all clients
+	var d = {};
+	d.PLAYER_LIST = true;
+	d.playerNames = [];
+	d.playerNames.push(0); //leave blank for active player
+	for(var i=0; i<clients.length; i++) d.playerNames.push(clients[i].name);
+	var m = JSON.stringify(d);
+	broadcast(m, null);
 
 	//give world if it exists
 	if(worldSnapshot){
