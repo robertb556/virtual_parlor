@@ -58,7 +58,7 @@ function addClient(ws, data){
 
 		//CLIENT SPECIFIC DATA
 		client.ws = ws;
-		client.name = name;
+		client.name = data.name;
 
 		//ADD CLIENT TO CLIENT LIST
 		clients.push(client);
