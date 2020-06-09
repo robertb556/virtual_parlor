@@ -140,7 +140,7 @@ var Player = function(index, name){
 	me.shiftDown = false;
 	me.viewX = 0;
 	me.viewY = 0;
-	me.mouseImg = colorizeImage(IMG["mouse"], IMG["mouseTop"], me.player.color, 1);
+	me.mouseImg = colorizeImage(IMG["mouse"], IMG["mouseTop"], me.color, 1);
 
 	me.heldObjects = [];
 	
