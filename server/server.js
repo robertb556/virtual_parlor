@@ -107,9 +107,11 @@ function broadcast(message, excludedClient){
 }
 
 function send(client, message){
-	client.ws.send(message, function(error){
-		if(error != null) closeClient(client);
-	});
+	if(client.ws){
+		client.ws.send(message, function(error){
+			if(error != null) closeClient(client);
+		});
+	}
 }
 
 
