@@ -24,92 +24,39 @@ var Input = function(){
 
 	//web server methods
 	me.init = function(){
-		//schedual backups
-		me.sendWorldBackup();
 
-		//connect to server
-		me.server = new WebSocket('ws://18.224.202.15:9191');
-		console.log("trying to connnect");
-		me.server.onopen = function(){
-			me.connected = true;
-			console.log("connected");
-			
-			var data = {};
-			data.CREATE_ROOM = true;
-			data.roomId = $_GET["roomId"]
-			data.roomName = "testRoom"
-			data.hostId = $_GET["playerId"];
-			var message = JSON.stringify(data);
-			me.send(message);
-		};
-
-		me.server.onerror = function(error){
-			alert('WebSocket Error ' + error); console.log(error);
-		};
-
-		me.server.onmessage	= function(e){
-			//console.log("got message["+e.data+"]");
-			var data = JSON.parse(e.data);
-
-			
-			//WORLD STATE
-			if(data.WORLD_STATE){
+		//HOST GAME
+		if(sessionStorage.getItem("isHost")){
+			//game already started (reload)
+			if(sessionStorage.getItem("WORLD_BACKUP")){
+				var message = sessionStorage.getItem("WORLD_BACKUP");
+				var data = JSON.parse(message);
 				me.loadWorldState(data);
 			}
-			
-			//UPDATE
-			else if(data.UPDATE){
-				if(!me.inboundLocked){
-					var player = players[data.playerIndex];
-					//add to buffer
-					for(var i=0; i<data.buffer.length; i++) player.buffer.push(data.buffer[i]);
-				}
-			}
-			
 
-			else if(data.PLAYER_LIST){
-				//delete old players
+			//create new game
+			else{
+				//players
 				players = [];
+				players[1] = Player(1, sessionStorage.getItem("playerId"));
+				localPlayer = players[1];
 
-				//delete old pass buttons
-				for(var i=0; i<gameObjects.objects.length; i++){
-					var obj = gameObjects.objects[i];
-					if(obj.type === OBJ_PASS) obj.deleteMe = true;
-				}
-
-				//new player list
-				for(var i=1; i<data.playerNames.length; i++){
-					var name = data.playerNames[i];
-					var player = Player(i, name);
-					players[i] = player;
-
-					//local player
-					if(name === $_GET["name"]){
-						localPlayer = players[i];
-
-						//If host, see if a state exists and load it.
-						if(localPlayer.index === 1 && sessionStorage.getItem("WORLD_BACKUP")){
-							var m = sessionStorage.getItem("WORLD_BACKUP");
-							var d = JSON.parse(m);
-							me.loadWorldState(d);
-						}
-					}
-				}
-
-				//active player
+				//set active player
 				players[0] = players[1];
+
+
+				//reserve room
+				me.roomManager = RoomManager($_GET['roomId'], sessionStorage.getItem('roomName'), localPlayer.name);
 			}
 
-			//YOU ARE HOST
-			else if(data.YOU_ARE_HOST){
+			//schedual backups
+			me.saveWorldBackup();
+		}
 
-			}
-			
-			//keep alive
-			else if(data.KEEP_ALIVE){
-				//do nothing
-			}
-		};
+		//JOIN GAME
+		else{
+
+		}
 	};
 
 	me.sendBuffer = function(){
@@ -151,6 +98,16 @@ var Input = function(){
 		setTimeout(me.unlockInbound, 2000);
 		setTimeout(me.unlockOutbound, 3000);
 
+		//players
+		players = [];
+		for(var i=1; i<data.playerIds.length; i++){
+			players[i] = Player(i, data.playerIds[i]);
+			if(players[i].name === sessionStorage.getItem("playerId")) localPlayer = players[i];
+		}
+
+		//active player
+		players[0] = players[data.activePlayerIndex];
+
 		//load state
 		gameObjects.setWorldState(data.state);
 
@@ -158,35 +115,34 @@ var Input = function(){
 		random.setSeed(data.seed);
 
 		//clear buffers
-		me.outboundBuffer.length = 0;
-		for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
+		//me.outboundBuffer.length = 0;
+		//for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
 	};
 
-	me.sendWorldBackup = function(){
+	me.saveWorldBackup = function(){
 		//if I'm the host
-		if(me.connected && localPlayer.index === 1){
+		if(localPlayer && localPlayer.index === 1){
 			//prepare packet
 			var data = {};
 			data.WORLD_BACKUP = true;
 			data.name = $_GET["name"];
 			data.state = gameObjects.getWorldState();
 			data.seed = random.getSeed();
+			data.playerIds = [];
+			for(var i=1; i<players.length; i++) data.playerIds[i] = players[i].name;
+			data.activePlayerIndex = players[0].index;
+
 			var message = JSON.stringify(data);
 
-			//send it
-			//me.send(message);
-
 			//store locally
-			if (typeof(Storage) !== "undefined") {
-			  sessionStorage.setItem("WORLD_BACKUP", message);
-				console.log("World saved locally.");
-			} else {
-			  console.log("FAILED TO SAVE. No Web Storage support.");
-			}
+			sessionStorage.setItem("WORLD_BACKUP", message);
+
+			//backed up
+			console.log("backed up world");
 		}
 		
 		//but always schedual
-		setTimeout(me.sendWorldBackup, 30000);
+		setTimeout(me.saveWorldBackup, 3000);
 	};
 
 	me.send = function(message){

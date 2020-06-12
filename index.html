@@ -22,33 +22,66 @@
 
 
 <body>
-
-<div class="container-fluid">
-	<div class="row">
+<div id="username-page" class="container-fluid">
+	<div class="row mt-5">
         <div class="col-md-4"></div>
 		<div class="col-md-4">
-			<h3>
-				Create room
-			</h3>
-			<form role="form">
-				<select class="form-control" id="game_types" name="game_types"></select>
-                <input class="btn btn-primary btn-block" type="button" onclick="createRoom()" value="create" />
-			</form>
+            <div class="card">
+                <div class="card-body">
+			        <form role="form">
+                        <div class="form-group">
+                            <label>username</label>
+                            <input type="text" class="form-control" id="username">
+                        </div>
+                        <input class="btn btn-primary btn-block" type="button" onclick="setUsername()" value="connect" />
+			        </form>
+                </div>
+            </div>
+		</div>
+        <div class="col-md-4"></div>
+	</div>
+</div>
+
+
+<div id="room-page" class="container-fluid">
+	<div class="row mt-5">
+        <div class="col-md-4"></div>
+		<div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+			        <form role="form">
+                        <div class="form-group">
+					        <label>room name</label>
+					        <input type="text" class="form-control" id="roomname" />
+				        </div>
+                        <div class="form-group">
+					        <label>select game</label>
+					        <select class="form-control" id="game_types" name="game_types"></select>
+				        </div>
+                        <input class="btn btn-primary btn-block" type="button" onclick="createRoom()" value="create" />
+			        </form>
+                </div>
+            </div>
+			
 		</div>
         <div class="col-md-4"></div>
 	</div>
     <p></p>
 
-	<div class="row">
+	<div class="row mt-3">
         <div class="col-md-4"></div>
 		<div class="col-md-4">
-			<h3>
-				Join room
-			</h3>
-			<form role="form">
-				<select class="form-control" id="rooms" name="rooms"></select>
-                <input class="btn btn-primary btn-block" type="button" onclick="joinRoom()" value="join" />
-			</form>
+            <div class="card">
+                <div class="card-body">
+			        <form role="form">
+                        <div class="form-group">
+                            <label>select room</label>
+				            <select class="form-control" id="rooms" name="rooms"></select>
+                        </div>
+                        <input class="btn btn-primary btn-block" type="button" onclick="joinRoom()" value="join" />
+			        </form>
+                </div>
+            </div>
 		</div>
         <div class="col-md-4"></div>
 	</div>
@@ -61,6 +94,19 @@
 
 
 <script>
+window.onload = function(){
+    if(sessionStorage.getItem("playerId")){
+        $('#username-page').hide();
+        $('#room-page').show();
+        console.log("show room");
+    }
+    else{
+        $('#username-page').show();
+        $('#room-page').hide();
+        console.log("show username");
+    }
+};
+
 //get rooms from server
 (function(){
 	//connect to server
@@ -88,14 +134,34 @@
 	};
 })();
 
+function setUsername(){
+    var username = $("#username").val();
+    if(username.match(/^[0-9a-z]+$/i) && username.length > 2){
+        //store username
+		sessionStorage.setItem("playerId", username);
+
+        //show rooms
+        $('#username-page').hide();
+        $('#room-page').show();
+    }
+}
+
 function joinRoom(){
     var roomId = $("select.rooms").children("option:selected").val();
-    window.location.href = "client.html?roomId="+roomId+"&playerId=rob";
+    window.location.href = "client.html?roomId="+roomId;
 }
 
 function createRoom(){
-    var roomId = createId();
-    window.location.href = "client.html?roomId="+roomId+"&playerId=rob";
+    var roomName = $("#roomname").val();
+    var playerId = sessionStorage.getItem("playerId");
+
+    if(roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && playerId.match(/^[0-9a-z]+$/i) && playerId.length > 2){
+        sessionStorage.setItem("roomName", roomName);
+        sessionStorage.setItem("isHost", true);
+        var roomId = createId();
+        window.location.href = "client.html?roomId="+roomId;
+    }
+    
 }
 
 function createId(){

@@ -40,13 +40,13 @@ window.onload = function(){
 
 
 	//INIT
-	input = Input();
 	graphics = Graphics();
 	loadImages();
 	random = Random();
 	mouse = Mouse();
 	keyboard = Keyboard();
 	gameObjects = GameObjects();
+	input = Input();
 	graphics.start();
 
 	//launch
