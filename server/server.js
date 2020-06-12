@@ -13,6 +13,7 @@ console.log('Starting server.');
 
 wss.on('connection', function(ws){
 	ws.on('message', function(message) {
+		console.log('got message['+message+']');
 		var data = JSON.parse(message);
 
 		//GET ROOMS
