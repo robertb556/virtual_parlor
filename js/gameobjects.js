@@ -288,6 +288,12 @@ var Deck = function(x, y, img, drawFaceUp){
 			ctx.fillStyle = "red";
 			ctx.fillRect(me.viewX, me.viewY, me.w, me.h);
 		}
+
+		//show number of cards remaining
+		ctx.font = "150px Arial";
+		ctx.textAlign = "center";
+		ctx.fillStyle = "black";
+		ctx.fillText(""+me.cards.length, me.x+Math.floor(me.w/2), me.y+7+Math.floor(me.h/2));
 	};
 
 	me.onMouseDown = function(e){
