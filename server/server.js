@@ -31,6 +31,7 @@ wss.on('connection', function(ws){
 			}
 			var m = JSON.stringify(d);
 			send(ws, m);
+			console.log('Sending rooms list.');
 		}
 
 		//JOIN ROOM
@@ -46,6 +47,10 @@ wss.on('connection', function(ws){
 				room.name = name;
 				room.hostId = hostId;
 				rooms[id] = room;
+				console.log('New room created.');
+			}
+			else{
+				console.log('Failed to create room, bad data.');
 			}
 		}
 	});
