@@ -20,7 +20,7 @@ wss.on('connection', function(ws){
 		if(data.GET_ROOMS){
 			var d = {};
 			d.ROOMS = true;
-			d.roomList = rooms;
+			d.roomList = [];
 			for(var roomId in rooms){
 				if(rooms.hasOwnProperty(roomId)){
 					var r = {};
