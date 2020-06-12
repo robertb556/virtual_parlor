@@ -5,18 +5,18 @@
 //-----------------CONSTANTS--------------------
 //##############################################
 //SETTINGS
-var SHOW_TUTORIAL = true;
-
+var SHOW_MOUSE_COORDINATES = true;
 
 //UI
 //var ZOOM_LEVELS = [0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.15,0.16,0.18,0.19,0.21,0.24,0.26,0.29,0.31,0.35,0.38,0.42,0.46,0.51,0.56,0.61,0.67,0.74,0.81,0.90,0.98,1.08,1.19,1.31,1.44,1.59,1.74,1.92,2.11,2.32,2.55,2.81,3.09,3.40,3.74,4.11,4.53,4.98,5.48,6.02,6.63,7.29,8.02,8.82,9.70,10.67,11.74,12.91,14.20,15.62];
 var ZOOM_LEVELS = [0.0118,0.0124,0.013,0.0136,0.0143,0.015,0.0158,0.0166,0.0174,0.0183,0.0192,0.0202,0.0212,0.0223,0.0234,0.0246,0.0258,0.0271,0.0285,0.0299,0.0314,0.033,0.0346,0.0363,0.0381,0.04,0.042,0.0441,0.0463,0.0486,0.051,0.0535,0.0562,0.059,0.0619,0.065,0.0682,0.0716,0.0752,0.079,0.083,0.0872,0.0916,0.0962,0.101,0.106,0.1113,0.1169,0.1227,0.1288,0.1352,0.142,0.1491,0.1566,0.1644,0.1726,0.1812,0.1903,0.1998,0.2098,0.2203,0.2313,0.2429,0.255,0.2678,0.2812,0.2953,0.3101,0.3256,0.3419,0.359,0.377,0.3958,0.4156,0.4364,0.4582,0.4811,0.5052,0.5305,0.557,0.5848,0.614,0.6447,0.6769,0.7107,0.7462,0.7835,0.8227,0.8638,0.907,0.9524,1,1.05,1.103,1.158,1.216,1.277,1.341,1.408,1.478,1.552,1.63,1.712,1.798,1.888,1.982,2.081,2.185,2.294,2.409,2.529,2.655,2.788,2.927,3.073,3.227,3.388,3.557,3.735,3.922,4.118,4.324,4.54,4.767,5.005,5.255,5.518,5.794,6.084,6.388,6.707,7.042,7.394,7.764,8.152,8.56,8.988,9.437,9.909,10.404,10.924,11.47,12.044,12.646,13.278,13.942,14.639,15.371];
 var SCREEN_WIDTH = 1920; //960;
 var SCREEN_HEIGHT = 1080;
-var DETAILS_WIDTH = 300;
+var DETAILS_WIDTH = 250;
 var IMAGE_SCALE = 3;
 var ACTIVE_PLAYER = 0;
 var COLORS = ["white", "#a92a2a", "#2e4ab0", "#268d26", "#b85e0f"];
+
 
 
 //##############################################
@@ -55,22 +55,30 @@ window.onload = function(){
 
 function launch(){
 	//sync
-	SyncButton(75, 450);
+	SyncButton(20, 20);
 
 	//layout
 	var s1 = 200;
 	var s2 = 300;
-	var x1 = 200;
-	var y1 = 400;
-	var y2 = y1+200;
-	var y3 = y2+200;
-	var y4 = y3+400;
+	var x1 = 2250;
+	var y1 = 930;
+	var y2 = y1+100;
+
+	var startingWorkers = 12;
 
 	//workers
-	for(var i=0; i<20; i++) Tile3(x1, y1, 1, "worker1", "pilot", "ace");
-	for(var i=0; i<20; i++) Tile3(x1+s1, y1, 1, "worker2", "pilot", "ace");
-	for(var i=0; i<20; i++) Tile3(x1+s1*2, y1, 1, "worker3", "pilot", "ace");
-	for(var i=0; i<20; i++) Tile3(x1+s1*3, y1, 1, "worker4", "pilot", "ace");
+	for(var i=0; i<20; i++) Tile3(1180, 6800, 1, "worker1", "pilot", "ace");
+	for(var i=0; i<startingWorkers; i++) Tile3(2250+278*i, 6795, 1, "worker1", "pilot", "ace");
+
+	for(var i=0; i<20; i++) Tile3(8200, 6226, 1, "worker2", "pilot", "ace");
+	for(var i=0; i<startingWorkers; i++) Tile3(8200, 6226-400-295*i, 1, "worker2", "pilot", "ace");
+
+	for(var i=0; i<20; i++) Tile3(150, 6226, 1, "worker3", "pilot", "ace");
+	for(var i=0; i<startingWorkers; i++) Tile3(150, 6226-400-295*i, 1, "worker3", "pilot", "ace");
+
+	for(var i=0; i<20; i++) Tile3(1250, 170, 1, "worker4", "pilot", "ace");
+	for(var i=0; i<startingWorkers; i++) Tile3(2300+278*i, 170, 1, "worker4", "pilot", "ace");
+
 
 	//cubes
 	for(var i=0; i<20; i++) Tile(x1, y2, "cube1");
@@ -78,24 +86,25 @@ function launch(){
 	for(var i=0; i<20; i++) Tile(x1+s1*2, y2, "cube3");
 	for(var i=0; i<20; i++) Tile(x1+s1*3, y2, "cube4");
 
+
 	//dice
-	for(var i=0; i<20; i++) D6(x1, y3, 5, "white");
-	for(var i=0; i<20; i++) D6(x1+s2, y3, 5, "black");
+	for(var i=0; i<20; i++) D6(915, 950, 5, "white");
+	for(var i=0; i<20; i++) D6(1280, 950, 5, "black");
 
 	
 	//boards
-	Board(1500, 1500, "turn_order");
+	Board(0, 0, "board");
 
 	//resource deck
-	var deck = Deck(200, y4, "resourceback", true);
+	var deck = Deck(1680, 5480, "resourceback", true);
 	for(var i=1; i<=16; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "resource"+i, "resourceback", "resourceback", true));
 
 	//buildings deck
-	var deck = Deck(1000, y4, "buildingback", true);
+	var deck = Deck(4320, 2350, "buildingback", true);
 	for(var i=1; i<=18; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "building"+i, "buildingback", "buildingback", true));
 
 	//parts deck
-	var deck = Deck(2000, y4, "partback", true);
+	var deck = Deck(2216, 2350, "partback", true);
 	for(var i=1; i<=23; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "part"+i, "partback", "partback", true));
 
 	
@@ -128,7 +137,7 @@ var Player = function(index, name){
 	me.index = index;
 	me.color = COLORS[index];
 	me.name = name;
-	PassButton(75, 100*me.index-50, me);
+	PassButton(20, 45*me.index+20, me);
 	me.bufferPlayTime = Date.now();
 
 

@@ -68,7 +68,7 @@ addImageFile("mouseTop",		"mouseTop.png");
 addImageFile("pilot",		"pilot.png");
 addImageFile("ace",			"ace.png");
 
-addImageFile("turn_order",	"turn_order.png");
+addImageFile("board",	"board.png");
 
 addImageFile("btop",		"btop.png");
 addImageFile("bbot",		"bbot.png");

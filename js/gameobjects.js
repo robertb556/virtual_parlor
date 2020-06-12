@@ -357,7 +357,7 @@ var PassButton = function(x, y, player){
 	me.type = OBJ_PASS;
 
 	me.sortLayer = 8;
-	me.img = IMG["button"];
+	me.img = IMG["btop"];
 	me.player = player;
 	me.x = x;
 	me.y = y;
@@ -368,7 +368,7 @@ var PassButton = function(x, y, player){
 	me.img = colorizeImage(IMG["btop"], null, me.player.color, 1);
 
 	me.onDraw = function(ctx){
-		var dy = 10;
+		var dy = 5;
 		if(me.player === players[ACTIVE_PLAYER]){
 			dy = 0;
 		}
@@ -376,10 +376,10 @@ var PassButton = function(x, y, player){
 		ctx.drawImage(me.img, me.x, me.y);
 		ctx.drawImage(me.img, me.x, me.y-dy);
 		if(dy > 0) ctx.drawImage(IMG["bbot"], me.x, me.y);
-		ctx.font = "24px Arial";
+		ctx.font = "16px Arial";
 		ctx.textAlign = "center";
 		ctx.fillStyle = "black";
-		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+8+Math.floor(me.h/2)-dy);
+		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+7+Math.floor(me.h/2)-dy);
 
 
 

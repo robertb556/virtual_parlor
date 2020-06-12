@@ -30,7 +30,7 @@ var Graphics = function(){
 		me.windowSizer 	= document.getElementById("windowSize");
 		
 		//Set up Contexts
-		me.staticCtx				= me.newCanvas(1, null,  "#222").getContext("2d");
+		me.staticCtx				= me.newCanvas(1, null,  "#333").getContext("2d");
 		me.activeCtx				= me.newCanvas(2, null,  null).getContext("2d");
 
 		//Prevent default right click menu so we can use right clicks for input
@@ -132,7 +132,19 @@ var Graphics = function(){
 			ctx.fillText("Please wait...", x, y);
 		}
 
-		//DEBUG current buffer's sizes
+
+		//DEBUG
+		//mouse coordinates
+		if(SHOW_MOUSE_COORDINATES){
+			ctx.font = "18px Arial";
+			ctx.textAlign = "left";
+			ctx.fillStyle = "black";
+			ctx.fillText(""+Math.floor(mouse.x)+", "+Math.floor(mouse.y)+" ", 21, 31);
+			ctx.fillStyle = "white";
+			ctx.fillText(""+Math.floor(mouse.x)+", "+Math.floor(mouse.y)+" ", 20, 30);
+		}
+
+		//current buffer's sizes
 		//ctx.font = "18px Arial";
 		//ctx.fillStyle = "white";
 		//ctx.textAlign = "left";
@@ -148,8 +160,8 @@ var Graphics = function(){
 		me.clearContext(ctx);
 
 		//details area
-		ctx.fillStyle = "#333";
-		ctx.fillRect(0,0,DETAILS_WIDTH, SCREEN_HEIGHT);
+		//ctx.fillStyle = "#333";
+		//ctx.fillRect(0,0,DETAILS_WIDTH, SCREEN_HEIGHT);
 
 		//pan & zoom
 		ctx.save();
