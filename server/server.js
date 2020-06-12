@@ -21,12 +21,12 @@ wss.on('connection', function(ws){
 			var d = {};
 			d.ROOMS = true;
 			d.roomList = rooms;
-			for(var id in rooms){
-				if(rooms.hasOwnProperty(id)){
+			for(var roomId in rooms){
+				if(rooms.hasOwnProperty(roomId)){
 					var r = {};
-					r.id = id;
-					r.name = rooms[id].name;
-					r.hostId = rooms[id].hostId;
+					r.roomId = roomId;
+					r.roomName = rooms[roomId].roomName;
+					r.hostId = rooms[roomId].hostId;
 					d.roomList.push(r);
 				}
 			}
@@ -37,17 +37,17 @@ wss.on('connection', function(ws){
 
 		//JOIN ROOM
 		else if(data.CREATE_ROOM){
-			var id = data.id;
-			var name = data.name;
+			var roomId = data.roomId;
+			var roomName = data.roomName;
 			var hostId = data.hostId;
 
 			//sanitize data
-			if(id.match(/^[0-9a-z]+$/i) && id.length > 2 && name.match(/^[0-9a-z]+$/i) && name.length > 2 && hostId.match(/^[0-9a-z]+$/i) && hostId.length > 2){
+			if(roomId.match(/^[0-9a-z]+$/i) && roomId.length > 2 && roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && hostId.match(/^[0-9a-z]+$/i) && hostId.length > 2){
 				var room = {};
-				room.id = id;
-				room.name = name;
+				room.roomId = roomId;
+				room.roomName = roomName;
 				room.hostId = hostId;
-				rooms[id] = room;
+				rooms[roomId] = room;
 				console.log('New room created.');
 			}
 			else{

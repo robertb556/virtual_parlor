@@ -36,9 +36,9 @@ var Input = function(){
 			
 			var data = {};
 			data.CREATE_ROOM = true;
-			data.id = $_GET["roomId"]
-			room.name = "testRoom"
-			room.hostId = $_GET["playerId"];
+			data.roomId = $_GET["roomId"]
+			data.roomName = "testRoom"
+			data.hostId = $_GET["playerId"];
 			var message = JSON.stringify(data);
 			me.send(message);
 		};

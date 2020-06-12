@@ -83,7 +83,7 @@
 		var data = JSON.parse(e.data);
 		if(data.ROOMS){
             var rooms = data.roomList;
-			for(var i=0; i<rooms.length; i++) $('#rooms').append("<option value='"+rooms[i].id+"'>"+rooms[i].name+"</option>");
+			for(var i=0; i<rooms.length; i++) $('#rooms').append("<option value='"+rooms[i].roomId+"'>"+rooms[i].roomName+"</option>");
 		}
 	};
 })();
