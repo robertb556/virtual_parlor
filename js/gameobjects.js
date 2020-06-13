@@ -472,7 +472,7 @@ var SyncContextMenu = function(x, y, isConfirm){
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
 			result = true;
 			
-			if(me.isConfirm) input.sendWorldState();
+			if(me.isConfirm) input.syncWorlds();
 		}
 
 		return result;

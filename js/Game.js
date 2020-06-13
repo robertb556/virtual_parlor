@@ -116,7 +116,7 @@ function tickStep(){
 	if(localPlayer !== null){
 		input.tick();
 		gameObjects.tick();
-		if(tickCount % 50 === 0) input.sendBuffer();
+		if(tickCount % 50 === 0) input.sendUpdate();
 	}
 	
 	setTimeout(tickStep, 15);

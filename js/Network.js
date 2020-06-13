@@ -1,6 +1,9 @@
+'use strict';
 
-
-var PEER_PREFIX = "CLIENT_";
+var PEER_PREFIX = "TD45v2ca77_";
+var ENQUEUE = 0;
+var PENDING = 1;
+var OPEN = 2;
 
 var Network = function(myId){
 	var me = {};
@@ -8,27 +11,43 @@ var Network = function(myId){
 	me.live = false;
 	me.peer = new Peer(PEER_PREFIX+myId);
 	me.connections = {};
-	me.pending = [];
+	me.connectionListeners = [];
+	me.messageListeners = [];
+
+
+	me.addConnectionListener = function(callback){
+		me.connectionListeners.push(callback);
+	};
+
+	me.addMessageListener = function(callback){
+		me.messageListeners.push(callback);
+	};
+	
 
 	me.addConnection = function(id){
 		//queue it up
 		if(!me.connections[id]){
+			console.log("enqued["+id+"]");
 			me.connections[id] = {};
 			me.connections[id].status = ENQUEUE;
 		}
 
 		//if its not already loaded, load it
-		if(me.live){
+		if(me.live && me.connections[id].status === ENQUEUE){
 			console.log("addConnection id["+id+"]");
+			var conn = me.peer.connect(id);
 			me.connections[id].status = PENDING;
-			me.connections[id].conn = me.peer.connect(id);
+			me.connections[id].conn = conn;
 
 			conn.on('open', function(){
 				console.log("conn.open");
 				me.connections[id].status = OPEN;
 
+				//listeners
+				for(var i=0; i<me.connectionListeners.length; i++) me.connectionListeners[i](id);
+
 				//inital handshake
-				conn.send(id);
+				conn.send("");
 			});
 
 			conn.on('error', function(err){
@@ -37,10 +56,12 @@ var Network = function(myId){
 		}
 	};
 
-	me.send = function(message){
+	me.broadcast = function(message){
 		for(var key in me.connections){
 			if(me.connections.hasOwnProperty(key)){
-
+				if(me.connections[key].status === OPEN){
+					me.connections[key].conn.send(message);
+				}
 			}
 		}
 	};
@@ -53,7 +74,7 @@ var Network = function(myId){
 		me.live = true;
 		for(var key in me.connections){
 			if(me.connections.hasOwnProperty(key)){
-				if(me.connections[key].status === PENDING) me.addConnection(me.connections[key]);
+				if(me.connections[key].status === ENQUEUE) me.addConnection(key);
 			}
 		}
 	});
@@ -76,13 +97,14 @@ var Network = function(myId){
 
 		//close
 		conn.on('close', function(){
-			connectionBroken = true;
 			console.log("connection on close.");
 		});
 
 		//recieve message
-		conn.on('data', function(data){
-
+		conn.on('data', function(message){
+			if(message.length > 0){
+				for(var i=0; i<me.messageListeners.length; i++) me.messageListeners[i](message);
+			}
 		});
 	});
 

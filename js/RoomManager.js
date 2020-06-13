@@ -1,4 +1,4 @@
-
+'use strict';
 
 var RoomManager = function(roomId, roomName, playerId){
 	var me = {};
@@ -63,12 +63,12 @@ var RoomManager = function(roomId, roomName, playerId){
 				players[i] = player;
 
 				//local player
-				if(name === $_GET["name"]){
+				if(name === sessionStorage.getItem("playerId")){
 					localPlayer = players[i];
 
 					//If host, see if a state exists and load it.
-					if(localPlayer.index === 1 && sessionStorage.getItem("WORLD_BACKUP")){
-						var m = sessionStorage.getItem("WORLD_BACKUP");
+					if(localPlayer.index === 1 && sessionStorage.getItem("WORLD_STATE")){
+						var m = sessionStorage.getItem("WORLD_STATE");
 						var d = JSON.parse(m);
 						me.loadWorldState(d);
 					}

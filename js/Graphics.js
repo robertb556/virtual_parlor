@@ -79,7 +79,15 @@ var Graphics = function(){
 		requestAnimationFrame(me.frame);
 		me.frameCount++;
 
-		console.log("Network.connections.length["+network.connections.length+"]");
+		/*
+		var text = "network cons[";
+		for(var i in network.connections){
+			if(network.connections.hasOwnProperty(i)){
+				text += network.connections[i].status+",";
+			}
+		}
+		console.log(text);
+		*/
 
 		if(localPlayer === null) return;
 

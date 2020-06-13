@@ -28,9 +28,13 @@ var Input = function(){
 		//HOST GAME
 		if(sessionStorage.getItem("isHost")){
 			console.log("im host!");
+
+			//listen for new players
+			network.addConnectionListener(me.onNewPlayer);
+
 			//game already started (reload)
-			if(sessionStorage.getItem("WORLD_BACKUP")){
-				var message = sessionStorage.getItem("WORLD_BACKUP");
+			if(sessionStorage.getItem("WORLD_STATE")){
+				var message = sessionStorage.getItem("WORLD_STATE");
 				var data = JSON.parse(message);
 				me.loadWorldState(data);
 			}
@@ -54,44 +58,96 @@ var Input = function(){
 			}
 
 			//schedual backups
-			me.saveWorldBackup();
+			me.backupWorld();
 		}
 
 		//JOIN GAME
 		else{
 			console.log("im a client.");
 			network.addConnection(PEER_PREFIX+sessionStorage.getItem("hostId"));
+			network.addMessageListener(me.onPeerMessage);
 		}
 	};
 
-	me.sendBuffer = function(){
-		//prepare packet
-		var data = {};
-		data.UPDATE = true;
-		data.name = $_GET["name"];
-		data.playerIndex = localPlayer.index;
-		data.buffer = me.outboundBuffer;
-		var message = JSON.stringify(data);
-
-		//send it
-		network.send(message);
-
-		//clear outbound
-		me.outboundBuffer.length = 0;
-		me.startTime = Date.now();
+	me.onNewPlayer = function(id){
+		var name = id.split(PEER_PREFIX)[1];
+		players.push(Player(players.length, name));
+		me.syncWorlds();
 	};
 
-	me.sendWorldState = function(){
+	me.onPeerMessage = function(message){
+		var data = JSON.parse(message);
+		console.log("peer message["+message+"]");
+
+		//WORLD STATE
+		if(data.WORLD_STATE){
+			me.loadWorldState(data);
+		}
+			
+		//UPDATE
+		else if(data.UPDATE){
+			if(!me.inboundLocked){
+				var player = players[data.playerIndex];
+				//add to buffer
+				for(var i=0; i<data.buffer.length; i++) player.buffer.push(data.buffer[i]);
+			}
+		}
+		/*
+		//PLAYER LIST
+		else if(data.PLAYER_LIST){
+			//delete old players
+			players = [];
+
+			//delete old pass buttons
+			for(var i=0; i<gameObjects.objects.length; i++){
+				var obj = gameObjects.objects[i];
+				if(obj.type === OBJ_PASS) obj.deleteMe = true;
+			}
+
+			//new player list
+			for(var i=1; i<data.playerNames.length; i++){
+				var name = data.playerNames[i];
+				var player = Player(i, name);
+				players[i] = player;
+
+				//local player
+				if(name === sessionStorage.getItem("playerId")){
+					localPlayer = players[i];
+
+					//If host, see if a state exists and load it.
+					if(localPlayer.index === 1 && sessionStorage.getItem("WORLD_STATE")){
+						var m = sessionStorage.getItem("WORLD_STATE");
+						var d = JSON.parse(m);
+						me.loadWorldState(d);
+					}
+				}
+			}
+			
+			//active player
+			players[0] = players[1];
+		}
+		*/
+	};
+
+	me.getWorldState = function(){
 		//prepare packet
 		var data = {};
 		data.WORLD_STATE = true;
-		data.name = $_GET["name"];
-		data.state = gameObjects.getWorldState();
-		data.seed = random.getSeed();
-		var message = JSON.stringify(data);
+		data.name = sessionStorage.getItem("playerId");
 
-		//send it
-		me.send(message);
+		//game objects
+		data.state = gameObjects.getWorldState();
+
+		//random seed
+		data.seed = random.getSeed();
+
+		//players
+		data.playerIds = [];
+		for(var i=1; i<players.length; i++) data.playerIds[i] = players[i].name;
+		data.activePlayerIndex = players[0].index;
+
+		//return
+		return data;
 	};
 
 	me.loadWorldState = function(data){
@@ -124,41 +180,47 @@ var Input = function(){
 		//for(var i=1; i<players.length; i++) players[i].buffer.removeAll();
 	};
 
-	me.saveWorldBackup = function(){
-		//if I'm the host
-		if(localPlayer && localPlayer.index === 1){
-			//prepare packet
-			var data = {};
-			data.WORLD_BACKUP = true;
-			data.name = $_GET["name"];
-			data.state = gameObjects.getWorldState();
-			data.seed = random.getSeed();
-			data.playerIds = [];
-			for(var i=1; i<players.length; i++) data.playerIds[i] = players[i].name;
-			data.activePlayerIndex = players[0].index;
+	me.sendUpdate = function(){
+		//prepare packet
+		var data = {};
+		data.UPDATE = true;
+		data.name = sessionStorage.getItem("playerId");
+		data.playerIndex = localPlayer.index;
+		data.buffer = me.outboundBuffer;
+		var message = JSON.stringify(data);
 
+		//send it
+		network.broadcast(message);
+
+		//clear outbound
+		me.outboundBuffer.length = 0;
+		me.startTime = Date.now();
+	};
+
+	me.syncWorlds = function(){
+		var data = me.getWorldState();
+		var message = JSON.stringify(data);
+		network.broadcast(message);
+		me.loadWorldState(data);
+	};
+
+
+	me.backupWorld = function(){
+		if(localPlayer){
+			var data = me.getWorldState();
 			var message = JSON.stringify(data);
-
-			//store locally
-			sessionStorage.setItem("WORLD_BACKUP", message);
-
-			//backed up
+			sessionStorage.setItem("WORLD_STATE", message);
 			console.log("backed up world");
 		}
 		
-		//but always schedual
-		setTimeout(me.saveWorldBackup, 3000);
-	};
-
-	me.send = function(message){
-		if(me.connected){
-			me.server.send(message);
-		}
+		//schedual
+		setTimeout(me.backupWorld, 10000);
 	};
 
 	me.unlockInbound = function(){
 		me.inboundLocked = false;
 	};
+
 	me.unlockOutbound = function(){
 		me.outboundLocked = false;
 	};
