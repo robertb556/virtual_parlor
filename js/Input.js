@@ -27,6 +27,7 @@ var Input = function(){
 
 		//HOST GAME
 		if(sessionStorage.getItem("isHost")){
+			console.log("im host!");
 			//game already started (reload)
 			if(sessionStorage.getItem("WORLD_BACKUP")){
 				var message = sessionStorage.getItem("WORLD_BACKUP");
@@ -36,6 +37,9 @@ var Input = function(){
 
 			//create new game
 			else{
+				//game components
+				initComponents();
+
 				//players
 				players = [];
 				players[1] = Player(1, sessionStorage.getItem("playerId"));
@@ -55,7 +59,8 @@ var Input = function(){
 
 		//JOIN GAME
 		else{
-
+			console.log("im a client.");
+			network.addConnection(PEER_PREFIX+sessionStorage.getItem("hostId"));
 		}
 	};
 
@@ -69,7 +74,7 @@ var Input = function(){
 		var message = JSON.stringify(data);
 
 		//send it
-		me.send(message);
+		network.send(message);
 
 		//clear outbound
 		me.outboundBuffer.length = 0;

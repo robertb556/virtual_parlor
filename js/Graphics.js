@@ -79,6 +79,8 @@ var Graphics = function(){
 		requestAnimationFrame(me.frame);
 		me.frameCount++;
 
+		console.log("Network.connections.length["+network.connections.length+"]");
+
 		if(localPlayer === null) return;
 
 

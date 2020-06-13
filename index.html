@@ -108,6 +108,8 @@ window.onload = function(){
 };
 
 //get rooms from server
+var roomIds = [];
+var hostIds = [];
 (function(){
 	//connect to server
 	var server = new WebSocket('ws://18.224.202.15:9191');
@@ -129,7 +131,11 @@ window.onload = function(){
 		var data = JSON.parse(e.data);
 		if(data.ROOMS){
             var rooms = data.roomList;
-			for(var i=0; i<rooms.length; i++) $('#rooms').append("<option value='"+rooms[i].roomId+"'>"+rooms[i].roomName+"</option>");
+			for(var i=0; i<rooms.length; i++){
+                $('#rooms').append("<option value='"+i+"'>"+rooms[i].roomName+"</option>");
+                roomIds[i] = rooms[i].roomId;
+                hostIds[i] = rooms[i].hostId;
+            }
 		}
 	};
 })();
@@ -147,7 +153,11 @@ function setUsername(){
 }
 
 function joinRoom(){
-    var roomId = $("select.rooms").children("option:selected").val();
+    var index = $("#rooms").children("option:selected").val();
+    var roomId = roomIds[index];
+    var hostId = hostIds[index];
+    sessionStorage.setItem("hostId", hostId);
+    sessionStorage.removeItem("isHost");
     window.location.href = "client.html?roomId="+roomId;
 }
 

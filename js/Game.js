@@ -33,6 +33,7 @@ var localPlayer = null;
 var isHost = false;
 var random;
 var tickCount = 0;
+var network;
 
 
 
@@ -46,14 +47,15 @@ window.onload = function(){
 	mouse = Mouse();
 	keyboard = Keyboard();
 	gameObjects = GameObjects();
+	network = Network(sessionStorage.getItem("playerId"));
 	input = Input();
 	graphics.start();
 
-	//launch
-	launch();
+
+	tickStep();
 };
 
-function launch(){
+function initComponents(){
 	//sync
 	SyncButton(20, 20);
 
@@ -106,11 +108,6 @@ function launch(){
 	//parts deck
 	var deck = Deck(2216, 2350, "partback", true);
 	for(var i=1; i<=23; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "part"+i, "partback", "partback", true));
-
-	
-
-
-	tickStep();
 }
 
 function tickStep(){
