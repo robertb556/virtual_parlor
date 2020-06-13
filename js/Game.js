@@ -30,7 +30,6 @@ var gameObjects;
 var activeElement;
 var players = [];
 var localPlayer = null;
-var isHost = false;
 var random;
 var tickCount = 0;
 var network;

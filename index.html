@@ -28,12 +28,12 @@
 		<div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-			        <form role="form">
+			        <form role="form" action="" onsubmit="return setUsername()">
                         <div class="form-group">
                             <label>username</label>
                             <input type="text" class="form-control" id="username">
                         </div>
-                        <input class="btn btn-primary btn-block" type="button" onclick="setUsername()" value="connect" />
+                        <input class="btn btn-primary btn-block" type="submit" value="connect" />
 			        </form>
                 </div>
             </div>
@@ -49,7 +49,7 @@
 		<div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-			        <form role="form">
+			        <form id="createRoomForm" role="form" action="" onsubmit="return createRoom()" method="post">
                         <div class="form-group">
 					        <label>room name</label>
 					        <input type="text" class="form-control" id="roomname" />
@@ -58,7 +58,7 @@
 					        <label>select game</label>
 					        <select class="form-control" id="game_types" name="game_types"></select>
 				        </div>
-                        <input class="btn btn-primary btn-block" type="button" onclick="createRoom()" value="create" />
+                        <input class="btn btn-primary btn-block" type="submit" value="create" />
 			        </form>
                 </div>
             </div>
@@ -73,12 +73,12 @@
 		<div class="col-md-4">
             <div class="card">
                 <div class="card-body">
-			        <form role="form">
+			        <form id="joinRoomForm" role="form" action="" onsubmit="return joinRoom()" method="post">
                         <div class="form-group">
                             <label>select room</label>
 				            <select class="form-control" id="rooms" name="rooms"></select>
                         </div>
-                        <input class="btn btn-primary btn-block" type="button" onclick="joinRoom()" value="join" />
+                        <input class="btn btn-primary btn-block" type="submit" value="join" />
 			        </form>
                 </div>
             </div>
@@ -94,7 +94,11 @@
 
 
 <script>
+var roomIds = [];
+var hostIds = [];
+
 window.onload = function(){
+
     if(sessionStorage.getItem("playerId")){
         $('#username-page').hide();
         $('#room-page').show();
@@ -108,8 +112,6 @@ window.onload = function(){
 };
 
 //get rooms from server
-var roomIds = [];
-var hostIds = [];
 (function(){
 	//connect to server
 	var server = new WebSocket('ws://18.224.202.15:9191');
@@ -147,19 +149,16 @@ function setUsername(){
 		sessionStorage.setItem("playerId", username);
 
         //show rooms
-        $('#username-page').hide();
-        $('#room-page').show();
+        //$('#username-page').hide();
+        //$('#room-page').show();
+        return true;
+    }
+    else{
+        return false;
     }
 }
 
-function joinRoom(){
-    var index = $("#rooms").children("option:selected").val();
-    var roomId = roomIds[index];
-    var hostId = hostIds[index];
-    sessionStorage.setItem("hostId", hostId);
-    sessionStorage.removeItem("isHost");
-    window.location.href = "client.html?roomId="+roomId;
-}
+
 
 function createRoom(){
     var roomName = $("#roomname").val();
@@ -169,9 +168,24 @@ function createRoom(){
         sessionStorage.setItem("roomName", roomName);
         sessionStorage.setItem("isHost", true);
         var roomId = createId();
-        window.location.href = "client.html?roomId="+roomId;
+        $('#createRoomForm').attr('action', 'client.html?roomId='+roomId);
+        //window.location.href = "client.html?roomId="+roomId;
+        return true;
     }
-    
+    else{
+        return false;
+    }
+}
+
+function joinRoom(){
+    var index = $("#rooms").children("option:selected").val();
+    var roomId = roomIds[index];
+    var hostId = hostIds[index];
+    sessionStorage.setItem("hostId", hostId);
+    sessionStorage.removeItem("isHost");
+    $('#joinRoomForm').attr('action', 'client.html?roomId='+roomId);
+    //window.location.href = "client.html?roomId="+roomId;
+    return true;
 }
 
 function createId(){

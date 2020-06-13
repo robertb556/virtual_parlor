@@ -65,8 +65,10 @@ var Input = function(){
 		else{
 			console.log("im a client.");
 			network.addConnection(PEER_PREFIX+sessionStorage.getItem("hostId"));
-			network.addMessageListener(me.onPeerMessage);
 		}
+
+		//listen for messages
+		network.addMessageListener(me.onPeerMessage);
 	};
 
 	me.onNewPlayer = function(id){
@@ -77,7 +79,7 @@ var Input = function(){
 
 	me.onPeerMessage = function(message){
 		var data = JSON.parse(message);
-		console.log("peer message["+message+"]");
+		console.log("peer message");//["+message+"]");
 
 		//WORLD STATE
 		if(data.WORLD_STATE){
@@ -163,7 +165,15 @@ var Input = function(){
 		players = [];
 		for(var i=1; i<data.playerIds.length; i++){
 			players[i] = Player(i, data.playerIds[i]);
+
+			//self
 			if(players[i].name === sessionStorage.getItem("playerId")) localPlayer = players[i];
+
+			//peers
+			else{
+				if(sessionStorage.getItem("isHost")) network.addConnection(PEER_PREFIX+players[i].name);
+				else if(i === 1) network.addConnection(PEER_PREFIX+players[i].name);
+			}
 		}
 
 		//active player
@@ -181,6 +191,7 @@ var Input = function(){
 	};
 
 	me.sendUpdate = function(){
+		console.log("send update");
 		//prepare packet
 		var data = {};
 		data.UPDATE = true;
@@ -198,6 +209,7 @@ var Input = function(){
 	};
 
 	me.syncWorlds = function(){
+		console.log("syncing worlds");
 		var data = me.getWorldState();
 		var message = JSON.stringify(data);
 		network.broadcast(message);

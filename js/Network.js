@@ -1,15 +1,20 @@
 'use strict';
 
-var PEER_PREFIX = "TD45v2ca77_";
+var PEER_PREFIX = "vparlor_";
 var ENQUEUE = 0;
 var PENDING = 1;
 var OPEN = 2;
 
 var Network = function(myId){
 	var me = {};
-
+	console.log("my playerId["+myId+"]");
 	me.live = false;
-	me.peer = new Peer(PEER_PREFIX+myId);
+	//me.peer = new Peer(PEER_PREFIX+myId);
+	me.peer = new Peer(PEER_PREFIX+myId, {
+		host:'18.224.202.15',
+		port:'9000',
+		path:'/virtualparlor'
+	});
 	me.connections = {};
 	me.connectionListeners = [];
 	me.messageListeners = [];
