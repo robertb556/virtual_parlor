@@ -7,19 +7,25 @@ var Network = function(myId){
 
 	me.live = false;
 	me.peer = new Peer(PEER_PREFIX+myId);
-	me.connections = [];
+	me.connections = {};
 	me.pending = [];
 
 	me.addConnection = function(id){
+		//queue it up
+		if(!me.connections[id]){
+			me.connections[id] = {};
+			me.connections[id].status = ENQUEUE;
+		}
+
+		//if its not already loaded, load it
 		if(me.live){
 			console.log("addConnection id["+id+"]");
-			var conn = me.peer.connect(id);
+			me.connections[id].status = PENDING;
+			me.connections[id].conn = me.peer.connect(id);
 
 			conn.on('open', function(){
 				console.log("conn.open");
-
-				//add connection
-				me.connections.push(conn);
+				me.connections[id].status = OPEN;
 
 				//inital handshake
 				conn.send(id);
@@ -29,21 +35,13 @@ var Network = function(myId){
 				console.log("conn error["+err+"]");
 			});
 		}
-		else{
-			me.pending.push(id);
-		}
-	};
-
-	me.hasConnection = function(id){
-		for(var i=0; i<me.connections.length; i++){
-			if(me.connections[i].peer === id) return true;
-		}
-		return false;
 	};
 
 	me.send = function(message){
-		for(var i=0; i<me.connections.length; i++){
+		for(var key in me.connections){
+			if(me.connections.hasOwnProperty(key)){
 
+			}
 		}
 	};
 
@@ -53,8 +51,11 @@ var Network = function(myId){
 	me.peer.on('open', function(id){
 		console.log('My client ID is: ' + id);
 		me.live = true;
-		for(var i=0; i<me.pending.length; i++) me.addConnection(me.pending[i]);
-		me.pending = [];
+		for(var key in me.connections){
+			if(me.connections.hasOwnProperty(key)){
+				if(me.connections[key].status === PENDING) me.addConnection(me.connections[key]);
+			}
+		}
 	});
 
 	me.peer.on('error', function(error){
@@ -66,7 +67,7 @@ var Network = function(myId){
 		var id = conn.peer;
 
 		//new connection
-		if(!me.hasConnection(id)) me.addConnection(id);
+		if(!me.connections[id]) me.addConnection(id);
 		
 		//errors
 		conn.on('error', function(error){
