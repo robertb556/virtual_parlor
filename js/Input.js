@@ -90,7 +90,7 @@ var Input = function(){
 
 	me.onPeerMessage = function(message){
 		var data = JSON.parse(message);
-		console.log("peer message");//["+message+"]");
+		//console.log("peer message");//["+message+"]");
 
 		//WORLD STATE
 		if(data.WORLD_STATE){
@@ -201,7 +201,7 @@ var Input = function(){
 	};
 
 	me.sendUpdate = function(){
-		console.log("send update");
+		//console.log("send update");
 		//prepare packet
 		var data = {};
 		data.UPDATE = true;
@@ -234,7 +234,7 @@ var Input = function(){
 			var roomData = JSON.parse(sessionStorage.getItem($_GET["roomId"]));
 			roomData.WORLD_STATE = message;
 			sessionStorage.setItem($_GET["roomId"], JSON.stringify(roomData));
-			console.log("backed up world");
+			//console.log("backed up world");
 		}
 		
 		//schedual

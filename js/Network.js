@@ -32,20 +32,20 @@ var Network = function(myId){
 	me.addConnection = function(id){
 		//queue it up
 		if(!me.connections[id]){
-			console.log("enqued["+id+"]");
+			console.log("network connection queued ["+id+"]");
 			me.connections[id] = {};
 			me.connections[id].status = ENQUEUE;
 		}
 
 		//if its not already loaded, load it
 		if(me.live && me.connections[id].status === ENQUEUE){
-			console.log("addConnection id["+id+"]");
+			console.log("network connection pending ["+id+"]");
 			var conn = me.peer.connect(id);
 			me.connections[id].status = PENDING;
 			me.connections[id].conn = conn;
 
 			conn.on('open', function(){
-				console.log("conn.open");
+				console.log("network connection open ["+id+"]");
 				me.connections[id].status = OPEN;
 
 				//listeners

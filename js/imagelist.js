@@ -46,54 +46,69 @@ var SIMG = {}; //small versions
 
 
 
-for(var i=1; i<=6; i++) addImageFile("d6_"+i, "d6_"+i+".png");		//white dice
-for(var i=1; i<=6; i++) addImageFile("db6_"+i, "bd6_"+i+".png");	//blue dice
-for(var i=1; i<=6; i++) addImageFile("kd6_"+i, "kd6_"+i+".png");		//black dice
-for(var i=1; i<=6; i++) addImageFile("rd6_"+i, "rd6_"+i+".png");		//red dice
+for(var i=1; i<=6; i++) loadImageFile("d6_"+i, "d6_"+i+".png");		//white dice
+for(var i=1; i<=6; i++) loadImageFile("db6_"+i, "bd6_"+i+".png");	//blue dice
+for(var i=1; i<=6; i++) loadImageFile("kd6_"+i, "kd6_"+i+".png");		//black dice
+for(var i=1; i<=6; i++) loadImageFile("rd6_"+i, "rd6_"+i+".png");		//red dice
 
-for(var i=1; i<=18; i++) addImageFile("building"+i, "building"+i+".png");		//building cards
-for(var i=1; i<=23; i++) addImageFile("part"+i, "part"+i+".png");				//part cards
-for(var i=1; i<=16; i++) addImageFile("resource"+i, "resource"+i+".png");		//resource cards
-for(var i=1; i<=18; i++) addImageFile("building"+i, "building"+i+".png");		//building cards
-for(var i=1; i<=4; i++) addImageFile("worker"+i, "worker"+i+".png");			//worker tokens
-for(var i=1; i<=4; i++) addImageFile("cube"+i, "cube"+i+".png");				//resource tokens
+for(var i=1; i<=18; i++) loadImageFile("building"+i, "building"+i+".png");		//building cards
+for(var i=1; i<=23; i++) loadImageFile("part"+i, "part"+i+".png");				//part cards
+for(var i=1; i<=16; i++) loadImageFile("resource"+i, "resource"+i+".png");		//resource cards
+for(var i=1; i<=18; i++) loadImageFile("building"+i, "building"+i+".png");		//building cards
+for(var i=1; i<=4; i++) loadImageFile("cube"+i, "cube"+i+".png");				//resource tokens
 
-addImageFile("resourceback",		"resourceback.png");
-addImageFile("buildingback",		"buildingback.png");
-addImageFile("partback",			"partback.png");
+loadImageFile("resourceback",		"resourceback.png");
+loadImageFile("buildingback",		"buildingback.png");
+loadImageFile("partback",			"partback.png");
 
-addImageFile("mouse",			"mouse.png");
-addImageFile("mouseTop",		"mouseTop.png");
+loadImageFile("mouse",			"mouse.png");
+loadImageFile("mouseTop",		"mouseTop.png");
 
-addImageFile("pilot",		"pilot.png");
-addImageFile("ace",			"ace.png");
+loadImageFile("worker",		"worker.png");
+loadImageFile("workerTop",	"workerTop.png");
+loadImageFile("pilot",		"pilot.png");
+loadImageFile("ace",			"ace.png");
 
-addImageFile("board",	"board.png");
+loadImageFile("board",	"board.png");
 
-addImageFile("btop",		"btop.png");
-addImageFile("bbot",		"bbot.png");
-addImageFile("button",		"button.png");
-addImageFile("sync",		"sync.png");
-addImageFile("cancel",		"cancel.png");
-addImageFile("confirm",		"confirm.png");
-addImageFile("shuffle",		"shuffle.png");
-addImageFile("set1",		"set1.png");
-addImageFile("set2",		"set2.png");
-addImageFile("set3",		"set3.png");
-addImageFile("set4",		"set4.png");
-addImageFile("set5",		"set5.png");
-addImageFile("set6",		"set6.png");
-
-
+loadImageFile("btop",		"btop.png");
+loadImageFile("bbot",		"bbot.png");
+loadImageFile("button",		"button.png");
+loadImageFile("sync",		"sync.png");
+loadImageFile("cancel",		"cancel.png");
+loadImageFile("confirm",		"confirm.png");
+loadImageFile("shuffle",		"shuffle.png");
+loadImageFile("set1",		"set1.png");
+loadImageFile("set2",		"set2.png");
+loadImageFile("set3",		"set3.png");
+loadImageFile("set4",		"set4.png");
+loadImageFile("set5",		"set5.png");
+loadImageFile("set6",		"set6.png");
 
 
-function addImageFile(name, fileName){
+
+
+function loadImageFile(name, fileName){
 	IMG[name] = new Image();
 	IMG[name].src = "img/"+fileName;
 }
 
+function addImage(name, img){
+	IMG[name] = img;
+	SIMG[name] = getSmallImg(IMG[name], IMAGE_SCALE);
+}
+
 
 function loadImages(){
+	//workers
+	for(var i=1; i<=4; i++){
+		addImage("worker"+i, colorizeImage(IMG["worker"], IMG["workerTop"], COLORS[i], 1));
+		addImage("pilot"+i, colorizeImage(IMG["worker"], IMG["pilot"], COLORS[i], 1));
+		addImage("ace"+i, colorizeImage(IMG["worker"], IMG["ace"], COLORS[i], 1));
+	}
+
+
+	//SMALL VERSIONS
 	for(var name in IMG){
 		if(IMG.hasOwnProperty(name)){
 			SIMG[name] = getSmallImg(IMG[name], IMAGE_SCALE);

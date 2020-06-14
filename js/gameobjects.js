@@ -43,7 +43,13 @@ var Tile = function(x, y, img){
 	};
 
 	me.onDrawDetails = function(ctx, w, h){
-		ctx.drawImage(IMG[me.img], 0, 0, w, h);
+		var dx = 20;
+		var dy = 20;
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(dx-10, dy-10, w+20, h+20);
+
+		ctx.drawImage(IMG[me.img], dx, dy, w, h);
 	};
 
 	return me;
@@ -61,19 +67,21 @@ var Tile3 = function(x, y, value, img1, img2, img3){
 	me.img[3] = img3;
 	me.x = x;
 	me.y = y;
-	me.w = IMG[me.img[me.value]].width;
-	me.h = IMG[me.img[me.value]].height;
+	me.w = IMG[me.img[1]].width;
+	me.h = IMG[me.img[1]].height;
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(IMG[me.img[1]], me.viewX, me.viewY);
-		if(me.value === 2) ctx.drawImage(IMG[me.img[2]], me.viewX, me.viewY);
-		if(me.value === 3) ctx.drawImage(IMG[me.img[3]], me.viewX, me.viewY);
+		ctx.drawImage(IMG[me.img[me.value]], me.viewX, me.viewY);
 	};
 
 	me.onDrawDetails = function(ctx, w, h){
-		ctx.drawImage(IMG[me.img[1]], 0, 0, w, h);
-		if(me.value === 2) ctx.drawImage(IMG[me.img[2]], 0, 0, w, h);
-		if(me.value === 3) ctx.drawImage(IMG[me.img[3]], 0, 0, w, h);
+		var dx = 20;
+		var dy = 20;
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(dx-10, dy-10, w+20, h+20);
+
+		ctx.drawImage(IMG[me.img[me.value]], dx, dy, w, h);
 	};
 
 	me.setValue = function(value){
@@ -131,12 +139,20 @@ var D6 = function(x, y, value, color){
 	};
 
 	me.onDrawDetails = function(ctx, w, h){
+		var dx = 20;
+		var dy = 20;
+		var dw = w/2;
+		var dh = h/2;
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(dx-10, dy-10, dw+20, dh+20);
+
 		if(me.animation > 0){
 			var rval = (me.animation%6)+1;
-			ctx.drawImage(IMG[me.imgPrefix+rval], 0, 0, w, h);
+			ctx.drawImage(IMG[me.imgPrefix+rval], dx, dy, dw, dh);
 		}
 		else{
-			ctx.drawImage(IMG[me.imgPrefix+me.value], 0, 0, w, h);
+			ctx.drawImage(IMG[me.imgPrefix+me.value], dx, dy, dw, dh);
 		}
 	};
 
@@ -202,18 +218,24 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 	};
 
 	me.onDrawDetails = function(ctx, w, h){
+		var dx = 20;
+		var dy = 20;
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(dx-10, dy-10, w+20, h+20);
+
 		//FACE UP
 		if(me.isFaceUp){
-			ctx.drawImage(IMG[me.imgTop], 0, 0, w, h);
+			ctx.drawImage(IMG[me.imgTop], dx, dy, w, h);
 		}
 
 		//FACE DOWN
 		else{
 			if(localPlayer === me.getOwner()){
-				ctx.drawImage(IMG[me.imgTop], 0, 0, w, h);
+				ctx.drawImage(IMG[me.imgTop], dx, dy, w, h);
 			}
 			else{
-				ctx.drawImage(IMG[me.imgBot], 0, 0, w, h);
+				ctx.drawImage(IMG[me.imgBot], dx, dy, w, h);
 			}
 		}
 	};
