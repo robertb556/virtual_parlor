@@ -57,6 +57,7 @@ var Network = function(myId){
 
 			conn.on('error', function(err){
 				console.log("conn error["+err+"]");
+				if(delete me.connections[conn.peer]) delete me.connections[conn.peer];
 			});
 		}
 	};
@@ -98,11 +99,13 @@ var Network = function(myId){
 		//errors
 		conn.on('error', function(error){
 			console.log("DataConnection error["+error.type+"]");
+			if(delete me.connections[conn.peer]) delete me.connections[conn.peer];
 		});
 
 		//close
 		conn.on('close', function(){
 			console.log("connection on close.");
+			if(delete me.connections[conn.peer]) delete me.connections[conn.peer];
 		});
 
 		//recieve message

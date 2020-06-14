@@ -165,9 +165,13 @@ function createRoom(){
     var playerId = sessionStorage.getItem("playerId");
 
     if(roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && playerId.match(/^[0-9a-z]+$/i) && playerId.length > 2){
-        sessionStorage.setItem("roomName", roomName);
-        sessionStorage.setItem("isHost", true);
         var roomId = createId();
+        var roomData = {};
+        if(sessionStorage.getItem(roomId)) roomData = JSON.parse(sessionStorage.getItem(roomId));
+        roomData.roomName = roomName;
+        roomData.isHost = true;
+        delete roomData.hostId;
+        sessionStorage.setItem(roomId, JSON.stringify(roomData));
         $('#createRoomForm').attr('action', 'client.html?roomId='+roomId);
         //window.location.href = "client.html?roomId="+roomId;
         return true;
@@ -180,9 +184,11 @@ function createRoom(){
 function joinRoom(){
     var index = $("#rooms").children("option:selected").val();
     var roomId = roomIds[index];
-    var hostId = hostIds[index];
-    sessionStorage.setItem("hostId", hostId);
-    sessionStorage.removeItem("isHost");
+
+    var roomData = {};
+    if(sessionStorage.getItem(roomId)) roomData = JSON.parse(sessionStorage.getItem(roomId));
+    if(!roomData.isHost) roomData.hostId = hostIds[index];
+    sessionStorage.setItem(roomId, JSON.stringify(roomData));
     $('#joinRoomForm').attr('action', 'client.html?roomId='+roomId);
     //window.location.href = "client.html?roomId="+roomId;
     return true;

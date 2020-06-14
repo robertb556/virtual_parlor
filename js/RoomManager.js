@@ -25,7 +25,7 @@ var RoomManager = function(roomId, roomName, playerId){
 	me.server.onerror = function(error){
 		alert('WebSocket Error ' + error); console.log(error);
 	};
-
+	/*
 	me.server.onmessage	= function(e){
 		//console.log("got message["+e.data+"]");
 		var data = JSON.parse(e.data);
@@ -84,4 +84,5 @@ var RoomManager = function(roomId, roomName, playerId){
 			//do nothing
 		}
 	};
+	*/
 };

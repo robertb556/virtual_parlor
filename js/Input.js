@@ -25,16 +25,19 @@ var Input = function(){
 	//web server methods
 	me.init = function(){
 
-		//HOST GAME
-		if(sessionStorage.getItem("isHost")){
+
+		var roomData = JSON.parse(sessionStorage.getItem($_GET["roomId"]));
+		console.log("input roomData["+roomData+"]");
+		console.log("input roomData["+JSON.stringify(roomData)+"]");
+		if(roomData.isHost){
 			console.log("im host!");
 
 			//listen for new players
 			network.addConnectionListener(me.onNewPlayer);
 
 			//game already started (reload)
-			if(sessionStorage.getItem("WORLD_STATE")){
-				var message = sessionStorage.getItem("WORLD_STATE");
+			if(roomData.WORLD_STATE){
+				var message = roomData.WORLD_STATE;
 				var data = JSON.parse(message);
 				me.loadWorldState(data);
 			}
@@ -54,7 +57,7 @@ var Input = function(){
 
 
 				//reserve room
-				me.roomManager = RoomManager($_GET['roomId'], sessionStorage.getItem('roomName'), localPlayer.name);
+				me.roomManager = RoomManager($_GET['roomId'], roomData.roomName, localPlayer.name);
 			}
 
 			//schedual backups
@@ -64,7 +67,7 @@ var Input = function(){
 		//JOIN GAME
 		else{
 			console.log("im a client.");
-			network.addConnection(PEER_PREFIX+sessionStorage.getItem("hostId"));
+			network.addConnection(PEER_PREFIX+roomData.hostId);
 		}
 
 		//listen for messages
@@ -73,7 +76,15 @@ var Input = function(){
 
 	me.onNewPlayer = function(id){
 		var name = id.split(PEER_PREFIX)[1];
-		players.push(Player(players.length, name));
+
+		var isNew = true;
+		//start at 1 not 0, cause 1 is redundent (activePlayer)
+		for(var i=1; i<players.length; i++) if(players[i].name === name) isNew = false;
+
+		//create new player
+		if(isNew) players.push(Player(players.length, name));
+
+		//sync
 		me.syncWorlds();
 	};
 
@@ -146,7 +157,6 @@ var Input = function(){
 		//players
 		data.playerIds = [];
 		for(var i=1; i<players.length; i++) data.playerIds[i] = players[i].name;
-		data.activePlayerIndex = players[0].index;
 
 		//return
 		return data;
@@ -171,13 +181,13 @@ var Input = function(){
 
 			//peers
 			else{
-				if(sessionStorage.getItem("isHost")) network.addConnection(PEER_PREFIX+players[i].name);
-				else if(i === 1) network.addConnection(PEER_PREFIX+players[i].name);
+				var roomData = JSON.parse(sessionStorage.getItem($_GET["roomId"]));
+				if(!roomData.isHost && i === 1) network.addConnection(PEER_PREFIX+roomData.hostId);
 			}
 		}
 
 		//active player
-		players[0] = players[data.activePlayerIndex];
+		players[0] = players[1];
 
 		//load state
 		gameObjects.setWorldState(data.state);
@@ -221,7 +231,9 @@ var Input = function(){
 		if(localPlayer){
 			var data = me.getWorldState();
 			var message = JSON.stringify(data);
-			sessionStorage.setItem("WORLD_STATE", message);
+			var roomData = JSON.parse(sessionStorage.getItem($_GET["roomId"]));
+			roomData.WORLD_STATE = message;
+			sessionStorage.setItem($_GET["roomId"], JSON.stringify(roomData));
 			console.log("backed up world");
 		}
 		
