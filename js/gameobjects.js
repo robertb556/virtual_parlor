@@ -9,18 +9,12 @@ gameObjects = GameObjects();
 gameObjects.addConstructor('cube', function(args){
 	var me = MovableObject(args);
 
-	me.x = args[2];
-	me.y = args[3];
-	me.color = args[4];
+	me.color = args[0];
+
 	me.w = 48;
 	me.h = 48;
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.color);
 		return args;
 	};
@@ -43,19 +37,13 @@ gameObjects.addConstructor('cube', function(args){
 gameObjects.addConstructor('tile', function(args){
 	var me = MovableObject(args);
 	
-	me.x = args[2];
-	me.y = args[3];
-	me.img = args[4];
+	me.img = args[0];
+
 	me.w = IMG[me.img].width;
 	me.h = IMG[me.img].height;
 	me.autoSetSpacing();
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.img);
 		return args;
 	};
@@ -74,6 +62,17 @@ gameObjects.addConstructor('tile', function(args){
 		ctx.drawImage(IMG[me.img], dx, dy, w, h);
 	};
 
+	me.onDrop = function(){
+		var x = me.x+Math.floor(me.w/2);
+		var y = me.y+Math.floor(me.h/2);
+		var grid = gameObjects.getGridAt(x, y, me.gridList);
+		console.log("grid["+grid+"]");
+		if(grid){
+			me.x = grid.snapX(x, y);
+			me.y = grid.snapY(x, y);
+		}
+	};
+
 	return me;
 });
 
@@ -81,24 +80,17 @@ gameObjects.addConstructor('tile', function(args){
 gameObjects.addConstructor('tile3', function(args){
 	var me = MovableObject(args);
 
-	me.x = args[2];
-	me.y = args[3];
-	me.value = args[4];
+	me.value = args[0];
 	me.img = [];
-	me.img[1] = args[5];
-	me.img[2] = args[6];
-	me.img[3] = args[7];
+	me.img[1] = args[1];
+	me.img[2] = args[2];
+	me.img[3] = args[3];
 	
 	me.w = IMG[me.img[1]].width;
 	me.h = IMG[me.img[1]].height;
 
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.value);
 		args.push(me.img[1]);
 		args.push(me.img[2]);
@@ -131,7 +123,7 @@ gameObjects.addConstructor('tile3', function(args){
 			result = true;
 			for(var i=1; i<=3; i++){
 				(function(val){
-					gameObjects.createObject(['dieContextMenu', null, e.x, e.y+260*i, me.id, val]);
+					gameObjects.createObject(['dieContextMenu', e.x, e.y+260*i, null, [], me.id, val]);
 				})(i);
 				
 			}
@@ -147,10 +139,8 @@ gameObjects.addConstructor('tile3', function(args){
 gameObjects.addConstructor('d6', function(args){
 	var me = MovableObject(args);
 
-	me.x = args[2];
-	me.y = args[3];
-	me.value = args[4];
-	me.color = args[5];
+	me.value = args[0];
+	me.color = args[1];
 
 	me.imgPrefix = "d6_";
 	if(me.color === "black") me.imgPrefix = "kd6_";
@@ -162,12 +152,7 @@ gameObjects.addConstructor('d6', function(args){
 	me.spacingWidth = 300;
 	me.spacingHeight = 300;
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.value);
 		args.push(me.color);
 		return args;
@@ -219,7 +204,7 @@ gameObjects.addConstructor('d6', function(args){
 			result = true;
 			for(var i=1; i<=6; i++){
 				(function(val){
-					gameObjects.createObject(['dieContextMenu', null, e.x, e.y+260*(i-1), me.id, val]);
+					gameObjects.createObject(['dieContextMenu', e.x, e.y+260*(i-1), null, [], me.id, val]);
 				})(i);
 				
 			}
@@ -236,23 +221,16 @@ gameObjects.addConstructor('card', function(args){
 	var me = MovableObject(args);
 
 	
-	me.x = args[2];
-	me.y = args[3];
-	me.ownerIndex = args[4];
-	me.imgTop = args[5];
-	me.imgBot = args[6];
-	me.imgMask = args[7];
-	me.isFaceUp = args[8];
+	me.ownerIndex = args[0];
+	me.imgTop = args[1];
+	me.imgBot = args[2];
+	me.imgMask = args[3];
+	me.isFaceUp = args[4];
 
 	me.w = IMG[me.imgTop].width;
 	me.h = IMG[me.imgTop].height;
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.ownerIndex);
 		args.push(me.imgTop);
 		args.push(me.imgBot);
@@ -340,16 +318,9 @@ gameObjects.addConstructor('board', function(args){
 
 	me.sortLayer = 2;
 
-	me.x = args[2];
-	me.y = args[3];
-	me.img = args[4];
+	me.img = args[0];
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.img);
 		return args;
 	};
@@ -362,14 +333,186 @@ gameObjects.addConstructor('board', function(args){
 });
 
 
+gameObjects.addConstructor('squareGrid', function(args){
+	var me = GameObject(args);
+
+	me.sortLayer = 2;
+	me.isGrid = true;
+	
+	me.showGrid = args[0];
+	me.rows = args[1];
+	me.columns = args[2];
+	me.cellWidth = args[3];
+	me.cellHeight = args[4];
+	me.gridName = args[5];
+
+	me.w = me.rows * me.cellWidth;
+	me.h = me.columns * me.cellHeight;
+
+	me.onExport = function(args){
+		args.push(me.showGrid);
+		args.push(me.rows);
+		args.push(me.columns);
+		args.push(me.cellWidth);
+		args.push(me.cellHeight);
+		args.push(me.gridName);
+		return args;
+	};
+	
+	me.snapX = function(x, y){
+		var sx = 0;
+		while(sx < x) sx += me.cellWidth;
+		var sx2 = sx - me.cellWidth;
+
+		if(Math.abs(sx-me.cellWidth) < Math.abs(sx2-me.cellWidth)) return sx;
+		else return sx2;
+	};
+
+	
+	me.snapY = function(x, y){
+		var sy = 0;
+		while(sy < y) sy += me.cellHeight;
+		var sy2 = sy - me.cellHeight;
+
+		if(Math.abs(sy-me.cellHeight) < Math.abs(sy2-me.cellHeight)) return sy;
+		else return sy2;
+	};
+
+	me.onDraw = function(ctx){
+		if(me.showGrid){
+			ctx.strokeStyle = "red";
+			ctx.lineWidth = 1;
+
+			for(var i=0; i<me.rows; i++){
+				for(var j=0; j<me.columns; j++){
+					var x = me.viewX + i*me.cellWidth;
+					var y = me.viewY + j*me.cellHeight;
+					ctx.strokeRect(x, y, me.cellWidth, me.cellHeight);
+				}
+			}
+		}
+	};
+
+	return me;
+});
+
+
+
+gameObjects.addConstructor('hexGrid', function(args){
+	var me = GameObject(args);
+
+	me.sortLayer = 2;
+	me.isGrid = true;
+	
+	me.showGrid = args[0];
+	me.rows = args[1];
+	me.columns = args[2];
+	me.cellWidth = args[3];
+	me.cellHeight = args[4];
+	me.gridName = args[5];
+
+	me.w = me.rows * me.cellWidth;
+	me.h = me.columns * me.cellHeight;
+
+	me.onExport = function(args){
+		args.push(me.showGrid);
+		args.push(me.rows);
+		args.push(me.columns);
+		args.push(me.cellWidth);
+		args.push(me.cellHeight);
+		args.push(me.gridName);
+		return args;
+	};
+
+	me.snapX = function(x, y){
+		x = me.xRelative(x);
+		y = me.yRelative(y);
+		var q = x / me.cellWidth;
+		var r = (y/me.cellHeight) - (q/2);
+		
+		return me.cubeRound(true, q, -q-r, r);
+	};
+
+	me.snapY = function(x, y){
+		x = me.xRelative(x);
+		y = me.yRelative(y);
+		var q = x / me.cellWidth;
+		var r = (y/me.cellHeight) - (q/2);
+		
+		return me.cubeRound(false, q, -q-r, r);
+	};
+	
+	me.xRelative = function(x){
+		x -= 23 + me.x;
+		return x;
+	};
+
+	me.yRelative = function(y){
+		y -= 26 + me.y;
+		return y;
+	};
+	
+	me.cubeRound = function(returnX, xx, yy, zz){
+		var rx = Math.round(xx);
+		var ry = Math.round(yy);
+		var rz = Math.round(zz);
+
+		var dx = Math.abs(rx-xx);
+		var dy = Math.abs(ry-yy);
+		var dz = Math.abs(rz-zz);
+
+		if(dx > dy && dx > dz){
+		    rx = -ry-rz;
+		}else if(dy > dz){
+		    ry = -rx-rz;
+		}else{
+		    rz = -rx-ry;
+		}
+
+		//return
+		if(returnX) return me.toX(rx, rz);
+		else return me.toY(rx, rz);
+	};
+
+	me.toX = function(gx, gy){
+		var xx = me.cellWidth * gx + me.x;
+		var yy = me.cellHeight * (gy + gx/2) + me.y;
+
+		return Math.round(xx);
+	};
+	
+	me.toY = function(gx, gy){
+		var xx = me.cellWidth * gx + me.x;
+		var yy = me.cellHeight * (gy + gx/2) + me.y;
+
+		return Math.round(yy);
+	};
+
+	me.onDraw = function(ctx){
+		if(me.showGrid){
+			ctx.strokeStyle = "red";
+			ctx.lineWidth = 1;
+
+			for(var i=0; i<me.rows; i++){
+				for(var j=0; j<me.columns; j++){
+					var x = me.toX(i,j);
+					var y = me.toY(i,j);
+					ctx.strokeRect(x, y, me.cellWidth, me.cellHeight);
+				}
+			}
+		}
+	};
+
+	return me;
+});
+
+
 gameObjects.addConstructor('deck', function(args){
 	var me = GameObject(args);
 
-	me.x = args[2];
-	me.y = args[3];
-	me.img = args[4];
-	me.drawFaceUp = args[5];
-	me.cardTemplates = args[6];
+	me.img = args[0];
+	me.drawFaceUp = args[1];
+	me.cardTemplates = args[2];
 	
 	me.w = IMG[me.img].width;
 	me.h = IMG[me.img].height;
@@ -381,12 +524,7 @@ gameObjects.addConstructor('deck', function(args){
 		}
 	};
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.img);
 		args.push(me.drawFaceUp);
 
@@ -411,10 +549,18 @@ gameObjects.addConstructor('deck', function(args){
 		}
 
 		//show number of cards remaining
-		ctx.font = "150px Arial";
+		var px = Math.floor(me.w/2)
+		ctx.font = px+"px Arial";
 		ctx.textAlign = "center";
+		ctx.fillStyle = "#aaa";
+		var x = me.x+Math.floor(me.w/2);
+		var y = Math.floor(me.y+(px/2)+(me.h/2));
+		ctx.fillText(""+me.cards.length, x+1, y+1);
+		ctx.fillText(""+me.cards.length, x+1, y-1);
+		ctx.fillText(""+me.cards.length, x-1, y+1);
+		ctx.fillText(""+me.cards.length, x-1, y-1);
 		ctx.fillStyle = "black";
-		ctx.fillText(""+me.cards.length, me.x+Math.floor(me.w/2), me.y+7+Math.floor(me.h/2));
+		ctx.fillText(""+me.cards.length, x, y);
 	};
 
 	me.onMouseDown = function(e){
@@ -450,7 +596,7 @@ gameObjects.addConstructor('deck', function(args){
 			}
 
 			else if(e.rightDown){
-				gameObjects.createObject(['deckContextMenu', null, e.x, e.y, me.id]);
+				gameObjects.createObject(['deckContextMenu', e.x, e.y, null, [], me.id]);
 			}
 
 		}
@@ -483,9 +629,7 @@ gameObjects.addConstructor('deck', function(args){
 gameObjects.addConstructor('passButton', function(args){
 	var me = GameObject(args);
 	
-	me.x = args[2];
-	me.y = args[3];
-	me.playerIndex = args[4];
+	me.playerIndex = args[0];
 
 	me.sortLayer = 8;
 	me.img = IMG["btop"];
@@ -495,12 +639,7 @@ gameObjects.addConstructor('passButton', function(args){
 	me.img2 = null;
 
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.playerIndex);
 		return args;
 	};
@@ -541,21 +680,13 @@ gameObjects.addConstructor('passButton', function(args){
 gameObjects.addConstructor('syncButton', function(args){
 	var me = GameObject(args);
 
-	me.x = args[2];
-	me.y = args[3];
-
 	me.sortLayer = 6;
 	me.img = IMG["sync"];
 	me.w = me.img.width;
 	me.h = me.img.height;
 	me.isUi = true;
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		return args;
 	};
 
@@ -568,8 +699,8 @@ gameObjects.addConstructor('syncButton', function(args){
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
 			result = true;
 
-			gameObjects.createObject(['syncContextMenu', null, e.rawX, e.rawY, true]);
-			gameObjects.createObject(['syncContextMenu', null, e.rawX, e.rawY+65, false]);
+			gameObjects.createObject(['syncContextMenu', e.rawX, e.rawY, null, [], true]);
+			gameObjects.createObject(['syncContextMenu', e.rawX, e.rawY+65, null, [], false]);
 		}
 
 		return result;
@@ -582,9 +713,7 @@ gameObjects.addConstructor('syncButton', function(args){
 gameObjects.addConstructor('syncContextMenu', function(args){
 	var me = GameObject(args);
 	
-	me.x = args[2];
-	me.y = args[3];
-	me.isConfirm = args[4];
+	me.isConfirm = args[0];
 
 	me.sortLayer = 9;
 	me.w = 150;
@@ -593,12 +722,7 @@ gameObjects.addConstructor('syncContextMenu', function(args){
 	me.clickCount = 0;
 
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.isConfirm);
 		return args;
 	};
@@ -631,21 +755,14 @@ gameObjects.addConstructor('syncContextMenu', function(args){
 gameObjects.addConstructor('deckContextMenu', function(args){
 	var me = GameObject(args);
 	
-	me.x = args[2];
-	me.y = args[3];
-	me.deckId = args[4];
+	me.deckId = args[0];
 
 	me.sortLayer = 7;
 	me.w = 150*4;
 	me.h = 60*4;
 	me.clickCount = 0;
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.deckId);
 		return args;
 	};
@@ -676,22 +793,15 @@ gameObjects.addConstructor('deckContextMenu', function(args){
 gameObjects.addConstructor('dieContextMenu', function(args){
 	var me = GameObject(args);
 
-	me.x = args[2];
-	me.y = args[3];
-	me.dieId = args[4];
-	me.value = args[5];
+	me.dieId = args[0];
+	me.value = args[1];
 
 	me.sortLayer = 7;
 	me.w = 150*4;
 	me.h = 60*4;
 	me.clickCount = 0;
 
-	me.export = function(){
-		var args = [];
-		args.push(me.type);
-		args.push(me.id);
-		args.push(me.x);
-		args.push(me.y);
+	me.onExport = function(args){
 		args.push(me.dieId);
 		args.push(me.value);
 		return args;

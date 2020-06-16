@@ -85,9 +85,9 @@ var Mouse = function(){
 	me.onscroll = function(event){
 		if(keyboard.isDown(CHAR_TO_KEYCODE["Shift"])){
 			if(event.deltaY > 0){
-				graphics.zoomAt(-1, me.x, me.y);
+				graphics.zoomAt(-2, me.x, me.y);
 			}else{
-				graphics.zoomAt(1, me.x, me.y);
+				graphics.zoomAt(2, me.x, me.y);
 			}
 		}
 	};

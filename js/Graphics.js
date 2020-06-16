@@ -189,7 +189,7 @@ var Graphics = function(){
 
 		//active player border
 		if(localPlayer === players[ACTIVE_PLAYER]){
-			var w = 5;
+			var w = 3;
 			ctx.lineWidth = w*2;
 			ctx.strokeStyle = "gold";
 			ctx.strokeRect(0+w, 0+w, SCREEN_WIDTH-2*w, SCREEN_HEIGHT-2*w);

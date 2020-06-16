@@ -53,7 +53,7 @@ window.onload = function(){
 
 function initComponents(gameType){
 	//sync
-	gameObjects.createObject(['syncButton', null, 20, 20]);
+	gameObjects.createObject(['syncButton', 20, 20, null, []]);
 
 	//load module
 	loadGameElements();
@@ -83,7 +83,7 @@ var Player = function(index, name){
 	me.index = index;
 	me.color = COLORS[index];
 	me.name = name;
-	gameObjects.createObject(['passButton', null, 20, 45*me.index+20, me.index]);
+	gameObjects.createObject(['passButton', 20, 45*me.index+20, null, [], me.index]);
 	me.bufferPlayTime = Date.now();
 
 

@@ -268,6 +268,18 @@ var GameObjects = function(){
 		return null;
 	};
 
+	me.getGridAt = function(x, y, gridList){
+		for(var i=me.objects.length-1; i>=0; i--){ //start at highest and work down
+			var obj = me.objects[i];
+			if(obj.isGrid){
+
+				//if any of the grids we are looking for contain it
+				for(var j=0; j<gridList.length; j++) if(obj.gridName === gridList[j] && obj.contains(x, y)) return obj;
+			}
+		}
+		return null;
+	};
+
 	me.getDeckIntersectsAt = function(topLeft, bottomRight){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
@@ -390,12 +402,15 @@ var GameObjects = function(){
 var GameObject = function(args){
 	var me = {};
 
-	me.type = args[0];
-	if(args[1] === null) me.id = gameObjects.getUID();
-	else me.id = args[1];
+	//args
+	me.type = args.shift();
+	me.x = args.shift();
+	me.y = args.shift();
+	me.id = args.shift();
+	if(me.id === null) me.id = gameObjects.getUID();
+	me.gridList = args.shift();
 
-	me.x = 0;
-	me.y = 0;
+
 	me.w = 0;
 	me.h = 0;
 	me.sortLayer = 4;
@@ -412,6 +427,17 @@ var GameObject = function(args){
 	me.spacingWidth = 200;
 	me.spacingHeight = 200;
 	me.spacingRowLength = 5;
+
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.id);
+		args.push(me.gridList);
+		return me.onExport(args);
+	};
 
 	me.autoSetSpacing = function(){
 		var sw = me.w;
@@ -499,6 +525,7 @@ var GameObject = function(args){
 
 
 	//child implements
+	me.onExport = function(args){};
 	me.onDraw = function(ctx){};
 	me.onDrawDetails = function(ctx){};
 	me.onMouseDown = function(e){};
