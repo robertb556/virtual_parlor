@@ -152,6 +152,7 @@ window.onload = function(){
                 roomIds[i] = rooms[i].roomId;
                 hostIds[i] = rooms[i].hostId;
                 gameTypes[i] = rooms[i].gameType;
+                console.log("i["+i+"] gameType["+gameTypes[i]+"]");
             }
 		}
 	};

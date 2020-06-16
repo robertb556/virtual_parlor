@@ -41,7 +41,7 @@ window.onload = function(){
 	random = Random();
 	mouse = Mouse();
 	keyboard = Keyboard();
-	//gameObjects = GameObjects();
+	createCompositeGameImages();
 	network = Network(sessionStorage.getItem("playerId"));
 	input = Input();
 	graphics.start();
@@ -56,9 +56,6 @@ function initComponents(gameType){
 	gameObjects.createObject(['syncButton', null, 20, 20]);
 
 	//load module
-	//$.getScript("modules/"+gameType+"/init.js");
-
-	createCompositeGameImages();
 	loadGameElements();
 }
 

@@ -48,6 +48,7 @@ gameObjects.addConstructor('tile', function(args){
 	me.img = args[4];
 	me.w = IMG[me.img].width;
 	me.h = IMG[me.img].height;
+	me.autoSetSpacing();
 
 	me.export = function(){
 		var args = [];
@@ -315,7 +316,9 @@ gameObjects.addConstructor('card', function(args){
 	me.onDrop = function(){
 		var topLeft = [me.x, me.y];
 		var bottomRight = [me.x+me.w, me.y+me.h];
+		console.log("card tl["+topLeft+"] br["+bottomRight+"]");
 		var deck = gameObjects.getDeckIntersectsAt(topLeft, bottomRight);
+		console.log("card drop["+deck+"]");
 		if(deck !== null){
 			deck.addCard(me);
 		}
@@ -583,10 +586,11 @@ gameObjects.addConstructor('syncContextMenu', function(args){
 	me.y = args[3];
 	me.isConfirm = args[4];
 
-	me.sortLayer = 7;
+	me.sortLayer = 9;
 	me.w = 150;
 	me.h = 60;
 	me.isUi = true;
+	me.clickCount = 0;
 
 
 	me.export = function(){
@@ -616,7 +620,8 @@ gameObjects.addConstructor('syncContextMenu', function(args){
 	};
 
 	me.onMouseUp = function(e){
-		me.deleteMe = true;
+		me.clickCount++;
+		if(me.clickCount > 1) me.deleteMe = true;
 	};
 
 	return me;
@@ -633,6 +638,7 @@ gameObjects.addConstructor('deckContextMenu', function(args){
 	me.sortLayer = 7;
 	me.w = 150*4;
 	me.h = 60*4;
+	me.clickCount = 0;
 
 	me.export = function(){
 		var args = [];
@@ -659,7 +665,8 @@ gameObjects.addConstructor('deckContextMenu', function(args){
 	};
 
 	me.onMouseUp = function(e){
-		me.deleteMe = true;
+		me.clickCount++;
+		if(me.clickCount > 1) me.deleteMe = true;
 	};
 
 	return me;
@@ -677,6 +684,7 @@ gameObjects.addConstructor('dieContextMenu', function(args){
 	me.sortLayer = 7;
 	me.w = 150*4;
 	me.h = 60*4;
+	me.clickCount = 0;
 
 	me.export = function(){
 		var args = [];
@@ -704,7 +712,8 @@ gameObjects.addConstructor('dieContextMenu', function(args){
 	};
 
 	me.onMouseUp = function(e){
-		me.deleteMe = true;
+		me.clickCount++;
+		if(me.clickCount > 1) me.deleteMe = true;
 	};
 
 	return me;

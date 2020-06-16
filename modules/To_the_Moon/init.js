@@ -1,7 +1,7 @@
 'use strict';
 
 
-console.log("init to the moon");
+console.log("init To the Moon.");
 
 //##############################################
 //-----------------IMAGES-----------------------

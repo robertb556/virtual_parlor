@@ -271,7 +271,7 @@ var GameObjects = function(){
 	me.getDeckIntersectsAt = function(topLeft, bottomRight){
 		for(var i=0; i<me.objects.length; i++){
 			var obj = me.objects[i];
-			if(obj.type === OBJ_DECK && (obj.contains(topLeft[0], topLeft[1]) || obj.contains(bottomRight[0], bottomRight[1]) || obj.contains(topLeft[0], bottomRight[1]) || obj.contains(bottomRight[0], topLeft[1]))){
+			if(obj.type === 'deck' && (obj.contains(topLeft[0], topLeft[1]) || obj.contains(bottomRight[0], bottomRight[1]) || obj.contains(topLeft[0], bottomRight[1]) || obj.contains(bottomRight[0], topLeft[1]))){
 				return obj;
 			}
 		}
@@ -412,6 +412,33 @@ var GameObject = function(args){
 	me.spacingWidth = 200;
 	me.spacingHeight = 200;
 	me.spacingRowLength = 5;
+
+	me.autoSetSpacing = function(){
+		var sw = me.w;
+		if(me.w > 4096) sw += 400;
+		else if(me.w > 2048) sw += 200;
+		else if(me.w > 1024) sw += 100;
+		else if(me.w > 512) sw += 50;
+		else if(me.w > 256) sw += 25;
+		else if(me.w > 128) sw += 13;
+		else if(me.w > 64) sw += 6;
+		else if(me.w > 32) sw += 3;
+		else if(me.w > 16) sw += 1;
+
+		var sh = me.h;
+		if(me.w > 4096) sh += 400;
+		else if(me.w > 2048) sh += 200;
+		else if(me.w > 1024) sh += 100;
+		else if(me.w > 512) sh += 50;
+		else if(me.w > 256) sh += 25;
+		else if(me.w > 128) sh += 13;
+		else if(me.w > 64) sh += 6;
+		else if(me.w > 32) sh += 3;
+		else if(me.w > 16) sh += 1;
+		
+		me.spacingWidth = sw;
+		me.spacingHeight = sh;
+	};
 
 	me.getOwner = function(){
 		return players[me.ownerIndex];
