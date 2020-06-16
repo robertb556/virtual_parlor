@@ -42,42 +42,25 @@ function colorizeImage(base, top, color, opacity){
 //-----------------IMAGES-----------------------
 //##############################################
 var IMG = {};
-var SIMG = {}; //small versions
 
+//set asset directory
+assetDirectory = "img/";
 
-
-for(var i=1; i<=6; i++) loadImageFile("d6_"+i, "d6_"+i+".png");		//white dice
-for(var i=1; i<=6; i++) loadImageFile("db6_"+i, "bd6_"+i+".png");	//blue dice
+//load images
+for(var i=1; i<=6; i++) loadImageFile("d6_"+i, "d6_"+i+".png");			//white dice
+for(var i=1; i<=6; i++) loadImageFile("db6_"+i, "bd6_"+i+".png");		//blue dice
 for(var i=1; i<=6; i++) loadImageFile("kd6_"+i, "kd6_"+i+".png");		//black dice
 for(var i=1; i<=6; i++) loadImageFile("rd6_"+i, "rd6_"+i+".png");		//red dice
 
-for(var i=1; i<=18; i++) loadImageFile("building"+i, "building"+i+".png");		//building cards
-for(var i=1; i<=23; i++) loadImageFile("part"+i, "part"+i+".png");				//part cards
-for(var i=1; i<=16; i++) loadImageFile("resource"+i, "resource"+i+".png");		//resource cards
-for(var i=1; i<=18; i++) loadImageFile("building"+i, "building"+i+".png");		//building cards
-for(var i=1; i<=4; i++) loadImageFile("cube"+i, "cube"+i+".png");				//resource tokens
-
-loadImageFile("resourceback",		"resourceback.png");
-loadImageFile("buildingback",		"buildingback.png");
-loadImageFile("partback",			"partback.png");
-
-loadImageFile("mouse",			"mouse.png");
-loadImageFile("mouseTop",		"mouseTop.png");
-
-loadImageFile("worker",		"worker.png");
-loadImageFile("workerTop",	"workerTop.png");
-loadImageFile("pilot",		"pilot.png");
-loadImageFile("ace",			"ace.png");
-
-loadImageFile("board",	"board.png");
-
+loadImageFile("mouse",		"mouse.png");
+loadImageFile("mouseTop",	"mouseTop.png");
 loadImageFile("btop",		"btop.png");
 loadImageFile("bbot",		"bbot.png");
 loadImageFile("button",		"button.png");
 loadImageFile("sync",		"sync.png");
 loadImageFile("cancel",		"cancel.png");
-loadImageFile("confirm",		"confirm.png");
-loadImageFile("shuffle",		"shuffle.png");
+loadImageFile("confirm",	"confirm.png");
+loadImageFile("shuffle",	"shuffle.png");
 loadImageFile("set1",		"set1.png");
 loadImageFile("set2",		"set2.png");
 loadImageFile("set3",		"set3.png");
@@ -90,30 +73,11 @@ loadImageFile("set6",		"set6.png");
 
 function loadImageFile(name, fileName){
 	IMG[name] = new Image();
-	IMG[name].src = "img/"+fileName;
+	IMG[name].src = assetDirectory+fileName;
 }
 
 function addImage(name, img){
 	IMG[name] = img;
-	SIMG[name] = getSmallImg(IMG[name], IMAGE_SCALE);
-}
-
-
-function loadImages(){
-	//workers
-	for(var i=1; i<=4; i++){
-		addImage("worker"+i, colorizeImage(IMG["worker"], IMG["workerTop"], COLORS[i], 1));
-		addImage("pilot"+i, colorizeImage(IMG["worker"], IMG["pilot"], COLORS[i], 1));
-		addImage("ace"+i, colorizeImage(IMG["worker"], IMG["ace"], COLORS[i], 1));
-	}
-
-
-	//SMALL VERSIONS
-	for(var name in IMG){
-		if(IMG.hasOwnProperty(name)){
-			SIMG[name] = getSmallImg(IMG[name], IMAGE_SCALE);
-		}
-	}
 }
 
 

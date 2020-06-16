@@ -45,7 +45,7 @@ var Input = function(){
 			//create new game
 			else{
 				//game components
-				initComponents();
+				initComponents(roomData.gameType);
 
 				//players
 				players = [];

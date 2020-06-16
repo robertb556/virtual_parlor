@@ -22,6 +22,7 @@
 
 
 <body>
+  
 <div id="username-page" class="container-fluid">
 	<div class="row mt-5">
         <div class="col-md-4"></div>
@@ -56,13 +57,25 @@
 				        </div>
                         <div class="form-group">
 					        <label>select game</label>
-					        <select class="form-control" id="game_types" name="game_types"></select>
+					        <select class="form-control" id="game_types" name="game_types">
+                          <?php
+                          $modulesDir = __DIR__."\\modules";
+                          $modules = scandir($modulesDir);
+                          //echo "<p>mods[".implode(",", $modules)."]</p>";
+
+                          foreach($modules as $mod){
+                            if($mod !== "." && $mod !== ".."){
+                              $t = str_replace("_", " ", $mod);
+                              echo "<option value='".$mod."'>".$t."</option>";
+                            }
+                          }
+                          ?>
+                  </select>
 				        </div>
                         <input class="btn btn-primary btn-block" type="submit" value="create" />
 			        </form>
                 </div>
             </div>
-			
 		</div>
         <div class="col-md-4"></div>
 	</div>
@@ -96,6 +109,7 @@
 <script>
 var roomIds = [];
 var hostIds = [];
+var gameTypes = [];
 
 window.onload = function(){
 
@@ -109,11 +123,11 @@ window.onload = function(){
         $('#room-page').hide();
         console.log("show username");
     }
-};
 
-//get rooms from server
-(function(){
-	//connect to server
+
+
+    //get rooms from server
+    //connect to server
 	var server = new WebSocket('ws://18.224.202.15:9191');
 	console.log("trying to connnect");
 	server.onopen = function(){
@@ -137,10 +151,12 @@ window.onload = function(){
                 $('#rooms').append("<option value='"+i+"'>"+rooms[i].roomName+"</option>");
                 roomIds[i] = rooms[i].roomId;
                 hostIds[i] = rooms[i].hostId;
+                gameTypes[i] = rooms[i].gameType;
             }
 		}
 	};
-})();
+};
+
 
 function setUsername(){
     var username = $("#username").val();
@@ -165,15 +181,30 @@ function createRoom(){
     var playerId = sessionStorage.getItem("playerId");
 
     if(roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && playerId.match(/^[0-9a-z]+$/i) && playerId.length > 2){
+        //variables
         var roomId = createId();
+        var gameType = $('#game_types').children("option:selected").val();
+
+        //roomData
         var roomData = {};
         if(sessionStorage.getItem(roomId)) roomData = JSON.parse(sessionStorage.getItem(roomId));
+
+        //populate roomData
         roomData.roomName = roomName;
         roomData.isHost = true;
+        roomData.gameType = gameType;
         delete roomData.hostId;
+
+        //save roomData
         sessionStorage.setItem(roomId, JSON.stringify(roomData));
-        $('#createRoomForm').attr('action', 'client.html?roomId='+roomId);
-        //window.location.href = "client.html?roomId="+roomId;
+
+        //add hidden gameType to form
+        $('<input>', { type:'hidden', id:'gameType', name:'gameType', value:gameType }).appendTo('form');
+
+        //set form action
+        $('#createRoomForm').attr('action', 'client.php?roomId='+roomId);
+
+        //success
         return true;
     }
     else{
@@ -182,15 +213,29 @@ function createRoom(){
 }
 
 function joinRoom(){
+    //variables
     var index = $("#rooms").children("option:selected").val();
     var roomId = roomIds[index];
+    var gameType = gameTypes[index];
 
+    //roomData
     var roomData = {};
     if(sessionStorage.getItem(roomId)) roomData = JSON.parse(sessionStorage.getItem(roomId));
+
+    //populate roomData
     if(!roomData.isHost) roomData.hostId = hostIds[index];
+    roomData.gameType = gameType;
+
+    //save roomData
     sessionStorage.setItem(roomId, JSON.stringify(roomData));
-    $('#joinRoomForm').attr('action', 'client.html?roomId='+roomId);
-    //window.location.href = "client.html?roomId="+roomId;
+
+    //add hidden gameType to form
+    $('<input>', { type:'hidden', id:'gameType', name:'gameType', value:gameType }).appendTo('form');
+
+    //set form action
+    $('#joinRoomForm').attr('action', 'client.php?roomId='+roomId);
+    
+    //success
     return true;
 }
 

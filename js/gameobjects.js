@@ -1,18 +1,29 @@
 'use strict';
 
 
+gameObjects = GameObjects();
+
 //##############################################
 //-----------------MOVABLE OBJECTS--------------
 //##############################################
-var Cube = function(x, y, color){
-	var me = MovableObject();
-	me.type = OBJ_CUBE;
+gameObjects.addConstructor('cube', function(args){
+	var me = MovableObject(args);
 
-	me.color = color;
-	me.x = x;
-	me.y = y;
+	me.x = args[2];
+	me.y = args[3];
+	me.color = args[4];
 	me.w = 48;
 	me.h = 48;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.color);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.fillStyle = me.color;
@@ -26,17 +37,27 @@ var Cube = function(x, y, color){
 	};
 
 	return me;
-};
+});
 
-var Tile = function(x, y, img){
-	var me = MovableObject();
-	me.type = OBJ_TILE;
 
-	me.img = img;
-	me.x = x;
-	me.y = y;
+gameObjects.addConstructor('tile', function(args){
+	var me = MovableObject(args);
+	
+	me.x = args[2];
+	me.y = args[3];
+	me.img = args[4];
 	me.w = IMG[me.img].width;
 	me.h = IMG[me.img].height;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.img);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.drawImage(IMG[me.img], me.viewX, me.viewY);
@@ -53,22 +74,36 @@ var Tile = function(x, y, img){
 	};
 
 	return me;
-};
+});
 
 
-var Tile3 = function(x, y, value, img1, img2, img3){
-	var me = MovableObject();
-	me.type = OBJ_TILE3;
+gameObjects.addConstructor('tile3', function(args){
+	var me = MovableObject(args);
 
-	me.value = value;
+	me.x = args[2];
+	me.y = args[3];
+	me.value = args[4];
 	me.img = [];
-	me.img[1] = img1;
-	me.img[2] = img2;
-	me.img[3] = img3;
-	me.x = x;
-	me.y = y;
+	me.img[1] = args[5];
+	me.img[2] = args[6];
+	me.img[3] = args[7];
+	
 	me.w = IMG[me.img[1]].width;
 	me.h = IMG[me.img[1]].height;
+
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.value);
+		args.push(me.img[1]);
+		args.push(me.img[2]);
+		args.push(me.img[3]);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.drawImage(IMG[me.img[me.value]], me.viewX, me.viewY);
@@ -95,7 +130,7 @@ var Tile3 = function(x, y, value, img1, img2, img3){
 			result = true;
 			for(var i=1; i<=3; i++){
 				(function(val){
-					gameObjects.add(DieContextMenu(e.x, e.y+260*i, me, val));
+					gameObjects.createObject(['dieContextMenu', null, e.x, e.y+260*i, me.id, val]);
 				})(i);
 				
 			}
@@ -105,26 +140,37 @@ var Tile3 = function(x, y, value, img1, img2, img3){
 	};
 
 	return me;
-};
+});
 
 
-var D6 = function(x, y, value, color){
-	var me = MovableObject();
-	me.type = OBJ_D6;
+gameObjects.addConstructor('d6', function(args){
+	var me = MovableObject(args);
 
-	me.x = x;
-	me.y = y;
-	me.color = color;
+	me.x = args[2];
+	me.y = args[3];
+	me.value = args[4];
+	me.color = args[5];
+
 	me.imgPrefix = "d6_";
 	if(me.color === "black") me.imgPrefix = "kd6_";
 	if(me.color === "blue") me.imgPrefix = "bd6_";
 	if(me.color === "red") me.imgPrefix = "rd6_";
 	me.w = IMG[me.imgPrefix+"1"].width;
 	me.h = IMG[me.imgPrefix+"1"].height;
-	me.value = value;
 
 	me.spacingWidth = 300;
 	me.spacingHeight = 300;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.value);
+		args.push(me.color);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		if(me.animation > 0){
@@ -172,7 +218,7 @@ var D6 = function(x, y, value, color){
 			result = true;
 			for(var i=1; i<=6; i++){
 				(function(val){
-					gameObjects.add(DieContextMenu(e.x, e.y+260*(i-1), me, val));
+					gameObjects.createObject(['dieContextMenu', null, e.x, e.y+260*(i-1), me.id, val]);
 				})(i);
 				
 			}
@@ -182,22 +228,37 @@ var D6 = function(x, y, value, color){
 	};
 
 	return me;
-};
+});
 
 
-var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
-	var me = MovableObject();
-	me.type = OBJ_CARD;
+gameObjects.addConstructor('card', function(args){
+	var me = MovableObject(args);
 
-	me.ownerIndex = ownerIndex;
-	me.x = x;
-	me.y = y;
-	me.w = IMG[imgTop].width;
-	me.h = IMG[imgTop].height;
-	me.imgTop = imgTop;
-	me.imgBot = imgBot;
-	me.imgMask = imgMask;
-	me.isFaceUp = faceUp;
+	
+	me.x = args[2];
+	me.y = args[3];
+	me.ownerIndex = args[4];
+	me.imgTop = args[5];
+	me.imgBot = args[6];
+	me.imgMask = args[7];
+	me.isFaceUp = args[8];
+
+	me.w = IMG[me.imgTop].width;
+	me.h = IMG[me.imgTop].height;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.ownerIndex);
+		args.push(me.imgTop);
+		args.push(me.imgBot);
+		args.push(me.imgMask);
+		args.push(me.isFaceUp);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		//FACE UP
@@ -262,7 +323,7 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 
 
 	return me;
-};
+});
 
 
 
@@ -271,35 +332,70 @@ var Card = function(ownerIndex, x, y, imgTop, imgBot, imgMask, faceUp){
 //##############################################
 //-----------------STATIC OBJECTS---------------
 //##############################################
-var Board = function(x, y, img){
-	var me = GameObject();
-	me.type = OBJ_BOARD;
+gameObjects.addConstructor('board', function(args){
+	var me = GameObject(args);
+
 	me.sortLayer = 2;
 
-	me.x = x;
-	me.y = y;
-	me.img = img;
+	me.x = args[2];
+	me.y = args[3];
+	me.img = args[4];
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.img);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.drawImage(IMG[me.img], me.viewX, me.viewY);
 	};
 
 	return me;
-};
+});
 
 
-var Deck = function(x, y, img, drawFaceUp){
-	var me = GameObject();
-	me.type = OBJ_DECK;
+gameObjects.addConstructor('deck', function(args){
+	var me = GameObject(args);
 
-	me.img = img;
-	me.x = x;
-	me.y = y;
-	me.w = IMG[img].width;
-	me.h = IMG[img].height;
-
-	me.drawFaceUp = drawFaceUp;
+	me.x = args[2];
+	me.y = args[3];
+	me.img = args[4];
+	me.drawFaceUp = args[5];
+	me.cardTemplates = args[6];
+	
+	me.w = IMG[me.img].width;
+	me.h = IMG[me.img].height;
 	me.cards = [];
+
+	me.init = function(){
+		for(var i=0; i<me.cardTemplates.length; i++){
+			me.addCard(gameObjects.createObject(me.cardTemplates[i]));
+		}
+	};
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.img);
+		args.push(me.drawFaceUp);
+
+		var cards = [];
+		for(var i=0; i<me.cards.length; i++){
+			var card = me.cards[i];
+			cards.push(card.export());
+		}
+		args.push(cards);
+
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		if(me.cards.length > 0){
@@ -346,12 +442,12 @@ var Deck = function(x, y, img, drawFaceUp){
 					card.deleteMe = false;
 
 					//finish
-					gameObjects.add(card);
+					gameObjects.addObject(card);
 				}
 			}
 
 			else if(e.rightDown){
-				gameObjects.add(DeckContextMenu(e.x, e.y, me));
+				gameObjects.createObject(['deckContextMenu', null, e.x, e.y, me.id]);
 			}
 
 		}
@@ -376,53 +472,52 @@ var Deck = function(x, y, img, drawFaceUp){
 		me.cards = temp;
 	};
 
+	me.init();
 	return me;
-};
+});
 
 
-var PassButton = function(x, y, player){
-	var me = GameObject();
-	me.type = OBJ_PASS;
+gameObjects.addConstructor('passButton', function(args){
+	var me = GameObject(args);
+	
+	me.x = args[2];
+	me.y = args[3];
+	me.playerIndex = args[4];
 
 	me.sortLayer = 8;
 	me.img = IMG["btop"];
-	me.player = player;
-	me.x = x;
-	me.y = y;
 	me.w = me.img.width;
 	me.h = me.img.height;
 	me.isUi = true;
+	me.img2 = null;
 
-	me.img = colorizeImage(IMG["btop"], null, me.player.color, 1);
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.playerIndex);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
+		var player = players[me.playerIndex];
+		if(me.img2 === null) me.img2 = colorizeImage(IMG["btop"], null, player.color, 1);
+
 		var dy = 5;
-		if(me.player === players[ACTIVE_PLAYER]){
+		if(player === players[ACTIVE_PLAYER]){
 			dy = 0;
 		}
 
-		ctx.drawImage(me.img, me.x, me.y);
-		ctx.drawImage(me.img, me.x, me.y-dy);
+		ctx.drawImage(me.img2, me.x, me.y);
+		ctx.drawImage(me.img2, me.x, me.y-dy);
 		if(dy > 0) ctx.drawImage(IMG["bbot"], me.x, me.y);
 		ctx.font = "16px Arial";
 		ctx.textAlign = "center";
 		ctx.fillStyle = "black";
-		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+7+Math.floor(me.h/2)-dy);
-
-
-
-		/*
-		ctx.fillStyle = me.player.color;
-		var b = 2;
-		if(me.player === players[ACTIVE_PLAYER]) b = 6;
-		ctx.fillRect(me.x-b, me.y-b, me.w+2*b, me.h+2*b);
-		ctx.drawImage(me.img, me.x, me.y);
-
-		ctx.font = "36px Arial";
-		ctx.textAlign = "center";
-		ctx.fillStyle = "black";
-		ctx.fillText(me.player.name, me.x+Math.floor(me.w/2), me.y+10+Math.floor(me.h/2));
-		*/
+		ctx.fillText(player.name, me.x+Math.floor(me.w/2), me.y+7+Math.floor(me.h/2)-dy);
 	};
 
 	me.onMouseDown = function(e){
@@ -430,27 +525,36 @@ var PassButton = function(x, y, player){
 		if(localPlayer === players[ACTIVE_PLAYER] && e.player === localPlayer && e.leftDown && me.contains(e.rawX, e.rawY)){
 			result = true;
 
-			input.add(me.player.index, PASS_CONTROL, 0, 0, 0, 0, false, false, false, false);
+			input.add(me.playerIndex, PASS_CONTROL, 0, 0, 0, 0, false, false, false, false);
 		}
 
 		return result;
 	};
 
 	return me;
-};
+});
 
 
-var SyncButton = function(x, y){
-	var me = GameObject();
-	me.type = OBJ_SYNC;
+gameObjects.addConstructor('syncButton', function(args){
+	var me = GameObject(args);
+
+	me.x = args[2];
+	me.y = args[3];
 
 	me.sortLayer = 6;
 	me.img = IMG["sync"];
-	me.x = x;
-	me.y = y;
 	me.w = me.img.width;
 	me.h = me.img.height;
 	me.isUi = true;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.drawImage(me.img, me.x, me.y);
@@ -461,28 +565,39 @@ var SyncButton = function(x, y){
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.rawX, e.rawY)){
 			result = true;
 
-			gameObjects.add(SyncContextMenu(e.rawX, e.rawY, true));
-			gameObjects.add(SyncContextMenu(e.rawX, e.rawY+65, false));
+			gameObjects.createObject(['syncContextMenu', null, e.rawX, e.rawY, true]);
+			gameObjects.createObject(['syncContextMenu', null, e.rawX, e.rawY+65, false]);
 		}
 
 		return result;
 	};
 
 	return me;
-};
+});
 
 
-var SyncContextMenu = function(x, y, isConfirm){
-	var me = GameObject();
-	me.type = OBJ_SYNC_CONTEXT;
+gameObjects.addConstructor('syncContextMenu', function(args){
+	var me = GameObject(args);
+	
+	me.x = args[2];
+	me.y = args[3];
+	me.isConfirm = args[4];
 
 	me.sortLayer = 7;
-	me.isConfirm = isConfirm;
-	me.x = x;
-	me.y = y;
 	me.w = 150;
 	me.h = 60;
 	me.isUi = true;
+
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.isConfirm);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		if(me.isConfirm) ctx.drawImage(IMG["confirm"], me.x, me.y);
@@ -505,19 +620,29 @@ var SyncContextMenu = function(x, y, isConfirm){
 	};
 
 	return me;
-};
+});
 
 
-var DeckContextMenu = function(x, y, deck){
-	var me = GameObject();
-	me.type = OBJ_DECK_CONTEXT;
+gameObjects.addConstructor('deckContextMenu', function(args){
+	var me = GameObject(args);
+	
+	me.x = args[2];
+	me.y = args[3];
+	me.deckId = args[4];
 
 	me.sortLayer = 7;
-	me.x = x;
-	me.y = y;
-	me.deck = deck;
 	me.w = 150*4;
 	me.h = 60*4;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.deckId);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.drawImage(IMG["shuffle"], me.x, me.y, me.w, me.h);
@@ -527,7 +652,7 @@ var DeckContextMenu = function(x, y, deck){
 		var result = false;
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			result = true;
-			me.deck.shuffle();
+			gameObjects.getById(me.deckId).shuffle();
 		}
 
 		return result;
@@ -538,20 +663,31 @@ var DeckContextMenu = function(x, y, deck){
 	};
 
 	return me;
-};
+});
 
 
-var DieContextMenu = function(x, y, die, value){
-	var me = GameObject();
-	me.type = OBJ_DIE_CONTEXT;
+gameObjects.addConstructor('dieContextMenu', function(args){
+	var me = GameObject(args);
+
+	me.x = args[2];
+	me.y = args[3];
+	me.dieId = args[4];
+	me.value = args[5];
 
 	me.sortLayer = 7;
-	me.x = x;
-	me.y = y;
-	me.die = die;
-	me.value = value;
 	me.w = 150*4;
 	me.h = 60*4;
+
+	me.export = function(){
+		var args = [];
+		args.push(me.type);
+		args.push(me.id);
+		args.push(me.x);
+		args.push(me.y);
+		args.push(me.dieId);
+		args.push(me.value);
+		return args;
+	};
 
 	me.onDraw = function(ctx){
 		ctx.drawImage(IMG["set"+me.value], me.x, me.y, me.w, me.h);
@@ -561,7 +697,7 @@ var DieContextMenu = function(x, y, die, value){
 		var result = false;
 		if(e.leftDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			result = true;
-			me.die.setValue(me.value);
+			gameObjects.getById(me.dieId).setValue(me.value);
 		}
 
 		return result;
@@ -572,7 +708,7 @@ var DieContextMenu = function(x, y, die, value){
 	};
 
 	return me;
-};
+});
 
 
 

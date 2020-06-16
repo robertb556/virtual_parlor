@@ -33,82 +33,33 @@ var localPlayer = null;
 var random;
 var tickCount = 0;
 var network;
-
-
+var assetDirectory = "img/";
 
 window.onload = function(){
-
-
 	//INIT
 	graphics = Graphics();
-	loadImages();
 	random = Random();
 	mouse = Mouse();
 	keyboard = Keyboard();
-	gameObjects = GameObjects();
+	//gameObjects = GameObjects();
 	network = Network(sessionStorage.getItem("playerId"));
 	input = Input();
 	graphics.start();
+	
 
 
 	tickStep();
 };
 
-function initComponents(){
+function initComponents(gameType){
 	//sync
-	SyncButton(20, 20);
+	gameObjects.createObject(['syncButton', null, 20, 20]);
 
-	//layout
-	var s1 = 200;
-	var s2 = 300;
-	var x1 = 2250;
-	var y1 = 930;
-	var y2 = y1+100;
+	//load module
+	//$.getScript("modules/"+gameType+"/init.js");
 
-	var startingWorkers = 12;
-
-	var xoff = -40;
-	var yoff = -85;
-
-	for(var i=0; i<20; i++) Tile3(1180+xoff, 6800+yoff, 1, "worker1", "pilot1", "ace1");
-	for(var i=0; i<startingWorkers; i++) Tile3(2250+xoff+278*i, 6795+yoff, 1, "worker1", "pilot1", "ace1");
-
-	for(var i=0; i<20; i++) Tile3(8200+xoff, 6226+yoff, 1, "worker2", "pilot2", "ace2");
-	for(var i=0; i<startingWorkers; i++) Tile3(8200+xoff, 6226+yoff-400-295*i, 1, "worker2", "pilot2", "ace2");
-
-	for(var i=0; i<20; i++) Tile3(150+xoff, 6226+yoff, 1, "worker3", "pilot3", "ace3");
-	for(var i=0; i<startingWorkers; i++) Tile3(150+xoff, 6226+yoff-400-295*i, 1, "worker3", "pilot3", "ace3");
-
-	for(var i=0; i<20; i++) Tile3(1250+xoff, 170+yoff, 1, "worker4", "pilot4", "ace4");
-	for(var i=0; i<startingWorkers; i++) Tile3(2300+xoff+278*i, 170+yoff, 1, "worker4", "pilot4", "ace4");
-
-
-	//cubes
-	for(var i=0; i<20; i++) Tile(x1, y2, "cube1");
-	for(var i=0; i<20; i++) Tile(x1+s1, y2, "cube2");
-	for(var i=0; i<20; i++) Tile(x1+s1*2, y2, "cube3");
-	for(var i=0; i<20; i++) Tile(x1+s1*3, y2, "cube4");
-
-
-	//dice
-	for(var i=0; i<20; i++) D6(915, 950, 5, "white");
-	for(var i=0; i<20; i++) D6(1280, 950, 5, "black");
-
-	
-	//boards
-	Board(0, 0, "board");
-
-	//resource deck
-	var deck = Deck(1680, 5480, "resourceback", true);
-	for(var i=1; i<=16; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "resource"+i, "resourceback", "resourceback", true));
-
-	//buildings deck
-	var deck = Deck(4320, 2350, "buildingback", true);
-	for(var i=1; i<=18; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "building"+i, "buildingback", "buildingback", true));
-
-	//parts deck
-	var deck = Deck(2216, 2350, "partback", true);
-	for(var i=1; i<=23; i++) deck.addCard(Card(ACTIVE_PLAYER, 0,0, "part"+i, "partback", "partback", true));
+	createCompositeGameImages();
+	loadGameElements();
 }
 
 function tickStep(){
@@ -135,7 +86,7 @@ var Player = function(index, name){
 	me.index = index;
 	me.color = COLORS[index];
 	me.name = name;
-	PassButton(20, 45*me.index+20, me);
+	gameObjects.createObject(['passButton', null, 20, 45*me.index+20, me.index]);
 	me.bufferPlayTime = Date.now();
 
 

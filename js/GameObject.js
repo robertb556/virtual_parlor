@@ -21,6 +21,28 @@ var GameObjects = function(){
 	var me = {};
 
 	me.objects = [];
+	me.constructors = {};
+	me.uidCount = 0;
+
+	me.getUID = function(){
+		return me.uidCount++;
+	};
+
+	me.addConstructor = function(type, constructor){
+		me.constructors[type] = constructor;
+	};
+
+	me.createObject = function(args){
+		var obj = me.constructors[args[0]](args);
+		return me.addObject(obj);
+	};
+
+	me.addObject = function(obj){
+		me.objects.push(obj);
+		me.sortObjects();
+		graphics.repaint();
+		return obj;
+	};
 
 	me.tick = function(){
 		me.removeDead();
@@ -28,6 +50,14 @@ var GameObjects = function(){
 	};
 
 	me.setWorldState = function(state){
+		me.objects.length = 0;
+
+		for(var i=0; i<state.length; i++){
+			var args = state[i];
+			me.createObject(args);
+		}
+
+		/*
 		var temp = [];
 
 		for(var i=0; i<state.length; i++){
@@ -75,9 +105,19 @@ var GameObjects = function(){
 			}
 		}
 		me.objects = temp;
+		*/
 	};
 
 	me.getWorldState = function(){
+		var world = [];
+
+		for(var i=0; i<me.objects.length; i++){
+			world.push(me.objects[i].export());
+		}
+
+		return world;
+
+		/*
 		var world = [];
 
 		for(var i=0; i<me.objects.length; i++){
@@ -203,12 +243,7 @@ var GameObjects = function(){
 		}
 
 		return world;
-	};
-
-	me.add = function(obj){
-		me.objects.push(obj);
-		me.sortObjects();
-		graphics.repaint();
+		*/
 	};
 
 	me.getIndex = function(object){
@@ -216,6 +251,13 @@ var GameObjects = function(){
 			if(me.objects[i] === object) return i;
 		}
 		return -1;
+	};
+
+	me.getById = function(id){
+		for(var i=0; i<me.objects.length; i++){
+			if(me.objects[i].id === id) return me.objects[i];
+		}
+		return null;
 	};
 
 	me.getAt = function(x,y){
@@ -254,7 +296,7 @@ var GameObjects = function(){
 			var obj = me.objects[i];
 			if(obj.moveToTop){
 				me.remove(obj);
-				me.add(obj);
+				me.addObject(obj);
 				obj.moveToTop = false;
 			}
 		}
@@ -345,8 +387,12 @@ var GameObjects = function(){
 //##############################################
 //-----------------GAME OBJECT------------------
 //##############################################
-var GameObject = function(){
+var GameObject = function(args){
 	var me = {};
+
+	me.type = args[0];
+	if(args[1] === null) me.id = gameObjects.getUID();
+	else me.id = args[1];
 
 	me.x = 0;
 	me.y = 0;
@@ -366,8 +412,6 @@ var GameObject = function(){
 	me.spacingWidth = 200;
 	me.spacingHeight = 200;
 	me.spacingRowLength = 5;
-
-	gameObjects.add(me);
 
 	me.getOwner = function(){
 		return players[me.ownerIndex];
@@ -440,8 +484,8 @@ var GameObject = function(){
 
 
 
-var MovableObject = function(){
-	var me = GameObject();
+var MovableObject = function(args){
+	var me = GameObject(args);
 
 	me.sortLayer = 5;
 

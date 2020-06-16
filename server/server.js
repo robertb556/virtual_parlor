@@ -25,6 +25,7 @@ wss.on('connection', function(ws){
 				if(rooms.hasOwnProperty(roomId)){
 					var r = {};
 					r.roomId = roomId;
+					r.gameType = rooms[roomId].gameType;
 					r.roomName = rooms[roomId].roomName;
 					r.hostId = rooms[roomId].hostId;
 					d.roomList.push(r);
@@ -38,13 +39,15 @@ wss.on('connection', function(ws){
 		//JOIN ROOM
 		else if(data.CREATE_ROOM){
 			var roomId = data.roomId;
+			var gameType = data.gameType;
 			var roomName = data.roomName;
 			var hostId = data.hostId;
 
 			//sanitize data
-			if(roomId.match(/^[0-9a-z]+$/i) && roomId.length > 2 && roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && hostId.match(/^[0-9a-z]+$/i) && hostId.length > 2){
+			if(roomId.match(/^[0-9a-z]+$/i) && roomId.length > 2 && gameType.match(/^[0-9a-z]+$/i) && gameType.length > 2 && roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && hostId.match(/^[0-9a-z]+$/i) && hostId.length > 2){
 				var room = {};
 				room.roomId = roomId;
+				room.gameType = gameType;
 				room.roomName = roomName;
 				room.hostId = hostId;
 				rooms[roomId] = room;
