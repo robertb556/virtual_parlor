@@ -57,7 +57,7 @@ var Input = function(){
 
 
 				//reserve room
-				me.roomManager = RoomManager($_GET['roomId'], roomData.roomName, localPlayer.name);
+				me.roomManager = RoomManager($_GET['roomId'], roomData.roomName, localPlayer.name, roomData.gameType);
 			}
 
 			//schedual backups

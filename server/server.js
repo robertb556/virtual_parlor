@@ -44,7 +44,7 @@ wss.on('connection', function(ws){
 			var hostId = data.hostId;
 
 			//sanitize data
-			if(roomId.match(/^[0-9a-z]+$/i) && roomId.length > 2 && gameType.match(/^[0-9a-z]+$/i) && gameType.length > 2 && roomName.match(/^[0-9a-z]+$/i) && roomName.length > 2 && hostId.match(/^[0-9a-z]+$/i) && hostId.length > 2){
+			if(validate(roomId, 3) && validate(gameType, 3) && validate(roomName, 3) && validate(hostId, 3)){
 				var room = {};
 				room.roomId = roomId;
 				room.gameType = gameType;
@@ -65,6 +65,12 @@ wss.on('connection', function(ws){
 
 
 //-----FUNCTIONS-----
+function validate(text, minLength){
+	if(text.length < minLength) return false;
+	if(!(text.match(/^[0-9a-z_]+$/i))) return false;
+	return true;
+}
+
 function send(ws, message){
 	if(ws){
 		ws.send(message, function(error){

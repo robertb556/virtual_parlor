@@ -1,11 +1,12 @@
 'use strict';
 
-var RoomManager = function(roomId, roomName, playerId){
+var RoomManager = function(roomId, roomName, playerId, gameType){
 	var me = {};
 
 	me.roomId = roomId;
 	me.roomName = roomName;
 	me.playerId = playerId;
+	me.gameType = gameType;
 	me.server = new WebSocket('ws://18.224.202.15:9191');
 	console.log("trying to connnect");
 
@@ -18,6 +19,7 @@ var RoomManager = function(roomId, roomName, playerId){
 		data.roomId = me.roomId;
 		data.roomName = me.roomName;
 		data.hostId = me.playerId;
+		data.gameType = me.gameType;
 		var message = JSON.stringify(data);
 		me.server.send(message);
 	};
