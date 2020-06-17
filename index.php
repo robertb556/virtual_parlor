@@ -59,7 +59,7 @@
 					        <label>select game</label>
 					        <select class="form-control" id="game_types" name="game_types">
                           <?php
-                          $modulesDir = __DIR__."\\modules";
+                          $modulesDir = __DIR__.DIRECTORY_SEPARATOR."modules";
                           echo "modulesDir[".$modulesDir."]";
                           $modules = scandir($modulesDir);
                           //echo "<p>mods[".implode(",", $modules)."]</p>";
