@@ -11,6 +11,7 @@ console.log("init Trucker.");
 //set asset directory
 assetDirectory = "modules/Trucker/img/";
 CONTEXT_MENU_SCALE = 1;
+DETAILS_WIDTH = 150;
 
 loadImageFile("board", "board.png");
 loadImageFile("hex", "hex.png");
