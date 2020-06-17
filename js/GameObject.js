@@ -325,8 +325,9 @@ var GameObject = function(args){
 	};
 
 	me.drawDetails = function(ctx){
-		var scale = 1/IMAGE_SCALE;
-		if(DETAILS_WIDTH < me.w) scale = DETAILS_WIDTH / me.w;
+		//var scale = 1/IMAGE_SCALE;
+		//if(DETAILS_WIDTH < me.w)
+		var scale = DETAILS_WIDTH / me.w;
 		var w = me.w * scale;
 		var h = me.h * scale;
 
@@ -346,6 +347,18 @@ var GameObject = function(args){
 	};
 
 	me.drop = function(){
+		//grids
+		var x = me.x+Math.floor(me.w/2);
+		var y = me.y+Math.floor(me.h/2);
+		var grid = gameObjects.getGridAt(x, y, me.gridList);
+		
+		if(grid){
+			me.x = grid.snapX(x, y);
+			me.y = grid.snapY(x, y);
+		}
+
+
+		//child code
 		me.onDrop();
 	};
 
@@ -434,17 +447,6 @@ var TileObject = function(args){
 		ctx.fillRect(dx-10, dy-10, w+20, h+20);
 
 		ctx.drawImage(IMG[me.img], dx, dy, w, h);
-	};
-
-	me.onDrop = function(){
-		var x = me.x+Math.floor(me.w/2);
-		var y = me.y+Math.floor(me.h/2);
-		var grid = gameObjects.getGridAt(x, y, me.gridList);
-		console.log("grid["+grid+"]");
-		if(grid){
-			me.x = grid.snapX(x, y);
-			me.y = grid.snapY(x, y);
-		}
 	};
 
 	return me;
