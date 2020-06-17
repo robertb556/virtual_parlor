@@ -9,7 +9,7 @@ console.log("init Trucker.");
 //-----------------IMAGES-----------------------
 //##############################################
 //set asset directory
-assetDirectory = "modules/trucker/img/";
+assetDirectory = "modules/Trucker/img/";
 CONTEXT_MENU_SCALE = 1;
 
 loadImageFile("board", "board.png");

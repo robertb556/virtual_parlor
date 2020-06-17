@@ -7,7 +7,7 @@ console.log("init To the Moon.");
 //-----------------IMAGES-----------------------
 //##############################################
 //set asset directory
-assetDirectory = "modules/to_the_moon/img/";
+assetDirectory = "modules/To_the_Moon/img/";
 
 //load images
 for(var i=1; i<=18; i++) loadImageFile("building"+i, "building"+i+".png");		//building cards
