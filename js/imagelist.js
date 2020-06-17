@@ -77,6 +77,7 @@ function loadImageFile(name, fileName){
 }
 
 function addImage(name, img){
+	//console.log("addImage["+name+"]["+img+"]");
 	IMG[name] = img;
 }
 

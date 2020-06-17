@@ -16,7 +16,9 @@ var DETAILS_WIDTH = 250;
 var IMAGE_SCALE = 3;
 var ACTIVE_PLAYER = 0;
 var COLORS = ["white", "#a92a2a", "#2e4ab0", "#268d26", "#b85e0f"];
-
+var CONTEXT_MENU_WIDTH = 150;
+var CONTEXT_MENU_HEIGHT = 60;
+var CONTEXT_MENU_SCALE = 1;
 
 
 //##############################################
@@ -132,7 +134,7 @@ var Player = function(index, name){
 	
 	//holding methods
 	me.grab = function(object){
-		if(!me.isHolding(object) && (me.heldObjects.length === 0 || (me.ctrlDown && object.type === me.heldObjects[0].type))){
+		if( (!object.isLockedPickup || me.ctrlDown) && (me.heldObjects.length === 0 || (object.isMultiPickup && me.heldObjects[0].isMultiPickup && !me.isHolding(object) && me.ctrlDown && object.type === me.heldObjects[0].type)) ){
 			me.heldObjects.push(object);
 			object.moveToTop = true;
 			graphics.repaint();

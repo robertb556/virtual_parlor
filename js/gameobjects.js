@@ -35,71 +35,38 @@ gameObjects.addConstructor('cube', function(args){
 
 
 gameObjects.addConstructor('tile', function(args){
-	var me = MovableObject(args);
-	
-	me.img = args[0];
+	var me = TileObject(args);
 
-	me.w = IMG[me.img].width;
-	me.h = IMG[me.img].height;
-	me.autoSetSpacing();
+	return me;
+});
 
-	me.onExport = function(args){
-		args.push(me.img);
-		return args;
-	};
+gameObjects.addConstructor('lockedTile', function(args){
+	var me = TileObject(args);
 
-	me.onDraw = function(ctx){
-		ctx.drawImage(IMG[me.img], me.viewX, me.viewY);
-	};
-
-	me.onDrawDetails = function(ctx, w, h){
-		var dx = 20;
-		var dy = 20;
-
-		ctx.fillStyle = "white";
-		ctx.fillRect(dx-10, dy-10, w+20, h+20);
-
-		ctx.drawImage(IMG[me.img], dx, dy, w, h);
-	};
-
-	me.onDrop = function(){
-		var x = me.x+Math.floor(me.w/2);
-		var y = me.y+Math.floor(me.h/2);
-		var grid = gameObjects.getGridAt(x, y, me.gridList);
-		console.log("grid["+grid+"]");
-		if(grid){
-			me.x = grid.snapX(x, y);
-			me.y = grid.snapY(x, y);
-		}
-	};
+	me.isLockedPickup = true;
 
 	return me;
 });
 
 
-gameObjects.addConstructor('tile3', function(args){
+gameObjects.addConstructor('multiTile', function(args){
 	var me = MovableObject(args);
 
 	me.value = args[0];
-	me.img = [];
-	me.img[1] = args[1];
-	me.img[2] = args[2];
-	me.img[3] = args[3];
+	me.imgs = args[1];
 	
-	me.w = IMG[me.img[1]].width;
-	me.h = IMG[me.img[1]].height;
+	me.w = IMG[me.imgs[0]].width;
+	me.h = IMG[me.imgs[0]].height;
 
 
 	me.onExport = function(args){
 		args.push(me.value);
-		args.push(me.img[1]);
-		args.push(me.img[2]);
-		args.push(me.img[3]);
+		args.push(me.imgs);
 		return args;
 	};
 
 	me.onDraw = function(ctx){
-		ctx.drawImage(IMG[me.img[me.value]], me.viewX, me.viewY);
+		ctx.drawImage(IMG[me.imgs[me.value-1]], me.viewX, me.viewY);
 	};
 
 	me.onDrawDetails = function(ctx, w, h){
@@ -109,7 +76,7 @@ gameObjects.addConstructor('tile3', function(args){
 		ctx.fillStyle = "white";
 		ctx.fillRect(dx-10, dy-10, w+20, h+20);
 
-		ctx.drawImage(IMG[me.img[me.value]], dx, dy, w, h);
+		ctx.drawImage(IMG[me.imgs[me.value-1]], dx, dy, w, h);
 	};
 
 	me.setValue = function(value){
@@ -121,9 +88,9 @@ gameObjects.addConstructor('tile3', function(args){
 
 		if(e.rightDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			result = true;
-			for(var i=1; i<=3; i++){
+			for(var i=0; i<me.imgs.length; i++){
 				(function(val){
-					gameObjects.createObject(['dieContextMenu', e.x, e.y+260*i, null, [], me.id, val]);
+					gameObjects.createObject(['dieContextMenu', e.x, e.y+(CONTEXT_MENU_HEIGHT*CONTEXT_MENU_SCALE)*i, null, [], me.id, val+1]);
 				})(i);
 				
 			}
@@ -141,6 +108,8 @@ gameObjects.addConstructor('d6', function(args){
 
 	me.value = args[0];
 	me.color = args[1];
+
+	me.isMultiPickup = true;
 
 	me.imgPrefix = "d6_";
 	if(me.color === "black") me.imgPrefix = "kd6_";
@@ -204,7 +173,7 @@ gameObjects.addConstructor('d6', function(args){
 			result = true;
 			for(var i=1; i<=6; i++){
 				(function(val){
-					gameObjects.createObject(['dieContextMenu', e.x, e.y+260*(i-1), null, [], me.id, val]);
+					gameObjects.createObject(['dieContextMenu', e.x, e.y+(CONTEXT_MENU_HEIGHT*CONTEXT_MENU_SCALE)*(i-1), null, [], me.id, val]);
 				})(i);
 				
 			}
@@ -226,9 +195,13 @@ gameObjects.addConstructor('card', function(args){
 	me.imgBot = args[2];
 	me.imgMask = args[3];
 	me.isFaceUp = args[4];
+	me.isMultiPickup = args[5];
+	me.isLockedMovement = args[6];
 
 	me.w = IMG[me.imgTop].width;
 	me.h = IMG[me.imgTop].height;
+	me.autoSetSpacing();
+	console.log("me.w["+me.w+"] ["+me.h+"]");
 
 	me.onExport = function(args){
 		args.push(me.ownerIndex);
@@ -236,6 +209,8 @@ gameObjects.addConstructor('card', function(args){
 		args.push(me.imgBot);
 		args.push(me.imgMask);
 		args.push(me.isFaceUp);
+		args.push(me.isMultiPickup);
+		args.push(me.isLockedMovement);
 		return args;
 	};
 
@@ -286,6 +261,7 @@ gameObjects.addConstructor('card', function(args){
 		if(e.rightDown && e.player === me.getOwner() && me.contains(e.x, e.y)){
 			result = true;
 			me.isFaceUp = !me.isFaceUp;
+			graphics.repaint();
 		}
 
 		return result;
@@ -528,12 +504,12 @@ gameObjects.addConstructor('deck', function(args){
 		args.push(me.img);
 		args.push(me.drawFaceUp);
 
-		var cards = [];
+		var cardTemplates = [];
 		for(var i=0; i<me.cards.length; i++){
 			var card = me.cards[i];
-			cards.push(card.export());
+			cardTemplates.push(card.export());
 		}
-		args.push(cards);
+		args.push(cardTemplates);
 
 		return args;
 	};
@@ -700,7 +676,7 @@ gameObjects.addConstructor('syncButton', function(args){
 			result = true;
 
 			gameObjects.createObject(['syncContextMenu', e.rawX, e.rawY, null, [], true]);
-			gameObjects.createObject(['syncContextMenu', e.rawX, e.rawY+65, null, [], false]);
+			gameObjects.createObject(['syncContextMenu', e.rawX, e.rawY+(CONTEXT_MENU_HEIGHT*CONTEXT_MENU_SCALE), null, [], false]);
 		}
 
 		return result;
@@ -716,8 +692,8 @@ gameObjects.addConstructor('syncContextMenu', function(args){
 	me.isConfirm = args[0];
 
 	me.sortLayer = 9;
-	me.w = 150;
-	me.h = 60;
+	me.w = CONTEXT_MENU_WIDTH*CONTEXT_MENU_SCALE;
+	me.h = CONTEXT_MENU_HEIGHT*CONTEXT_MENU_SCALE;
 	me.isUi = true;
 	me.clickCount = 0;
 
@@ -728,8 +704,8 @@ gameObjects.addConstructor('syncContextMenu', function(args){
 	};
 
 	me.onDraw = function(ctx){
-		if(me.isConfirm) ctx.drawImage(IMG["confirm"], me.x, me.y);
-		else ctx.drawImage(IMG["cancel"], me.x, me.y);
+		if(me.isConfirm) ctx.drawImage(IMG["confirm"], me.x, me.y, me.w, me.h);
+		else ctx.drawImage(IMG["cancel"], me.x, me.y, me.w, me.h);
 	};
 
 	me.onMouseDown = function(e){
@@ -758,8 +734,8 @@ gameObjects.addConstructor('deckContextMenu', function(args){
 	me.deckId = args[0];
 
 	me.sortLayer = 7;
-	me.w = 150*4;
-	me.h = 60*4;
+	me.w = CONTEXT_MENU_WIDTH*CONTEXT_MENU_SCALE;
+	me.h = CONTEXT_MENU_HEIGHT*CONTEXT_MENU_SCALE;
 	me.clickCount = 0;
 
 	me.onExport = function(args){
@@ -797,8 +773,8 @@ gameObjects.addConstructor('dieContextMenu', function(args){
 	me.value = args[1];
 
 	me.sortLayer = 7;
-	me.w = 150*4;
-	me.h = 60*4;
+	me.w = CONTEXT_MENU_WIDTH*CONTEXT_MENU_SCALE;
+	me.h = CONTEXT_MENU_HEIGHT*CONTEXT_MENU_SCALE;
 	me.clickCount = 0;
 
 	me.onExport = function(args){

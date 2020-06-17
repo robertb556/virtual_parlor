@@ -60,8 +60,8 @@ var Input = function(){
 				me.roomManager = RoomManager($_GET['roomId'], roomData.roomName, localPlayer.name, roomData.gameType);
 			}
 
-			//schedual backups
-			me.backupWorld();
+			//schedual initial backup
+			setTimeout(me.backupWorld, 500);
 		}
 
 		//JOIN GAME

@@ -56,56 +56,6 @@ var GameObjects = function(){
 			var args = state[i];
 			me.createObject(args);
 		}
-
-		/*
-		var temp = [];
-
-		for(var i=0; i<state.length; i++){
-			var a = state[i];
-			if(a.type === OBJ_CUBE){
-				temp.push(Cube(a.x, a.y, a.color));
-			}
-			else if(a.type === OBJ_TILE){
-				temp.push(Tile(a.x, a.y, a.img));
-			}
-			else if(a.type === OBJ_TILE3){
-				temp.push(Tile3(a.x, a.y, a.value, a.img1, a.img2, a.img3));
-			}
-			else if(a.type === OBJ_D6){
-				temp.push(D6(a.x, a.y, a.value, a.color));
-			}
-			else if(a.type === OBJ_CARD){
-				temp.push(Card(a.ownerIndex, a.x, a.y, a.imgTop, a.imgBot, a.imgMask, a.isFaceUp));
-			}
-			else if(a.type === OBJ_BOARD){
-				temp.push(Board(a.x, a.y, a.img));
-			}
-			else if(a.type === OBJ_DECK){
-				var deck = Deck(a.x, a.y, a.img, a.drawFaceUp);
-				for(var j=0; j<a.cards.length; j++){
-					var c = a.cards[j];
-					deck.addCard(Card(c.ownerIndex, c.x, c.y, c.imgTop, c.imgBot, c.imgMask, c.isFaceUp));
-				}
-				temp.push(deck);
-			}
-			else if(a.type === OBJ_PASS){
-				temp.push(PassButton(a.x, a.y, players[a.playerIndex]));
-			}
-			else if(a.type === OBJ_SYNC){
-				temp.push(SyncButton(a.x, a.y));
-			}
-			else if(a.type === OBJ_SYNC_CONTEXT){
-				//temp.push(SyncContextMenu(a.x, a.y, a.isConfirm));
-			}
-			else if(a.type === OBJ_DECK_CONTEXT){
-				temp.push(DeckContextMenu(a.x, a.y, temp[a.deckIndex]));
-			}
-			else if(a.type === OBJ_DIE_CONTEXT){
-				temp.push(DieContextMenu(a.x, a.y, temp[a.dieIndex]));
-			}
-		}
-		me.objects = temp;
-		*/
 	};
 
 	me.getWorldState = function(){
@@ -116,134 +66,6 @@ var GameObjects = function(){
 		}
 
 		return world;
-
-		/*
-		var world = [];
-
-		for(var i=0; i<me.objects.length; i++){
-			var a = me.objects[i];
-
-			if(a.type === OBJ_CUBE){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.color = a.color;
-				world.push(o);
-			}
-			else if(a.type === OBJ_TILE){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.img = a.img;
-				world.push(o);
-			}
-			else if(a.type === OBJ_TILE3){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.value = a.value;
-				o.img1 = a.img[1];
-				o.img2 = a.img[2];
-				o.img3 = a.img[3];
-				world.push(o);
-			}
-			else if(a.type === OBJ_D6){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.value = a.value;
-				o.color = a.color;
-				world.push(o);
-			}
-			else if(a.type === OBJ_CARD){
-				var o = {};
-				o.type = a.type;
-				o.ownerIndex = a.ownerIndex;
-				o.x = a.x;
-				o.y = a.y;
-				o.imgTop = a.imgTop;
-				o.imgBot = a.imgBot;
-				o.imgMask = a.imgMask;
-				o.isFaceUp = a.isFaceUp;
-				world.push(o);
-			}
-			else if(a.type === OBJ_BOARD){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.img = a.img;
-				world.push(o);
-			}
-			else if(a.type === OBJ_DECK){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.img = a.img;
-				o.drawFaceUp = a.drawFaceUp;
-				o.cards = [];
-				for(var j=0; j<a.cards.length; j++){
-					var card = a.cards[j];
-					var c = {};
-					c.ownerIndex = card.ownerIndex;
-					c.x = card.x;
-					c.y = card.y;
-					c.imgTop = card.imgTop;
-					c.imgBot = card.imgBot;
-					c.imgMask = card.imgMask;
-					c.isFaceUp = card.isFaceUp;
-					o.cards.push(c);
-				}
-				world.push(o);
-			}
-			else if(a.type === OBJ_PASS){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.playerIndex = a.player.index;
-				world.push(o);
-			}
-			else if(a.type === OBJ_SYNC){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				world.push(o);
-			}
-			else if(a.type === OBJ_SYNC_CONTEXT){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.isConfirm = a.isConfirm;
-				world.push(o);
-			}
-			else if(a.type === OBJ_DECK_CONTEXT){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.deckIndex = me.getIndex(a.deck);
-				world.push(o);
-			}
-			else if(a.type === OBJ_DIE_CONTEXT){
-				var o = {};
-				o.type = a.type;
-				o.x = a.x;
-				o.y = a.y;
-				o.dieIndex = me.getIndex(a.die);
-				world.push(o);
-			}
-		}
-
-		return world;
-		*/
 	};
 
 	me.getIndex = function(object){
@@ -319,6 +141,7 @@ var GameObjects = function(){
 		while(index < me.objects.length){
 			var obj = me.objects[index];
 			if(obj.deleteMe){
+				console.log("deleting");
 				obj.deleteMe = false;
 				me.objects.splice(index, 1);
 				graphics.repaint();
@@ -420,6 +243,9 @@ var GameObject = function(args){
 	me.moveToTop = false;
 	me.isUi = false;  //draw without pan & zoom, eg. for UI stuff.
 	me.isDynamic = true;
+
+	me.isMultiPickup = false;
+	me.isLockedPickup = false;
 
 	me.viewX = 0;
 	me.viewY = 0;
@@ -537,7 +363,9 @@ var GameObject = function(args){
 };
 
 
-
+//##############################################
+//-----------------MOVABLE OBJECT---------------
+//##############################################
 var MovableObject = function(args){
 	var me = GameObject(args);
 
@@ -571,6 +399,52 @@ var MovableObject = function(args){
 		if(e.player === me.getOwner()) e.player.drop(me);
 
 		me.onMouseUp(e);
+	};
+
+	return me;
+};
+
+
+//##############################################
+//-----------------TILE OBJECT------------------
+//##############################################
+var TileObject = function(args){
+	var me = MovableObject(args);
+	
+	me.img = args.shift();
+
+	me.w = IMG[me.img].width;
+	me.h = IMG[me.img].height;
+	me.autoSetSpacing();
+
+	me.onExport = function(args){
+		args.push(me.img);
+		return args;
+	};
+
+	me.onDraw = function(ctx){
+		ctx.drawImage(IMG[me.img], me.viewX, me.viewY);
+	};
+
+	me.onDrawDetails = function(ctx, w, h){
+		var dx = 20;
+		var dy = 20;
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(dx-10, dy-10, w+20, h+20);
+
+		ctx.drawImage(IMG[me.img], dx, dy, w, h);
+	};
+
+	me.onDrop = function(){
+		var x = me.x+Math.floor(me.w/2);
+		var y = me.y+Math.floor(me.h/2);
+		var grid = gameObjects.getGridAt(x, y, me.gridList);
+		console.log("grid["+grid+"]");
+		if(grid){
+			me.x = grid.snapX(x, y);
+			me.y = grid.snapY(x, y);
+		}
 	};
 
 	return me;
