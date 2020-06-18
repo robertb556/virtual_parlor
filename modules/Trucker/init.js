@@ -121,10 +121,11 @@ function loadGameElements(){
 	gameObjects.createObject(['multiTile', p4.x, p4.y+100, null, ['grid1'], 1, ["truck14","truck24","truck34","truck44"]]);
 
 	//stations
-	for(var i=0; i<12; i++) gameObjects.createObject(['tile', p1.x,				p1.y-300+50*i,	null, ['grid1'], "station1"]);
-	for(var i=0; i<12; i++) gameObjects.createObject(['tile', p2.x-300+50*i,	p2.y,			null, ['grid1'], "station2"]);
-	for(var i=0; i<12; i++) gameObjects.createObject(['tile', p3.x,				p3.y-300+50*i,	null, ['grid1'], "station3"]);
-	for(var i=0; i<12; i++) gameObjects.createObject(['tile', p4.x-300+50*i,	p4.y,			null, ['grid1'], "station4"]);
+	var stationQty = 12;
+	for(var i=0; i<stationQty; i++) gameObjects.createObject(['tile', p1.x,				p1.y-300+50*i,	null, ['grid1'], "station1"]);
+	for(var i=0; i<stationQty; i++) gameObjects.createObject(['tile', p2.x-300+50*i,	p2.y,			null, ['grid1'], "station2"]);
+	for(var i=0; i<stationQty; i++) gameObjects.createObject(['tile', p3.x,				p3.y-300+50*i,	null, ['grid1'], "station3"]);
+	for(var i=0; i<stationQty; i++) gameObjects.createObject(['tile', p4.x-300+50*i,	p4.y,			null, ['grid1'], "station4"]);
 
 	//bonus turn redemption slips
 	gameObjects.createObject(['tile', p1.x-200, p1.y-150, null, [], "convoy"]);
