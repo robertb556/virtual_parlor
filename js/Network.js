@@ -62,6 +62,13 @@ var Network = function(myId){
 		}
 	};
 
+	me.send = function(name, message){
+		var id = PEER_PREFIX+name;
+		if(me.connections[id].status === OPEN){
+			me.connections[id].conn.send(message);
+		}
+	};
+
 	me.broadcast = function(message){
 		for(var key in me.connections){
 			if(me.connections.hasOwnProperty(key)){

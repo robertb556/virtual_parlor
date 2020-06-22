@@ -103,6 +103,16 @@ var Input = function(){
 				var player = players[data.playerIndex];
 				//add to buffer
 				for(var i=0; i<data.buffer.length; i++) player.buffer.push(data.buffer[i]);
+
+				//host
+				if(localPlayer !== null && localPlayer.index === 1){
+					//echo to other clients
+					for(var i=2; i<players.length; i++){
+						if(i !== data.playerIndex){
+							network.send(players[i].name, message);
+						}
+					}
+				}
 			}
 		}
 		/*
