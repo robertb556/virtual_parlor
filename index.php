@@ -141,7 +141,8 @@ window.onload = function(){
 	};
 
 	server.onerror = function(error){
-		alert('WebSocket Error ' + error); console.log(error);
+		//alert('WebSocket Error ' + error); console.log(error);
+    console.error("WebSocket error observed:", event);
 	};
 
 	server.onmessage	= function(e){
