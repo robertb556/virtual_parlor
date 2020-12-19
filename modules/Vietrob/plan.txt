@@ -1,0 +1,17 @@
+
+PAGES
+-cards (Each card is a row. Click a card to edit. each row has a qty box for each card. you can fill them in and then there is a drop down of decks at top and an add to deck button).
+-editCard (all the fields, save button).
+-decks (list of decks, you click on a deck to edit it).
+-editDeck (list of all cards and qty in deck, can change qty, 0 will remove. Save button).
+
+API
+-getCards
+-getCard
+-getDecks
+-getDeck
+-createCard (update on dup)
+-createDeck (update on dup)
+
+-deleteCard
+-deleteDeck
