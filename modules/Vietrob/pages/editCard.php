@@ -136,16 +136,16 @@ foreach($view as $row){
 <script>
 window.onload = function(){
     $("#mainForm").submit(function(){
-        var card = {};
+        //var card = {};
         //card.id = $("cardId").val();
-        card.name = $("name").val();
-        card.type = $("type").val();
-        card.cost = $("cost").val();
-        card.power = $("power").val();
-        card.text1 = $("text1").val();
-        card.text2 = $("text2").val();
-        card.text3 = $("text3").val();
-        console.log("pre["+card+"]");
+        //card.name = $("name").val();
+        //card.type = $("type").val();
+        //card.cost = $("cost").val();
+        //card.power = $("power").val();
+        //card.text1 = $("text1").val();
+        //card.text2 = $("text2").val();
+        //card.text3 = $("text3").val();
+        //console.log("pre["+card+"]");
 
         $.post("api/editCard.php", $( "#mainForm" ).serialize()).done(function(data){
             console.log("result["+data+"]");

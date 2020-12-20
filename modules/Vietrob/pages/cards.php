@@ -34,8 +34,9 @@
 
 <div class="row">
 <div class="col-12">
-    <button id="addToDeck1" type="button" class="btn btn-primary">Add to Blue Deck</button>
-    <button id="addToDeck2" type="button" class="btn btn-danger">Add to Red Deck</button>
+    <a href="editCard.php" class="btn btn-secondary">Create Card</a>
+    <button id="addToDeck1" type="button" class="btn btn-primary deckAdderBtn" disabled>Add to Blue Deck</button>
+    <button id="addToDeck2" type="button" class="btn btn-danger deckAdderBtn" disabled>Add to Red Deck</button>
 </div>
 </div>
 </div>
@@ -43,11 +44,13 @@
 <script>
 window.onload = function(){
     
+    
+    
     $.post("api/getCards.php", {}).done(function(data){
         var list = JSON.parse(data);
         
         for(var i=0; i<list.length; i++){
-            $("#cardTable").children('tbody').append("<tr><td><input class='addDeckCheck' type='checkbox' id='check"+list[i].id+"' name='check"+list[i].id+"' value='"+list[i].id+"'></td><td class='clickableCell' data-href='editCard.php?cardId="+list[i].id+"'>"+list[i].name+"</td><td>"+list[i].type+"</td><td>"+list[i].cost+"</td><td>"+list[i].power+"</td><td>"+list[i].text1+"</td><td>"+list[i].text2+"</td><td>"+list[i].text3+"</td></tr>");
+            $("#cardTable").children('tbody').append("<tr><td><input class='addDeckCheck' type='checkbox' id='check"+list[i].id+"' name='check"+list[i].id+"' value='"+list[i].id+"'></td><td class='clickableCell' style='cursor: pointer;' data-href='editCard.php?cardId="+list[i].id+"'>"+list[i].name+"</td><td>"+list[i].type+"</td><td>"+list[i].cost+"</td><td>"+list[i].power+"</td><td>"+list[i].text1+"</td><td>"+list[i].text2+"</td><td>"+list[i].text3+"</td></tr>");
         }
         
         $(".clickableCell").click(function() {
@@ -60,6 +63,13 @@ window.onload = function(){
         
         $('#cardTable').DataTable();
         //paging: false
+        
+        //
+        $(".addDeckCheck:checkbox").change(function(){
+            var count = $(".addDeckCheck:checkbox:checked").length;
+            if(count <= 0) $(".deckAdderBtn").prop("disabled", true);
+            else $(".deckAdderBtn").prop("disabled", false);
+        });
     });
     
     $("#addToDeck1").click(function() {
