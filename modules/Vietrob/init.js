@@ -22,8 +22,6 @@ loadImageFile("CAS", "CAS.png");
 loadImageFile("BLD", "BLD.png");
 loadImageFile("TAC", "TAC.png");
 loadImageFile("map", "map.png");
-var cardCount = 0;
-
 
 
 //##############################################
@@ -35,12 +33,12 @@ function createCompositeGameImages() {
 
     //get the actual image data started loading from database
     $.post("modules/Vietrob/pages/api/getCards.php", {}).done(function (data) {
+        console.log("generating imgs");
         var cardList = JSON.parse(data);
         for (var i = 0; i < cardList.length; i++) {
             var c = cardList[i];
             var cardImg = createCardImg(IMG["bluebase"], c.name, c.cost, c.power, IMG[c.type], c.text1, c.text2, c.text3);
-            IMG["card"+i] = cardImg;
-            cardCount++;
+            IMG["card"+c.id] = cardImg;
         }
     });
 }
@@ -81,11 +79,21 @@ function loadGameElements() {
     gameObjects.createObject(['board', 0, 0, null, [], "map"]);
 
     //cards
-    for (var i = 0; i < cardCount; i++) {
-        gameObjects.createObject(['card', 200, 200, null, [], 1, "card" + i, "blueback", "bluemask", true, false, false]);
-    }
     //gameObjects.createObject(['card', 200, 200, null, [], 1, "dcard", "blueback", "bluemask", true, false, false]);
     //gameObjects.createObject(['card', 200, 200, null, [], 1, "card41", "blueback", "bluemask", true, false, false]);
+
+    //get decks from database
+    $.post("modules/Vietrob/pages/api/getDeck.php", {"deck_id":1}).done(function (data) {
+        console.log("loading deck");
+        var deck = JSON.parse(data);
+        for (var i = 0; i < deck.length; i++) {
+            console.log("card i[" + i + "]");
+            var c = deck[i];
+            for (var j = 0; j < c.qty; j++) {
+                gameObjects.createObject(['card', 200, 200, null, [], 1, "card" + c.id, "blueback", "bluemask", true, false, false]);
+            }
+        }
+    });
 }
 
 
